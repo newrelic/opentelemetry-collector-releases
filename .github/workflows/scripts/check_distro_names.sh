@@ -33,7 +33,7 @@ check_distributions_dirs() {
     for distribution in ${DISTRIBUTIONS}
     do
         if [[ " ${base_distributions[*]} " =~ " ${distribution} " ]]; then
-            echo "[ERROR]: Distribution already exisits, change your distribution name"
+            echo "[ERROR]: Distribution already exists, change your distribution name"
             exit 1
         fi
     done
@@ -48,7 +48,7 @@ check_distributions_mainfests() {
     do
         distribution=$(awk '/name:/{print $2}' ${manifest_file})
         if [[ " ${distributions_name[*]} " =~ " ${distribution} " ]]; then
-            echo "[ERROR]: Distribution already exisits on a manifest file, change your distribution name"
+            echo "[ERROR]: Distribution already exists on a manifest file, change your distribution name"
             exit 1
         fi
         distributions_name+=($distribution)
