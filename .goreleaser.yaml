@@ -96,6 +96,12 @@ docker_manifests:
         - newrelic/opentelemetry-collector-releases/nr-otel-collector:latest-amd64
         - newrelic/opentelemetry-collector-releases/nr-otel-collector:latest-arm64
 
+publishers:
+  - name: my-publisher
+    cmd: .github/workflows/scripts/gh_publisher.sh -t {{ .Env.NR_RELEASE_TAG }} -f {{ abs .ArtifactPath }}
+    env:
+      - GITHUB_TOKEN={{ .Env.GITHUB_TOKEN }}
+
 git:
   # What should be used to sort tags when gathering the current and previous
   # tags if there are more than one tag in the same commit.
@@ -105,11 +111,10 @@ git:
   # Default: `-version:refname`
   tag_sort: -version:creatordate
 
+# Skip creating/updating gh release.
 release:
   disable: true
 
-publishers:
-  - name: my-publisher
-    cmd: .github/workflows/scripts/gh_publisher.sh -t {{ .Env.NR_RELEASE_TAG }} -f {{ abs .ArtifactPath }}
-    env:
-      - GITHUB_TOKEN={{ .Env.GITHUB_TOKEN }}
+# Skip auto-generating changelog.
+changelog:
+  skip: true
