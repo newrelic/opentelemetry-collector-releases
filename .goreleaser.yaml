@@ -97,7 +97,7 @@ docker_manifests:
         - newrelic/opentelemetry-collector-releases/nr-otel-collector:latest-arm64
 
 publishers:
-  - name: my-publisher
+  - name: GH Publisher
     cmd: .github/workflows/scripts/gh_publisher.sh -t {{ .Env.NR_RELEASE_TAG }} -f {{ abs .ArtifactPath }}
     env:
       - GITHUB_TOKEN={{ .Env.GITHUB_TOKEN }}
