@@ -44,4 +44,6 @@ jobs:
         uses: goreleaser/goreleaser-action@v4
         with:
           version: latest
-          args: --snapshot --skip-validate --timeout 2h
+          args: --snapshot --rm-dist --skip-sign --skip-sbom --timeout 2h
+        env:
+          GORELEASER_CURRENT_TAG: 0.0.0
