@@ -5,12 +5,12 @@ on:
     branches: [main]
     paths:
     - ".goreleaser.yaml"
-    - "distributions/nr-otel-collector/manifest.yaml"
+    - "distributions/**/manifest.yaml"
   pull_request:
     branches: [main]
     paths:
     - ".goreleaser.yaml"
-    - "distributions/nr-otel-collector/manifest.yaml"
+    - "distributions/**/manifest.yaml"
 
 jobs:
   check-goreleaser:
