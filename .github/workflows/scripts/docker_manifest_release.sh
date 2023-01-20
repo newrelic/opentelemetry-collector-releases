@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# This script will create a new manifest from an existing -rc.
-# During the pre-release process we tag all the images using -rc suffix which is not required for the released images.
+# This script will create a new manifest from an existing one containing -rc suffix.
+# During the pre-release process we tag all the images using -rc suffix
+# On release images should not contain this suffix
 
 set -e
 
@@ -34,12 +35,12 @@ do
     esac
 done
 
-# Get the list of docker images contained by the rc manifest.
+# Get the list of docker images sha digest contained by the rc manifest.
 images=$(docker manifest inspect "${image_name}":"${version}"-rc | jq --arg image "${image_name}" '.manifests[] | ($image+"@"+.digest)' | tr -d \")
 
 printf "Images:\n%s\n" "${images}"
 
-# Create and push a two new manifests latest and versioned without -rc suffix.
+# Create and push two new manifests latest and versioned, without -rc suffix.
 docker manifest create "${image_name}:latest" $images
 docker manifest create "${image_name}:${version}" $images
 
