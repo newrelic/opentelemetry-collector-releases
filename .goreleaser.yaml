@@ -56,7 +56,7 @@ dockers:
       goarch: amd64
       dockerfile: distributions/nr-otel-collector/Dockerfile
       image_templates:
-        - newrelic/nr-otel-collector{{ .Version }}-rc-amd64
+        - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
       extra_files:
         - configs/nr-otel-collector.yaml
       build_flag_templates:
@@ -72,7 +72,7 @@ dockers:
       goarch: arm64
       dockerfile: distributions/nr-otel-collector/Dockerfile
       image_templates:
-        - newrelic/nr-otel-collector{{ .Version }}-rc-arm64
+        - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
       extra_files:
         - configs/nr-otel-collector.yaml
       build_flag_templates:
@@ -87,8 +87,8 @@ dockers:
 docker_manifests:
     - name_template: newrelic/nr-otel-collector{{ .Version }}-rc
       image_templates:
-        - newrelic/nr-otel-collector{{ .Version }}-rc-amd64
-        - newrelic/nr-otel-collector{{ .Version }}-rc-arm64
+        - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
+        - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
 
 publishers:
   - name: GH Publisher
