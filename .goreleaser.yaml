@@ -85,7 +85,7 @@ dockers:
         - --label=org.opencontainers.image.source={{.GitURL}}
       use: buildx
 docker_manifests:
-    - name_template: newrelic/nr-otel-collector{{ .Version }}-rc
+    - name_template: newrelic/nr-otel-collector:{{ .Version }}-rc
       image_templates:
         - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
         - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
