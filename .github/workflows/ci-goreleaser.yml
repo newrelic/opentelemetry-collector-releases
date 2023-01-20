@@ -45,3 +45,5 @@ jobs:
         with:
           version: latest
           args: --snapshot --rm-dist --skip-sign --skip-sbom --timeout 2h
+        env:
+          GORELEASER_CURRENT_TAG: 0.0.0
