@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# This script will create a new manifest from an existing one containing -rc suffix.
-# During the pre-release process we tag all the images using -rc suffix
-# On release images should not contain this suffix
+# This script will create a new manifest from an existing one that has -rc suffix.
+# During the pre-release docker images are tagged using -rc suffix
+# On release this suffix will be removed.
 
 set -e
 
