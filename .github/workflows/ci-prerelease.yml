@@ -8,50 +8,50 @@ on:
       - '*'
 
 jobs:
-  prerelease:
-    name: Pre-release
+  # prerelease:
+  #   name: Pre-release
 
-    runs-on: ubuntu-20.04
+  #   runs-on: ubuntu-20.04
 
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set and validate distribution name and version
-        run: .github/workflows/scripts/set_version.sh
+  #     - name: Set and validate distribution name and version
+  #       run: .github/workflows/scripts/set_version.sh
 
-      - uses: docker/setup-qemu-action@v2
+  #     - uses: docker/setup-qemu-action@v2
 
-      - uses: docker/setup-buildx-action@v2
+  #     - uses: docker/setup-buildx-action@v2
 
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '~1.19.4'
-          check-latest: true
+  #     - uses: actions/setup-go@v3
+  #       with:
+  #         go-version: '~1.19.4'
+  #         check-latest: true
 
-      - name: Generate distribution sources
-        run: make generate-sources
+  #     - name: Generate distribution sources
+  #       run: make generate-sources
 
-      - name: Log into Docker.io
-        uses: docker/login-action@v2
-        with:
-          username: ${{secrets.CAOS_DOCKER_HUB_ID}}
-          password:  ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
+  #     - name: Log into Docker.io
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{secrets.CAOS_DOCKER_HUB_ID}}
+  #         password:  ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
 
-      - name: Build binaries & packages with GoReleaser
-        uses: goreleaser/goreleaser-action@v4
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --rm-dist --timeout 2h
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Build binaries & packages with GoReleaser
+  #       uses: goreleaser/goreleaser-action@v4
+  #       with:
+  #         distribution: goreleaser
+  #         version: latest
+  #         args: release --rm-dist --timeout 2h
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publishing-to-s3:
     name: Publish artifacts into s3 staging bucket
     uses: ./.github/workflows/component_publish.yml
-    needs: [prerelease]
+    # needs: [prerelease]
     secrets:
       # TODO: Change all secrets var names from _TESTING to _STAGING after testing
       DOCKER_HUB_ID: ${{secrets.CAOS_DOCKER_HUB_ID}}
@@ -66,7 +66,8 @@ jobs:
       ACCESS_POINT_HOST: "testing" # TODO: change this to staging after testing
       SCHEMA_BRANCH: "upload_schemas"
       RUN_ID: ${{ github.run_id }}
-      TAG: ${{ github.event.release.tag_name }}
+      TAG: nr-otel-collector-0.0.2
+      #${{ github.event.release.tag_name }}
       AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
