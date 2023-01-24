@@ -67,7 +67,7 @@ jobs:
       SCHEMA_BRANCH: "upload_schemas"
       RUN_ID: ${{ github.run_id }}
       TAG: "nr-otel-collector-0.0.2"
-      VERSION: "0.0.2"
+      APP_VERSION: "0.0.2"
       #${{ github.event.release.tag_name }}
       AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"

@@ -24,7 +24,7 @@ on:
       TAG:
         required: true
         type: string
-      VERSION:
+      APP_VERSION:
         required: true
         type: string
       AWS_S3_BUCKET_NAME:
@@ -51,7 +51,7 @@ env:
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
   GPG_PRIVATE_KEY_BASE64: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
   TAG:  ${{ inputs.TAG }}
-  VERSION:  ${{ inputs.VERSION }}
+  APP_VERSION:  ${{ inputs.APP_VERSION }}
   DOCKER_HUB_ID: ${{ secrets.DOCKER_HUB_ID }}
   DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
   SCHEMA_BRANCH: ${{ inputs.SCHEMA_BRANCH }}
@@ -100,7 +100,7 @@ jobs:
         uses: newrelic/infrastructure-publish-action@v1.2.6
         with:
           tag: ${{env.TAG}}
-          version: ${{env.VERSION}}
+          app_version: ${{env.APP_VERSION}}
           app_name: "${{env.NR_DISTRO}}"
           repo_name: "newrelic/opentelemetry-collector-releases"
           schema: "custom"
