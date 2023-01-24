@@ -8,45 +8,66 @@ on:
       - '*'
 
 jobs:
-  prerelease:
-    name: Pre-release
-    permissions:
-      id-token: write
-      packages: write
-      contents: write
+  # prerelease:
+  #   name: Pre-release
 
-    runs-on: ubuntu-20.04
+  #   runs-on: ubuntu-20.04
 
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set and validate distribution name and version
-        run: .github/workflows/scripts/set_version.sh
+  #     - name: Set and validate distribution name and version
+  #       run: .github/workflows/scripts/set_version.sh
 
-      - uses: docker/setup-qemu-action@v2
+  #     - uses: docker/setup-qemu-action@v2
 
-      - uses: docker/setup-buildx-action@v2
+  #     - uses: docker/setup-buildx-action@v2
 
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '~1.19.4'
-          check-latest: true
+  #     - uses: actions/setup-go@v3
+  #       with:
+  #         go-version: '~1.19.4'
+  #         check-latest: true
 
-      - name: Generate distribution sources
-        run: make generate-sources
+  #     - name: Generate distribution sources
+  #       run: make generate-sources
 
-      # - name: Log into Docker.io
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{secrets.OHAI_DOCKER_HUB_ID}}
-      #     password:  ${{secrets.OHAI_DOCKER_HUB_PASSWORD}}
+  #     - name: Log into Docker.io
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{secrets.CAOS_DOCKER_HUB_ID}}
+  #         password:  ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
 
-      - uses: goreleaser/goreleaser-action@v4
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --rm-dist --timeout 2h
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Build binaries & packages with GoReleaser
+  #       uses: goreleaser/goreleaser-action@v4
+  #       with:
+  #         distribution: goreleaser
+  #         version: latest
+  #         args: release --rm-dist --timeout 2h
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publishing-to-s3:
+    name: Publish artifacts into s3 staging bucket
+    uses: ./.github/workflows/components/publish.yml
+    # needs: [prerelease]
+    secrets:
+      # TODO: Change all secrets var names from _TESTING to _STAGING after testing
+      DOCKER_HUB_ID: ${{secrets.CAOS_DOCKER_HUB_ID}}
+      DOCKER_HUB_PASSWORD: ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
+      GPG_PASSPHRASE: ${{ secrets.CAOS_GPG_PASSPHRASE }}
+      GPG_PRIVATE_KEY_BASE64: ${{ secrets.CAOS_GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
+      AWS_ACCESS_KEY_ID: ${{ secrets.CAOS_AWS_ACCESS_KEY_ID_TESTING }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CAOS_AWS_SECRET_ACCESS_KEY_TESTING }}
+      AWS_ROLE_ARN: ${{ secrets.CAOS_AWS_ROLE_ARN_TESTING }}
+      AWS_ROLE_SESSION_NAME: ${{ secrets.CAOS_AWS_ROLE_SESSION_NAME_TESTING }}
+    with:
+      ACCESS_POINT_HOST: "testing" # TODO: change this to staging after testing
+      SCHEMA_BRANCH: "upload_schemas"
+      RUN_ID: ${{ github.run_id }}
+      TAG: nr-otel-collector-0.0.1 
+      #${{ github.event.release.tag_name }}
+      AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
+      AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
+      ASSETS_TYPE: "all"
