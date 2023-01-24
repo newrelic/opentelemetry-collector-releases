@@ -12,9 +12,5 @@
         - focal
         - bionic
         - xenial
-        - buster
-        - jessie
-        - stretch
-        - groovy
-        - hirsute
         - bullseye
+        - buster
