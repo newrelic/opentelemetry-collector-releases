@@ -1,5 +1,5 @@
 ---
-- src: "nr-otel-collector_{version}_{arch}.deb"
+- src: "nr-otel-collector_{version}_linux_{arch}.deb"
   arch:
     - amd64
     - arm64
