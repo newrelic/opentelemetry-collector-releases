@@ -50,7 +50,7 @@ jobs:
 
   publishing-to-s3:
     name: Publish artifacts into s3 staging bucket
-    uses: ./.github/workflows/components/publish.yml
+    uses: ./.github/workflows/component_publish.yml
     needs: [prerelease]
     secrets:
       # TODO: Change all secrets var names from _TESTING to _STAGING after testing
