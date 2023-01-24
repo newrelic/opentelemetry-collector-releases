@@ -23,7 +23,9 @@ fi
 printf "Distribution name: %s, Version name: %s\n" "${distro}" "${version}"
 
 # Set the variables for later use in the GHA pipeline
-echo "NR_DISTRO=${distro}"; echo "NR_VERSION=${version}"; echo "NR_RELEASE_TAG=${tag}"  >> "$GITHUB_ENV"
+echo "NR_DISTRO=${distro}" >> "$GITHUB_ENV"
+echo "NR_VERSION=${version}" >> "$GITHUB_ENV"
+echo "NR_RELEASE_TAG=${tag}" >> "$GITHUB_ENV"
 
 # Assert manifest distro and version
 manifest_file="./distributions/${distro}/manifest.yaml"

@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  release:
+    types:
+      - released
+    tags:
+      - '*'
+
+jobs:
+  release:
+    name: release
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set and validate distribution name and version
+        run: .github/workflows/scripts/set_version.sh
+
+      - name: Log into Docker.io
+        uses: docker/login-action@v2
+        with:
+          username: ${{secrets.CAOS_DOCKER_HUB_ID}}
+          password:  ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
+
+      - name: Publish docker manifest
+        run: .github/workflows/scripts/docker_manifest_release.sh -i cciutea768/${{env.NR_DISTRO}} -v ${{env.NR_VERSION}}
