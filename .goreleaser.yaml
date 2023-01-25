@@ -33,10 +33,10 @@ nfpms:
   - package_name: nr-otel-collector
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_
-      {{ if eq .Os "linux" }}
-      {{ replace .Arch "amd64" "x86_64" }}
+      {{- if eq .Os "linux" }}
+        {{- replace .Arch "amd64" "x86_64" }}
       {{ else }}
-      {{ .Arch }}
+        {{- .Arch }}
       {{ end }}
 
     contents:
