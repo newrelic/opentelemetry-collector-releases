@@ -3,3 +3,4 @@
   uploads:
     - type: file
       dest: "{dest_prefix}binaries/windows/amd64/{src}"
+
