@@ -35,9 +35,9 @@ nfpms:
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_
       {{- if eq .Os "linux" }}
         {{- replace .Arch "amd64" "x86_64" }}
-      {{ else }}
+      {{- else }}
         {{- .Arch }}
-      {{ end }}
+      {{- end }}
 
     contents:
       - src: distributions/nr-otel-collector/nr-otel-collector.service
