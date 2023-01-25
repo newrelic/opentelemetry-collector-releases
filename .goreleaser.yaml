@@ -3,10 +3,10 @@ builds:
   - id: nr-otel-collector
     goos:
       - linux
-      # - windows
+      - windows
     goarch:
       - amd64
-      # - arm64
+      - arm64
     ignore:
       - goos: windows
         goarch: arm64
@@ -28,10 +28,6 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-
-      #         {{- with .Arm }}v{{ . }}{{- end }}
-      # {{- with .Mips }}_{{ . }}{{- end }}
-      # {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{- end }}
 
 nfpms:
   - package_name: nr-otel-collector
@@ -64,6 +60,7 @@ nfpms:
       - nr-otel-collector
     formats:
       - deb
+      - rpm
     maintainer: New Relic <caos-team@newrelic.com>
     description: OpenTelemetry Collector - nr-otel-collector
     license: Apache 2.0
