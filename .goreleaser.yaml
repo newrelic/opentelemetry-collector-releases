@@ -37,11 +37,14 @@ nfpms:
   - package_name: nr-otel-collector
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_ 
-      {{- if (eq (filter .ConventionalFileName "rpm$") "") }}
-        {{- .Os }}
+      {{- if not (eq (filter .ConventionalFileName "\\.rpm$") "") }}
+        {{- replace .Arch "amd64" "x86_64" }}
       {{- else }}
         {{- .Arch }}
       {{- end }}
+      {{- with .Arm }}v{{ . }}{{- end }}
+      {{- with .Mips }}_{{ . }}{{- end }}
+      {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{- end }}
 
     contents:
       - src: distributions/nr-otel-collector/nr-otel-collector.service
