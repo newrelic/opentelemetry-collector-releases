@@ -28,15 +28,12 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
- 
-#  {{- if not (eq (filter .ConventionalFileName "\.rpm$") "") }}
-#         {{- replace .Arch "amd64" "x86_64" }}
-#       {{ else }}
+
 nfpms:
   - package_name: nr-otel-collector
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_ 
-      {{- with (filter .ConventionalFileName "\.rpm$") }}
+      {{- if not (eq (filter .ConventionalFileName "\.rpm$") "") }}
         {{- replace .Arch "amd64" "x86_64" }}
       {{ else }}
         {{- .Arch }}
