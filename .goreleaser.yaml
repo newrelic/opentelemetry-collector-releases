@@ -33,11 +33,7 @@ nfpms:
   - package_name: nr-otel-collector
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_
-      {{- if eq .Os "linux" }}
-        {{- replace .Arch "amd64" "x86_64" }}
-      {{- else }}
-        {{- .Arch }}
-      {{- end }}
+      {{- if neq filter .ConventionalFileName "\.rpm$" "" }}test{{ end }}
 
     contents:
       - src: distributions/nr-otel-collector/nr-otel-collector.service
@@ -57,7 +53,6 @@ nfpms:
       - nr-otel-collector
     formats:
       - deb
-      - rpm
     maintainer: New Relic <caos-team@newrelic.com>
     description: OpenTelemetry Collector - nr-otel-collector
     license: Apache 2.0
