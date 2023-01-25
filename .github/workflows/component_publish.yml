@@ -81,6 +81,10 @@ jobs:
           - "zip"
           - "deb"
           - "rpm"
+        include:
+          - os: linux
+          - os: windows
+            assetsType: zip
           
     steps:
       - uses: actions/checkout@v3
@@ -105,7 +109,7 @@ jobs:
           app_name: "${{env.NR_DISTRO}}"
           repo_name: "newrelic/opentelemetry-collector-releases"
           schema: "custom"
-          schema_url: "https://raw.githubusercontent.com/newrelic/opentelemetry-collector-releases/${{ env.SCHEMA_BRANCH }}/distributions/${{ env.NR_DISTRO }}/upload-schema-linux-${{ matrix.assetsType }}.yml"
+          schema_url: "https://raw.githubusercontent.com/newrelic/opentelemetry-collector-releases/${{ env.SCHEMA_BRANCH }}/distributions/${{ env.NR_DISTRO }}/upload-schema-${{ matrix.os }}-${{ matrix.assetsType }}.yml"
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws_s3_bucket_name: ${{ env.AWS_S3_BUCKET_NAME }}
