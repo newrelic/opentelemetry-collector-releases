@@ -80,6 +80,7 @@ jobs:
       matrix:
         assetsType:
           - "targz"
+          - "zip"
           - "deb"
           - "rpm"
           
