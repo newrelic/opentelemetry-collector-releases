@@ -37,9 +37,9 @@ nfpms:
   - package_name: nr-otel-collector
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_ 
-      {{- if (eq (filter .ConventionalFileName "rpm") "") }}
+      {{- if (eq (filter .ConventionalFileName "rpm$") "") }}
         {{- .Os }}
-      {{ else }}
+      {{- else }}
         {{- .Arch }}
       {{- end }}
 
