@@ -1,94 +1,112 @@
 project_name: opentelemetry-collector-releases
 builds:
-    - id: nr-otel-collector
-      goos:
-        - linux
-        - windows
-      goarch:
-        - amd64
-        - arm64
-      ignore:
-        - goos: windows
-          goarch: arm64
-      dir: distributions/nr-otel-collector/_build
-      binary: nr-otel-collector
-      ldflags:
-        - -s
-        - -w
-      flags:
-        - -trimpath
-      env:
-        - CGO_ENABLED=0
+  - id: nr-otel-collector
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    dir: distributions/nr-otel-collector/_build
+    binary: nr-otel-collector
+    ldflags:
+      - -s
+      - -w
+    flags:
+      - -trimpath
+    env:
+      - CGO_ENABLED=0
 archives:
-    - id: nr-otel-collector
-      builds:
-        - nr-otel-collector
-      name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
+  - id: nr-otel-collector
+    builds:
+      - nr-otel-collector
+    name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
+
+    format_overrides:
+      - goos: windows
+        format: zip
 
 nfpms:
-    - package_name: nr-otel-collector
-      contents:
-        - src: distributions/nr-otel-collector/nr-otel-collector.service
-          dst: /lib/systemd/system/nr-otel-collector.service
-        - src: distributions/nr-otel-collector/nr-otel-collector.conf
-          dst: /etc/nr-otel-collector/nr-otel-collector.conf
-          type: config|noreplace
-        - src: configs/nr-otel-collector.yaml
-          dst: /etc/nr-otel-collector/config.yaml
-          type: config
-      scripts:
-        preinstall: distributions/nr-otel-collector/preinstall.sh
-        postinstall: distributions/nr-otel-collector/postinstall.sh
-        preremove: distributions/nr-otel-collector/preremove.sh
-      id: nr-otel-collector
-      builds:
-        - nr-otel-collector
-      formats:
-        - deb
-        - rpm
-      maintainer: New Relic <caos-team@newrelic.com>
-      description: OpenTelemetry Collector - nr-otel-collector
-      license: Apache 2.0
+  - package_name: nr-otel-collector
+
+    # Replace arch for rpm from amd64 to x86_64 to be consistent with our rpm repo.
+    file_name_template: >-
+      {{ .PackageName }}_{{ .Version }}_{{ .Os }}_ 
+      {{- if not (eq (filter .ConventionalFileName "\\.rpm$") "") }}
+        {{- replace .Arch "amd64" "x86_64" }}
+      {{- else }}
+        {{- .Arch }}
+      {{- end }}
+      {{- with .Arm }}v{{ . }}{{- end }}
+      {{- with .Mips }}_{{ . }}{{- end }}
+      {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{- end }}
+
+    contents:
+      - src: distributions/nr-otel-collector/nr-otel-collector.service
+        dst: /lib/systemd/system/nr-otel-collector.service
+      - src: distributions/nr-otel-collector/nr-otel-collector.conf
+        dst: /etc/nr-otel-collector/nr-otel-collector.conf
+        type: config|noreplace
+      - src: configs/nr-otel-collector.yaml
+        dst: /etc/nr-otel-collector/config.yaml
+        type: config
+    scripts:
+      preinstall: distributions/nr-otel-collector/preinstall.sh
+      postinstall: distributions/nr-otel-collector/postinstall.sh
+      preremove: distributions/nr-otel-collector/preremove.sh
+    id: nr-otel-collector
+    builds:
+      - nr-otel-collector
+    formats:
+      - deb
+      - rpm
+    maintainer: New Relic <caos-team@newrelic.com>
+    description: OpenTelemetry Collector - nr-otel-collector
+    license: Apache 2.0
+
 checksum:
-    name_template: '{{ .ProjectName }}_checksums.txt'
+  name_template: '{{ .ProjectName }}_checksums.txt'
 dockers:
-    - goos: linux
-      goarch: amd64
-      dockerfile: distributions/nr-otel-collector/Dockerfile
-      image_templates:
-        - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
-      extra_files:
-        - configs/nr-otel-collector.yaml
-      build_flag_templates:
-        - --pull
-        - --platform=linux/amd64
-        - --label=org.opencontainers.image.created={{.Date}}
-        - --label=org.opencontainers.image.name={{.ProjectName}}
-        - --label=org.opencontainers.image.revision={{.FullCommit}}
-        - --label=org.opencontainers.image.version={{.Version}}
-        - --label=org.opencontainers.image.source={{.GitURL}}
-      use: buildx
-    - goos: linux
-      goarch: arm64
-      dockerfile: distributions/nr-otel-collector/Dockerfile
-      image_templates:
-        - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
-      extra_files:
-        - configs/nr-otel-collector.yaml
-      build_flag_templates:
-        - --pull
-        - --platform=linux/arm64
-        - --label=org.opencontainers.image.created={{.Date}}
-        - --label=org.opencontainers.image.name={{.ProjectName}}
-        - --label=org.opencontainers.image.revision={{.FullCommit}}
-        - --label=org.opencontainers.image.version={{.Version}}
-        - --label=org.opencontainers.image.source={{.GitURL}}
-      use: buildx
+  - goos: linux
+    goarch: amd64
+    dockerfile: distributions/nr-otel-collector/Dockerfile
+    image_templates:
+      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
+    extra_files:
+      - configs/nr-otel-collector.yaml
+    build_flag_templates:
+      - --pull
+      - --platform=linux/amd64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+    use: buildx
+  - goos: linux
+    goarch: arm64
+    dockerfile: distributions/nr-otel-collector/Dockerfile
+    image_templates:
+      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
+    extra_files:
+      - configs/nr-otel-collector.yaml
+    build_flag_templates:
+      - --pull
+      - --platform=linux/arm64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+    use: buildx
 docker_manifests:
-    - name_template: newrelic/nr-otel-collector:{{ .Version }}-rc
-      image_templates:
-        - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
-        - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
+  - name_template: newrelic/nr-otel-collector:{{ .Version }}-rc
+    image_templates:
+      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
+      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
 
 publishers:
   - name: GH Publisher
