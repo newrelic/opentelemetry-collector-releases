@@ -29,18 +29,19 @@ archives:
       - goos: windows
         format: zip
 
+      #         {{- with .Arm }}v{{ . }}{{- end }}
+      # {{- with .Mips }}_{{ . }}{{- end }}
+      # {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{- end }}
+
 nfpms:
   - package_name: nr-otel-collector
     file_name_template: >-
       {{ .PackageName }}_{{ .Version }}_{{ .Os }}_ 
-      {{- if not (eq (filter .ConventionalFileName "\.rpm$") "") }}
-        {{- replace .Arch "amd64" "x86_64" }}
+      {{- if eq (filter .ConventionalFileName "\.rpm$") "" }}
+        {{- .Os }}
       {{ else }}
         {{- .Arch }}
       {{- end }}
-      {{- with .Arm }}v{{ . }}{{- end }}
-      {{- with .Mips }}_{{ . }}{{- end }}
-      {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{- end }}
 
     contents:
       - src: distributions/nr-otel-collector/nr-otel-collector.service
