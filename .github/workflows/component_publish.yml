@@ -46,8 +46,6 @@ on:
         required: true
         type: string
 
-https://github.com/newrelic/opentelemetry-collector-releases/releases/download/nr-otel-collector-0.0.2/nr-otel-collector_0.0.2_amd64.deb
-https://github.com/newrelic/opentelemetry-collector-releases/releases/download/nr-otel-collector-0.0.2/nr-otel-collector_0.0.2_linux_amd64.deb
 env:
   GPG_MAIL: 'infrastructure-eng@newrelic.com'
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
