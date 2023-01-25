@@ -26,7 +26,6 @@ jobs:
       SCHEMA_BRANCH: "main"
       RUN_ID: ${{ github.run_id }}
       TAG: ${{ github.event.release.tag_name }}
-      APP_VERSION: ${{ env.NR_VERSION }}
       AWS_S3_BUCKET_NAME: "nr-downloads-main"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock"
       ASSETS_TYPE: "all"

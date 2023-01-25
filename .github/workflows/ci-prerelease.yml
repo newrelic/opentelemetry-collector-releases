@@ -67,7 +67,6 @@ jobs:
       SCHEMA_BRANCH: "upload_schemas" # main
       RUN_ID: ${{ github.run_id }}
       TAG: ${{ github.event.release.tag_name }}
-      APP_VERSION: ${{ env.NR_VERSION }}
       AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
