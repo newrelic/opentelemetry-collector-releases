@@ -77,6 +77,7 @@ jobs:
           - "zip"
           - "deb"
           - "rpm"
+        # add os field to the matrix and overwrite it when the assetsType is 'zip'
         include:
           - os: linux
           - os: windows
