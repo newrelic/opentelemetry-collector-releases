@@ -19,6 +19,6 @@ jobs:
   molecule-packaging-tests:
     uses: ./.github/workflows/component_molecule_packaging.yml
     with:
-      TAG: '0.0.6'
+      TAG: '0.0.7'
       PACKAGE_NAME: 'nr-otel-collector'
       REPO_ENDPOINT: 'http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent'

@@ -91,12 +91,12 @@ jobs:
       - name: Set and validate distribution name and version
         run: .github/workflows/scripts/set_version.sh
 
-      - name: Login to DockerHub
-        if: ${{ (env.ASSETS_TYPE == 'all' || env.ASSETS_TYPE == matrix.assetsType) }}
-        uses: docker/login-action@v1
-        with:
-          username: ${{ env.DOCKER_HUB_ID }}
-          password: ${{ env.DOCKER_HUB_PASSWORD }}
+      # - name: Login to DockerHub
+      #   if: ${{ (env.ASSETS_TYPE == 'all' || env.ASSETS_TYPE == matrix.assetsType) }}
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ env.DOCKER_HUB_ID }}
+      #     password: ${{ env.DOCKER_HUB_PASSWORD }}
       - name: Publish ${{ matrix.assetsType }} to S3 action
         if: ${{ (env.ASSETS_TYPE == 'all' || env.ASSETS_TYPE == matrix.assetsType) }}
         uses: newrelic/infrastructure-publish-action@v1.2.6
