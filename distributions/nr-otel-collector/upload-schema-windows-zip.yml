@@ -1,0 +1,6 @@
+---
+- src: "nr-otel-collector_{version}_windows_amd64.zip"
+  uploads:
+    - type: file
+      dest: "{dest_prefix}binaries/windows/amd64/{src}"
+

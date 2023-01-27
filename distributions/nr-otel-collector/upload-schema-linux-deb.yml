@@ -1,0 +1,16 @@
+---
+- src: "nr-otel-collector_{version}_linux_{arch}.deb"
+  arch:
+    - amd64
+    - arm64
+  uploads:
+    - type: apt
+      src_repo: "{access_point_host}/infrastructure_agent/linux/apt"
+      dest: "{dest_prefix}linux/apt/"
+      os_version:
+        - jammy
+        - focal
+        - bionic
+        - xenial
+        - bullseye
+        - buster
