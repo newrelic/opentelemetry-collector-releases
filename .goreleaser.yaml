@@ -67,6 +67,10 @@ nfpms:
     description: OpenTelemetry Collector - nr-otel-collector
     license: Apache 2.0
 
+    # needed for useradd command of post install script
+    recommends:
+      - shadow-utils
+
 checksum:
   name_template: '{{ .ProjectName }}_checksums.txt'
 dockers:
