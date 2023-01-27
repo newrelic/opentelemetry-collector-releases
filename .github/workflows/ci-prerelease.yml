@@ -53,19 +53,20 @@ jobs:
     uses: ./.github/workflows/component_publish.yml
     needs: [prerelease]
     secrets:
+      # TODO: change this to STAGING when testing is done
       DOCKER_HUB_ID: ${{secrets.CAOS_DOCKER_HUB_ID}}
       DOCKER_HUB_PASSWORD: ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
       GPG_PASSPHRASE: ${{ secrets.CAOS_GPG_PASSPHRASE }}
       GPG_PRIVATE_KEY_BASE64: ${{ secrets.CAOS_GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
-      AWS_ACCESS_KEY_ID: ${{ secrets.CAOS_AWS_ACCESS_KEY_ID_STAGING }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.CAOS_AWS_SECRET_ACCESS_KEY_STAGING }}
-      AWS_ROLE_ARN: ${{ secrets.CAOS_AWS_ROLE_ARN_STAGING }}
-      AWS_ROLE_SESSION_NAME: ${{ secrets.CAOS_AWS_ROLE_SESSION_NAME_STAGING }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.CAOS_AWS_ACCESS_KEY_ID_TESTING }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CAOS_AWS_SECRET_ACCESS_KEY_TESTING }}
+      AWS_ROLE_ARN: ${{ secrets.CAOS_AWS_ROLE_ARN_TESTING }}
+      AWS_ROLE_SESSION_NAME: ${{ secrets.CAOS_AWS_ROLE_SESSION_NAME_TESTING }}
     with:
-      ACCESS_POINT_HOST: "staging"
+      ACCESS_POINT_HOST: "testing"
       SCHEMA_BRANCH: "main"
       RUN_ID: ${{ github.run_id }}
       TAG: ${{ github.event.release.tag_name }}
-      AWS_S3_BUCKET_NAME: "nr-downloads-ohai-staging"
-      AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-staging"
+      AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
+      AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
