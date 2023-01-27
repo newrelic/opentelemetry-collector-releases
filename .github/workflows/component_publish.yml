@@ -82,7 +82,7 @@ jobs:
           - os: linux
           - os: windows
             assetsType: zip
-          
+
     steps:
       - uses: actions/checkout@v3
         with:

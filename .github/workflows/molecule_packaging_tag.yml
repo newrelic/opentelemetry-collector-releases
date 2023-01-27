@@ -1,0 +1,24 @@
+name: 🚀 🧬 Test specific version installation
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      package_name:
+        required: true
+        type: string
+      tag:
+        description: 'Version of the agent to test installation'
+        required: true
+      staging:
+        description: 'Should run tests using staging bucket?'
+        type: boolean
+        default: true
+        required: false
+
+jobs:
+  molecule-packaging-tests:
+    uses: ./.github/workflows/component_molecule_packaging.yml
+    with:
+      TAG: '0.0.6'
+      PACKAGE_NAME: 'nr-otel-collector'
+      REPO_ENDPOINT: 'http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent'

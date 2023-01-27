@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publishing-to-s3:
-    name: Publish artifacts into s3 staging bucket
+    name: Publish artifacts into s3 testing bucket
     uses: ./.github/workflows/component_publish.yml
     needs: [prerelease]
     secrets:
@@ -70,3 +70,12 @@ jobs:
       AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
+
+  packaging-tests:
+    name: Assert version of published packages
+    uses: ./.github/workflows/component_molecule_packaging.yml
+    needs: [publishing-to-s3]
+    with:
+      TAG: ${{ env.NR_VERSION }}
+      REPO_ENDPOINT: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+      PACKAGE_NAME: ${{ env.NR_DISTRO }}
