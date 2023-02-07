@@ -34,7 +34,7 @@ nfpms:
 
     # Replace arch for rpm from amd64 to x86_64 to be consistent with our rpm repo.
     file_name_template: >-
-      {{ .PackageName }}_{{ .Version }}_{{ .Os }}_ 
+      {{ .PackageName }}_{{ .Version }}_{{ .Os }}_
       {{- if not (eq (filter .ConventionalFileName "\\.rpm$") "") }}
         {{- replace .Arch "amd64" "x86_64" }}
       {{- else }}

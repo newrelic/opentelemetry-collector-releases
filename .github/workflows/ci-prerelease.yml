@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publishing-to-s3:
-    name: Publish artifacts into s3 staging bucket
+    name: Publish artifacts into s3 testing bucket
     uses: ./.github/workflows/component_publish.yml
     needs: [prerelease]
     secrets:
@@ -70,3 +70,22 @@ jobs:
       AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
+
+  packaging-tests:
+    runs-on: ubuntu-20.04
+    needs: [publishing-to-s3]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set and validate distribution name and go-version
+        run: .github/workflows/scripts/set_version.sh
+
+      - uses: newrelic/pkg-installation-testing-action@v1
+        with:
+          gpg_key: 'https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg'
+          repo_base_url: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+          package_name: ${{ env.NR_DISTRO }}
+          package_version: ${{ env.NR_VERSION }}
+          platforms: "al2,al2022,centos7,centos8,debian-bullseye,debian-buster,redhat8,redhat9,suse15.2,suse15.3,suse15.4,ubuntu1604,ubuntu1804,ubuntu2004,ubuntu2204"
