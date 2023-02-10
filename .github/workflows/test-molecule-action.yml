@@ -1,0 +1,23 @@
+name: TEST molecule action from branch
+
+on:
+  push:
+    branches: [NR-83103_test_molecule_action]
+
+
+
+jobs:
+  packaging-tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: newrelic/pkg-installation-testing-action@NR-83102_reuse_caos_ansible_roles
+        with:
+          gpg_key: 'https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg'
+          repo_base_url: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+          package_name: nr-otel-collector
+          package_version: 0.0.10
+          platforms: "centos8,debian-bullseye,suse15.4,ubuntu2204"
