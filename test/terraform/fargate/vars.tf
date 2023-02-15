@@ -88,6 +88,9 @@ variable "efs_volume_name" {
   default = "shared-otel-releases"
 }
 
+variable "canaries_security_group" {
+  default = "sg-044ef7bc34691164a"
+}
 
 #######################################
 # OIDC permissions

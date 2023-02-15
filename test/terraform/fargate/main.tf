@@ -83,6 +83,7 @@ module "otel_infra" {
 
     efs_volume_mount_point = var.efs_volume_mount_point
     efs_volume_name = var.efs_volume_name
+    canaries_security_group = var.canaries_security_group
 
     oidc_repository = var.oidc_repository
     oidc_role_name = var.oidc_role_name
