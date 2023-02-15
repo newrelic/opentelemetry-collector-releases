@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - role: caos.ansible_roles.docker_install
+    - role: pip
+      vars:
+        pip_install_packages:
+          - name: docker
+            extra_args: --ignore-installed
+          - name: docker-compose
+
+- name: Run with inline Compose file version 3
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - community.docker.docker_compose:
+        project_name: nr-otel-collector_canaries
+        definition:
+          version: '3'
+          services:
+            previous_collector:
+              container_name: "nr_otel_collector_previous"
+              image: "otel/opentelemetry-collector:{{ previous_version }}"
+              restart: always
+            current_collector:
+              container_name: "nr_otel_collector_current"
+              image: "otel/opentelemetry-collector:{{ current_version }}"
+              restart: always
+      register: output
+
+    - ansible.builtin.debug:
+        var: output
+
+    - ansible.builtin.assert:
+        that:
+          - 'output.services.previous_collector.nr_otel_collector_previous.state.running'
+          - 'output.services.current_collector.nr_otel_collector_current.state.running'
