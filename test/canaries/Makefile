@@ -3,7 +3,7 @@
 ROLES_PATH:=$(CURDIR)/roles
 COLLECTIONS_PATH:=$(CURDIR)/collections
 
-ANSIBLE_INVENTORY ?= $(CURDIR)/inventory.yaml
+ANSIBLE_INVENTORY ?= $(CURDIR)/inventory.yml
 
 
 $(ROLES_PATH) $(COLLECTIONS_PATH):
