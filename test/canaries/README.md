@@ -8,11 +8,11 @@ Otel collector containers into a host. The playbook will install Docker and dock
 Populate the [inventory.yml](./inventory.yml) file with the host/s information.
 
 ```bash
-$ make PREVIOUS_VERSION=0.69.0 CURRENT_VERSION=0.70.0
+$ make PREVIOUS_IMAGE=otel/opentelemetry-collector:0.69.0 CURRENT_IMAGE=otel/opentelemetry-collector:0.70.0
 ```
 
 A custom inventory file can also be provided:
 
 ```bash
-$ make INVENTORY_FILE=/a/path PREVIOUS_VERSION=0.69.0 CURRENT_VERSION=0.70.0
+$ make INVENTORY_FILE=/a/path PREVIOUS_IMAGE=otel/opentelemetry-collector:0.69.0 CURRENT_IMAGE=otel/opentelemetry-collector:0.70.0
 ```

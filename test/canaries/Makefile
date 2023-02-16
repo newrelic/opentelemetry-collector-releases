@@ -17,11 +17,11 @@ dependencies: $(ROLES_PATH) $(COLLECTIONS_PATH)
 
 .PHONY: canaries
 canaries: dependencies
-ifndef PREVIOUS_VERSION
-$(error PREVIOUS_VERSION is not set)
+ifndef PREVIOUS_IMAGE
+$(error PREVIOUS_IMAGE is not set)
 endif
 
-ifndef CURRENT_VERSION
-$(error CURRENT_VERSION is not set)
+ifndef CURRENT_IMAGE
+$(error CURRENT_IMAGE is not set)
 endif
-	ansible-playbook -i $(ANSIBLE_INVENTORY) deploy_canaries.yml -e "current_version=$(CURRENT_VERSION) previous_version=$(PREVIOUS_VERSION)"
+	ansible-playbook -i $(ANSIBLE_INVENTORY) deploy_canaries.yml -e "current_image=$(CURRENT_IMAGE) previous_image=$(PREVIOUS_IMAGE)"
