@@ -7,3 +7,5 @@ dist/
 .generated-yaml/
 .vscode
 **/.terraform*
+terraform/terraform.backend.tf
+inventory

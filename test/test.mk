@@ -1,13 +1,13 @@
-LIMIT ?= "testing_hosts"
+LIMIT ?= "testing_hosts_linux"
 ANSIBLE_FORKS ?= 5
 
 ANSIBLE_INVENTORY_FOLDER ?= $(CURDIR)/test/packaging/ansible
 
-ifeq ($(origin ANSIBLE_INVENTORY_FILE), undefined)
-  ANSIBLE_INVENTORY = $(CURDIR)/test/packaging/ansible/inventory.ec2
-else
-  ANSIBLE_INVENTORY = $(ANSIBLE_INVENTORY_FOLDER)/$(ANSIBLE_INVENTORY_FILE)
-endif
+#ifeq ($(origin ANSIBLE_INVENTORY_FILE), undefined)
+#  ANSIBLE_INVENTORY = $(CURDIR)/test/packaging/ansible/inventory.ec2
+#else
+#  ANSIBLE_INVENTORY = $(ANSIBLE_INVENTORY_FOLDER)/$(ANSIBLE_INVENTORY_FILE)
+#endif
 
 .PHONY: test/packaging/requirements
 test/packaging/requirements:

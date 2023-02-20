@@ -1,14 +1,3 @@
-#########################################
-# State Backend
-#########################################
-#terraform {
-#  backend "s3" {
-#    bucket = "automation-pipeline-terraform-state"
-#    key    = "otel-pipeline"
-#    region = "us-east-2"
-#  }
-#}
-
 variable "ec2_otels" {
   default = ""
 }
