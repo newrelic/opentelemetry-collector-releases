@@ -17,6 +17,14 @@
 
       block:
 
+        - name: NR Otel Distribution
+          include_role:
+            name: caos.ansible_roles.nr_otel_distribution
+          vars:
+            distribution: "nr-otel-collector"
+            repo_endpoint: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+            collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
+
         - name: Uninstall collector
           include_role:
             name: caos.ansible_roles.nr_otel_distribution
