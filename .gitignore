@@ -1,5 +1,7 @@
 vendor
 **/_build
+**/collections
+**/roles
 dist/
 .idea
 .generated-yaml/

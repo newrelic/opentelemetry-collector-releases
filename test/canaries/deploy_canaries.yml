@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - role: caos.ansible_roles.docker_install
+    - role: pip
+      vars:
+        pip_install_packages:
+          - name: docker
+            extra_args: --ignore-installed
+          - name: docker-compose
+
+- name: Run containers with the provided images
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - community.docker.docker_compose:
+        project_name: otel-collector_canaries
+        definition:
+          version: '3'
+          services:
+            previous_collector:
+              container_name: "otel_collector_previous"
+              image: "{{ previous_image }}"
+              restart: always
+            current_collector:
+              container_name: "otel_collector_current"
+              image: "{{ current_image }}"
+              restart: always
+      register: output
+
+    - ansible.builtin.debug:
+        var: output
+
+    - ansible.builtin.assert:
+        that:
+          - 'output.services.previous_collector.otel_collector_previous.state.running'
+          - 'output.services.current_collector.otel_collector_current.state.running'
