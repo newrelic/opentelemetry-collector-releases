@@ -27,8 +27,6 @@ receivers:
       load:
       memory:
         metrics:
-          system.memory.usage:
-            enabled: true
           system.memory.utilization:
             enabled: true
       paging:
@@ -39,20 +37,12 @@ receivers:
             enabled: false
       filesystem:
         metrics:
-          system.filesystem.inodes.usage:
-            enabled: true
           system.filesystem.utilization:
             enabled: true
       disk:
         metrics:
           system.disk.merged:
             enabled: false
-          system.disk.io:
-            enabled: true
-          system.disk.io_time:
-            enabled: true
-          system.disk.operation_time:
-            enabled: true
           system.disk.pending_operations:
             enabled: false
           system.disk.weighted_io_time:
