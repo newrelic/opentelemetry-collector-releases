@@ -35,7 +35,7 @@ jobs:
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases-td
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
-          cloud_watch_logs_stream_name: ecs/test-prerelease
+          cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
           action_id: "${{ env.GITHUB_RUN_ID }}_${{ env.GITHUB_RUN_NUMBER }}_${{ env.GITHUB_JOB }}"
