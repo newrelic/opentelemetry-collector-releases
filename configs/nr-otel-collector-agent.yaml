@@ -8,7 +8,7 @@
 # If the collector is not installed through a package manager, the following
 # environment variables need to be set:
 # - NEW_RELIC_MEMORY_LIMIT_MIB: Maximum amount of memory to be used. (default: 100)
-# - NEW_RELIC_OTLP_ENDPOINT: New Relic Otlp endpoint to export metrics to (see: https://docs.newrelic.com/docs/more-integrations/open-source-telemetry-integrations/opentelemetry/get-started/opentelemetry-set-up-your-app/#review-settings)
+# - OTEL_EXPORTER_OTLP_ENDPOINT: New Relic Otlp endpoint to export metrics to (see: https://docs.newrelic.com/docs/more-integrations/open-source-telemetry-integrations/opentelemetry/get-started/opentelemetry-set-up-your-app/#review-settings)
 
 extensions:
   health_check:
@@ -163,7 +163,7 @@ exporters:
   logging:
     verbosity: detailed
   otlp:
-    endpoint: ${NEW_RELIC_OTLP_ENDPOINT}
+    endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
     headers:
       api-key: ${NEW_RELIC_LICENSE_KEY}
 
