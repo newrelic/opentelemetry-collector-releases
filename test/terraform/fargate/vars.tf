@@ -76,6 +76,10 @@ variable "task_logs_prefix" {
   default = "ecs-otel-releases"
 }
 
+variable "s3_bucket" {
+  default = "arn:aws:s3:::automation-pipeline-terraform-state"
+}
+
 #######################################
 # EFS volume
 #######################################
