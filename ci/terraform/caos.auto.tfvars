@@ -387,3 +387,4 @@ ssh_pub_key    = "AAAAB3NzaC1yc2EAAAADAQABAAABAQDH9C7BS2XrtXGXFFyL0pNku/Hfy84Rli
 pvt_key        = "~/.ssh/caos-dev-arm.cer"
 otlp_endpoint  = "staging-otlp.nr-data.net:4317"
 nr_license_key = "******"
+ansible_playbook = "empty-playbook.yml"
