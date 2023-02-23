@@ -38,4 +38,5 @@ module "otel-env-provisioner" {
   ssh_pub_key        = var.ssh_pub_key
   inventory_template = "${path.module}/inventory.tmpl"
   inventory_output   = var.inventory_output
+  ansible_playbook   = var.ansible_playbook
 }
