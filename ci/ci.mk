@@ -2,10 +2,12 @@ ci: build
 
 .PHONY: terraform/backend
 terraform/backend:
-ifndef TERRAFORM_BACKEND
-	$(error TERRAFORM_BACKEND is undefined)
+ifndef TAG_OR_UNIQUE_NAME
+	$(error TAG_OR_UNIQUE_NAME is undefined)
 endif
-	sed "s/REPLACE_ME/${TERRAFORM_BACKEND}/g" "$(CURDIR)/ci/terraform/terraform.backend.tf.dist" > "$(CURDIR)/ci/terraform/terraform.backend.tf"
+	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(CURDIR)/ci/terraform/terraform.backend.tf.dist" > "$(CURDIR)/ci/terraform/terraform.backend.tf"
+	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(CURDIR)/ci/terraform/caos.auto.tfvars.dist" > "$(CURDIR)/ci/terraform/caos.auto.tfvars"
+
 
 .PHONY: terraform/clean
 terraform/clean:
