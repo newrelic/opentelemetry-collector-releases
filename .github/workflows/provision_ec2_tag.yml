@@ -51,7 +51,7 @@ jobs:
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "main"
+          ref: "terraform_ec2"
 
       - name: Destroy infra
         uses: newrelic/fargate-runner-action@main
