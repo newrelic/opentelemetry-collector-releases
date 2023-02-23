@@ -39,6 +39,13 @@ jobs:
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
           ref: "terraform_ec2"
+          log_filters: |
+            \[ALLOW_MSG\].+
+            TASK\s\[.*\]\s
+            PLAY\s\[.*\]\s
+            PLAY\sRECAP\s
+            Apply\scomplete!
+            ok=\d+\s+changed=\d+\s+unreachable=\d+\s+failed=\d+\s+skipped=\d+\s+rescued=\d+\s+ignored=\d+
 
       - name: Run packaging tests
         uses: newrelic/fargate-runner-action@main
