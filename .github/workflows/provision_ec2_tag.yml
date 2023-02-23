@@ -28,7 +28,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Fargate task
-        uses: newrelic/fargate-runner-action@docker_repo_to_clone
+        uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
           container_make_target: "terraform/provision-ec2 TF_VAR_inventory_output='/srv/runner/inventory/${{ env.GIT_REF }}/inventory.ec2' TERRAFORM_BACKEND=${{ env.GIT_REF }}"
@@ -38,5 +38,4 @@ jobs:
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          action_id: "${{ env.GITHUB_RUN_ID }}_${{ env.GITHUB_RUN_NUMBER }}_${{ env.GITHUB_JOB }}"
           ref: "terraform_ec2"
