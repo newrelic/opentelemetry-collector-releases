@@ -9,3 +9,4 @@ dist/
 **/.terraform*
 ci/terraform/terraform.backend.tf
 inventory
+ci/terraform/caos.auto.tfvars
