@@ -38,9 +38,5 @@
               - exec: "nr-otel-collector --version"
                 version: "0.0.10"
 
-      always:
-        - name: Final cleanup # Only required for shared infra.
-          include_role:
-            name: cleanup
 
 ...
