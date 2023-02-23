@@ -40,3 +40,7 @@ module "otel-env-provisioner" {
   inventory_output   = var.inventory_output
   ansible_playbook   = var.ansible_playbook
 }
+
+output "check_vars" {
+    value = "${var.inventory_output}"
+}
