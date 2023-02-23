@@ -37,6 +37,4 @@
             target_versions:
               - exec: "nr-otel-collector --version"
                 version: "0.0.10"
-
-
 ...
