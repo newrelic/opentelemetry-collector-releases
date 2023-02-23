@@ -15,6 +15,7 @@ terraform/clean:
 
 .PHONY: terraform/provision-ec2
 terraform/provision-ec2: terraform/backend
+	touch "/srv/runner/inventory/test-file.ec2"
 	cd "$(CURDIR)/ci/terraform" && \
 	terraform init -reconfigure && \
 	terraform apply -auto-approve
