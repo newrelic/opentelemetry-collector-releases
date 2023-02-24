@@ -132,7 +132,7 @@ ec2_otels = {
     }
   }
   "otel-TAG_OR_UNIQUE_NAME-amd64-sles-12.5" = {
-    ami             = "ami-04aa88aebb9fefd83"
+    ami             = "ami-05f6084a6b524a8f0"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
@@ -143,7 +143,7 @@ ec2_otels = {
     }
   }
   "otel-TAG_OR_UNIQUE_NAME-amd64-sles-15.2" = {
-    ami             = "ami-0f052119b3c7e61d1"
+    ami             = "ami-0b14d12cfa5e9dcc5"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
@@ -154,7 +154,7 @@ ec2_otels = {
     }
   }
   "otel-TAG_OR_UNIQUE_NAME-amd64-sles-15.3" = {
-    ami             = "ami-09d5143648310dcd5"
+    ami             = "ami-055742ec92937ec3e"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
@@ -176,7 +176,7 @@ ec2_otels = {
     }
   }
   "otel-TAG_OR_UNIQUE_NAME-arm64-sles-15.2" = {
-    ami             = "ami-0b99ca359a84941ee"
+    ami             = "ami-0ccf2efb4e042d474"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
@@ -187,7 +187,7 @@ ec2_otels = {
     }
   }
   "otel-TAG_OR_UNIQUE_NAME-arm64-sles-15.3" = {
-    ami             = "ami-0894472e71d4d7caf"
+    ami             = "ami-075a486be6269029f"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
