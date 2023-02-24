@@ -3,8 +3,8 @@
 - name: pinned version agent installation
   import_playbook: installation-pinned.yaml
 
-- name: collector installation as unprivileged user
-  import_playbook: installation-unprivileged-user.yaml
+# - name: collector installation as unprivileged user
+#   import_playbook: installation-unprivileged-user.yaml
 
 - name: collector upgrade
   import_playbook: upgrade.yaml
