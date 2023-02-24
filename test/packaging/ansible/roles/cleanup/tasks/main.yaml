@@ -13,5 +13,5 @@
     packages_to_cleanup:
       - nr-otel-collector
     services_to_stop:
-      - nr-otel-collector
+      - nr-otel-collector.service
 ...
