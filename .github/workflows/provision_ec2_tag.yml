@@ -9,7 +9,7 @@ on: [push]
 
 env:
   AWS_ASSUME_ROLE: 'arn:aws:iam::018789649883:role/caos-pipeline-oidc-otel-releases'
-  TAG_OR_UNIQUE_NAME: "some-uniq-string-4"
+  TAG_OR_UNIQUE_NAME: "some-uniq-string-5"
 
 permissions:
   id-token: write
