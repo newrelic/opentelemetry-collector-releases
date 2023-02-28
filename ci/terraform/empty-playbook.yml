@@ -1,4 +1,0 @@
----
-
-- name: empty playbook
-  hosts: testing_hosts_linux

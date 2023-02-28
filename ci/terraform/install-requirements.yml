@@ -1,0 +1,28 @@
+---
+
+- hosts: testing_hosts_linux
+  become: true
+  gather_facts: no
+
+  tasks:
+    - name: Remove EOL repository sources
+      include_role:
+        name: remove-eol-sources
+
+    - name: install python
+      include_role:
+        name: install-python
+
+    - name: Install GPG
+      include_role:
+        name: install-gpg
+
+- hosts: testing_hosts_linux
+  become: true
+  gather_facts: yes
+
+  tasks:
+
+    - name: Configure hostname
+      include_role:
+        name: hostname
