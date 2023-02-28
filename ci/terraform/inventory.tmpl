@@ -1,6 +1,6 @@
 [testing_hosts_linux]
 %{ for index, vms in agent-ids ~}
-${vms} ansible_user=${agent-user[index]} ansible_host=${agent-private-ip[index]}
+${vms} ansible_user=${agent-user[index]} ansible_host=${agent-private-ip[index]} ansible_python_interpreter=${agent-python[index]}
 %{ endfor ~}
 
 [testing_hosts_linux:vars]

@@ -6,6 +6,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ubuntu"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -17,6 +18,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ubuntu"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -28,6 +30,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ubuntu"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -39,6 +42,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ubuntu"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -50,6 +54,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ubuntu"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -61,6 +66,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ubuntu"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -72,6 +78,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "centos"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -83,6 +90,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "centos"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -94,6 +102,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "centos"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -105,6 +114,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "centos"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -116,6 +126,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "centos"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -127,6 +138,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "centos"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -138,6 +150,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -149,6 +162,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -160,6 +174,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -171,6 +186,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -182,6 +198,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -193,6 +210,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -204,6 +222,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -215,6 +234,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -226,6 +246,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -237,6 +258,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -248,6 +270,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -259,6 +282,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -270,6 +294,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "admin"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -281,6 +306,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "admin"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -292,6 +318,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "admin"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -303,6 +330,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "m6g.medium"
     username        = "admin"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -314,6 +342,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "admin"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -325,6 +354,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "admin"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -336,6 +366,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -347,6 +378,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python"
     tags            = {
       "otel_role" = "agent"
     }
@@ -358,6 +390,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
@@ -369,6 +402,7 @@ ec2_otels = {
     key_name        = "caos-dev-arm"
     instance_type   = "t4g.small"
     username        = "ec2-user"
+    python          = "/usr/bin/python3"
     tags            = {
       "otel_role" = "agent"
     }
