@@ -287,18 +287,6 @@ ec2_otels = {
       "otel_role" = "agent"
     }
   }
-  "otel-TAG_OR_UNIQUE_NAME-amd64:debian-stretch" = {
-    ami             = "ami-0d6d3e4f081c69f42"
-    subnet          = "subnet-09b64de757828cdd4"
-    security_groups = ["sg-044ef7bc34691164a"]
-    key_name        = "caos-dev-arm"
-    instance_type   = "t3a.small"
-    username        = "admin"
-    python          = "/usr/bin/python3"
-    tags            = {
-      "otel_role" = "agent"
-    }
-  }
   "otel-TAG_OR_UNIQUE_NAME-amd64:debian-buster" = {
     ami             = "ami-0f42acddbf04bd1b6"
     subnet          = "subnet-09b64de757828cdd4"
@@ -317,18 +305,6 @@ ec2_otels = {
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
     instance_type   = "t3a.small"
-    username        = "admin"
-    python          = "/usr/bin/python3"
-    tags            = {
-      "otel_role" = "agent"
-    }
-  }
-  "otel-TAG_OR_UNIQUE_NAME-arm64:debian-stretch" = {
-    ami             = "ami-0cc41fb90199e2764"
-    subnet          = "subnet-09b64de757828cdd4"
-    security_groups = ["sg-044ef7bc34691164a"]
-    key_name        = "caos-dev-arm"
-    instance_type   = "m6g.medium"
     username        = "admin"
     python          = "/usr/bin/python3"
     tags            = {
