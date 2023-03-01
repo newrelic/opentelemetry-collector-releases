@@ -3,6 +3,3 @@ INCLUDE_TEST_DIR	?= $(PROJECT_WORKSPACE)/test
 
 include $(INCLUDE_TEST_DIR)/test.mk
 include $(PROJECT_WORKSPACE)/build.mk
-include $(PROJECT_WORKSPACE)/ci/ci.mk
-
-
