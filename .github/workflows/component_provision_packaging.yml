@@ -1,16 +1,21 @@
-name: 🚀 💾 provision infra for a tag
-#on:
-#  workflow_dispatch:
-#      tag:
-#        description: 'Version of the agent to test installation'
-#        required: true
+name: 🚀 💾 Provision infra and run packaging tests
 
-on: [push]
+on:
+  workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      AWS_VPC_SUBNET:
+        required: true
+
+    inputs:
+      TAG_OR_UNIQUE_NAME:
+        required: true
+        type: string
 
 env:
-  AWS_ASSUME_ROLE: 'arn:aws:iam::018789649883:role/caos-pipeline-oidc-otel-releases'
-  TAG_OR_UNIQUE_NAME: "some-uniq-string-8"
-  GITHUB_REFERENCE_NAME: "terraform_ec2_roles"
+  TAG_OR_UNIQUE_NAME: ${{ inputs.TAG_OR_UNIQUE_NAME }}
+  GITHUB_REFERENCE_NAME: "terraform_ec2"
 
 permissions:
   id-token: write
@@ -25,7 +30,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ env.AWS_ASSUME_ROLE }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-2
 
       - name: Provision infra

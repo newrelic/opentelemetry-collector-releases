@@ -71,7 +71,7 @@ jobs:
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
 
-  packaging-tests:
+  molecule-tests:
     runs-on: ubuntu-20.04
     needs: [publishing-to-s3]
     steps:
@@ -89,3 +89,11 @@ jobs:
           package_name: ${{ env.NR_DISTRO }}
           package_version: ${{ env.NR_VERSION }}
           platforms: "al2,al2022,centos7,centos8,debian-bullseye,debian-buster,redhat8,redhat9,suse15.2,suse15.3,suse15.4,ubuntu1604,ubuntu1804,ubuntu2004,ubuntu2204"
+
+    packaging-tests:
+      uses: ./.github/workflows/component_provision_packaging.yml
+      secrets:
+        AWS_ROLE_ARN: ${{secrets.AWS_ROLE_ARN}}
+        AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
+      with:
+        TAG_OR_UNIQUE_NAME:  ${{ github.event.release.tag_name }}

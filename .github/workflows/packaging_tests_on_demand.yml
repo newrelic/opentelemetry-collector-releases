@@ -1,0 +1,18 @@
+name: . 🚀 🐧 🦺 Otel packaging tests on demand
+
+on:
+  push:
+  # workflow_dispatch:
+  #   inputs:
+  #     unique_tag:
+  #       description: 'Unique tag or prefix'
+  #       required: true
+
+jobs:
+  packaging:
+    uses: ./.github/workflows/component_provision_packaging.yml
+    with:
+      TAG_OR_UNIQUE_NAME: 'nr-otel-collector-0.0.10'
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
