@@ -9,7 +9,7 @@ endif
 
 .PHONY: terraform/clean
 terraform/clean:
-	rm "$(CURDIR)/test/provision/terraform/terraform.backend.tf"
+	rm "$(CURDIR)/test/provision/terraform/terraform.backend.tf" "$(CURDIR)/test/provision/terraform/caos.auto.tfvars"
 
 .PHONY: test/provision
 test/provision: terraform/backend
