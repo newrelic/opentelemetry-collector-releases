@@ -12,10 +12,14 @@ on:
       TAG_OR_UNIQUE_NAME:
         required: true
         type: string
+      BRANCH_REF:
+        required: false
+        type: string
+        default: "main"
 
 env:
   TAG_OR_UNIQUE_NAME: ${{ inputs.TAG_OR_UNIQUE_NAME }}
-  GITHUB_REFERENCE_NAME: "terraform_ec2"
+  GITHUB_REFERENCE_NAME: ${{ inputs.BRANCH_REF }}
 
 permissions:
   id-token: write
