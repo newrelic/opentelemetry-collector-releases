@@ -10,6 +10,7 @@ on: [push]
 env:
   AWS_ASSUME_ROLE: 'arn:aws:iam::018789649883:role/caos-pipeline-oidc-otel-releases'
   TAG_OR_UNIQUE_NAME: "some-uniq-string-8"
+  GITHUB_REFERENCE_NAME: "terraform_ec2_roles"
 
 permissions:
   id-token: write
@@ -38,7 +39,7 @@ jobs:
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "terraform_ec2_move_ci"
+          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
           log_filters: |
             \[ALLOW_MSG\].+
             TASK\s\[.*\]\s
@@ -58,7 +59,7 @@ jobs:
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "terraform_ec2_move_ci"
+          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
 
       - name: Destroy infra
         uses: newrelic/fargate-runner-action@main
@@ -71,4 +72,4 @@ jobs:
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "terraform_ec2_move_ci"
+          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
