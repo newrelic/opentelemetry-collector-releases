@@ -82,3 +82,5 @@ jobs:
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
           ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+          log_filters: |
+            Destroy\scomplete!
