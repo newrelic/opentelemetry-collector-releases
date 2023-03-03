@@ -4,7 +4,6 @@ collections:
     - name: community.general
     - name: git+https://github.com/newrelic-experimental/caos-ansible-roles.git#/caos.ansible_roles/
       type: git
-      version: NR-83102_reuse_agent_roles
 
 roles:
     - src: geerlingguy.docker
