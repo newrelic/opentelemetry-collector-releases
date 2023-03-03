@@ -30,7 +30,7 @@ variable "inventory_output" {
 }
 
 module "otel-env-provisioner" {
-  source             = "git::https://github.com/newrelic-experimental/otel-env-provisioner//terraform/otel-ec2?ref=otel_ec2"
+  source             = "git::https://github.com/newrelic-experimental/otel-env-provisioner//terraform/otel-ec2"
   ec2_otels          = var.ec2_otels
   nr_license_key     = var.nr_license_key
   otlp_endpoint      = var.otlp_endpoint
