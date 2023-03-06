@@ -7,3 +7,11 @@ dist/
 .generated-yaml/
 .vscode
 **/.terraform*
+
+# Local .terraform directories
+**/.terraform/*
+# .tfstate files
+*.tfstate
+*.tfstate.*
+*.auto.tfvars
+.terraform.lock.hcl
