@@ -1,4 +1,4 @@
-name: .. 🚧 Canary alerts | Create
+name: .. 🚧 Canary alerts | Delete
 
 on:
   workflow_call:
@@ -56,7 +56,7 @@ jobs:
           role-to-assume: ${{ env.AWS_ASSUME_ROLE }}
           aws-region: us-east-2
 
-      - name: Creating alerts for canaries
+      - name: Deleting alerts for canaries
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
