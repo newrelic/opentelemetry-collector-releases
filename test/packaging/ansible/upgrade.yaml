@@ -61,9 +61,9 @@
           assert:
             that: collector_pid.stdout != updated_collector_pid.stdout
 
-      # always:
-      #   - name: Final cleanup # Only required for shared infra.
-      #     include_role:
-      #       name: cleanup
+      always:
+        - name: Final cleanup # Only required for shared infra.
+          include_role:
+            name: cleanup
 
 ...
