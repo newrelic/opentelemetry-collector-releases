@@ -1,0 +1,86 @@
+name: 🚀 💾 Provision infra and run packaging tests
+
+on:
+  workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      AWS_VPC_SUBNET:
+        required: true
+
+    inputs:
+      TAG_OR_UNIQUE_NAME:
+        required: true
+        type: string
+      BRANCH_REF:
+        required: false
+        type: string
+        default: "main"
+
+env:
+  TAG_OR_UNIQUE_NAME: ${{ inputs.TAG_OR_UNIQUE_NAME }}
+  GITHUB_REFERENCE_NAME: ${{ inputs.BRANCH_REF }}
+
+permissions:
+  id-token: write
+
+jobs:
+  infra:
+    name: Prepare infra
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-2
+
+      - name: Provision infra
+        uses: newrelic/fargate-runner-action@main
+        with:
+          aws_region: us-east-2
+          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG_OR_UNIQUE_NAME }}-inventory.ec2 TAG_OR_UNIQUE_NAME=${{ env.TAG_OR_UNIQUE_NAME }}"
+          ecs_cluster_name: caos_otel_releases
+          task_definition_name: otel-releases-td
+          cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
+          cloud_watch_logs_stream_name: ecs/test-otel-releases
+          aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
+          repo_name: "newrelic/opentelemetry-collector-releases"
+          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+          log_filters: |
+            \[ALLOW_MSG\].+
+            TASK\s\[.*\]\s
+            PLAY\s\[.*\]\s
+            PLAY\sRECAP\s
+            Apply\scomplete!
+            ok=\d+\s+changed=\d+\s+unreachable=\d+\s+failed=\d+\s+skipped=\d+\s+rescued=\d+\s+ignored=\d+
+
+      - name: Run packaging tests
+        uses: newrelic/fargate-runner-action@main
+        with:
+          aws_region: us-east-2
+          container_make_target: "test/packaging ANSIBLE_INVENTORY_FOLDER='/srv/runner/inventory/' ANSIBLE_INVENTORY_FILE='${{ env.TAG_OR_UNIQUE_NAME }}-inventory.ec2' LIMIT=testing_hosts_linux"
+          ecs_cluster_name: caos_otel_releases
+          task_definition_name: otel-releases-td
+          cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
+          cloud_watch_logs_stream_name: ecs/test-otel-releases
+          aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
+          repo_name: "newrelic/opentelemetry-collector-releases"
+          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+
+      - name: Destroy infra
+        uses: newrelic/fargate-runner-action@main
+        with:
+          aws_region: us-east-2
+          container_make_target: "test/provision-destroy TAG_OR_UNIQUE_NAME=${{ env.TAG_OR_UNIQUE_NAME }}"
+          ecs_cluster_name: caos_otel_releases
+          task_definition_name: otel-releases-td
+          cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
+          cloud_watch_logs_stream_name: ecs/test-otel-releases
+          aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
+          repo_name: "newrelic/opentelemetry-collector-releases"
+          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+          log_filters: |
+            Destroy\scomplete!

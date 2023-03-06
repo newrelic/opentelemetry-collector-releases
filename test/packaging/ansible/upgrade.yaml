@@ -13,7 +13,7 @@
   tasks:
     - name: Installation tests suite
       vars:
-        initial_version: "0.0.6"
+        initial_version: "0.0.4"
         env_vars:
 
       block:

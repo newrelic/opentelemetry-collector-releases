@@ -7,7 +7,9 @@ dist/
 .generated-yaml/
 .vscode
 **/.terraform*
-
+ci/terraform/terraform.backend.tf
+inventory
+ci/terraform/caos.auto.tfvars
 # Local .terraform directories
 **/.terraform/*
 # .tfstate files
