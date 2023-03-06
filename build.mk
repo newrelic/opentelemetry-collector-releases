@@ -7,6 +7,8 @@ OTELCOL_BUILDER ?= ${OTELCOL_BUILDER_DIR}/ocb
 
 DISTRIBUTIONS ?= "nr-otel-collector"
 
+ci: build
+
 build: go ocb
 	@./scripts/build.sh -d "${DISTRIBUTIONS}" -b ${OTELCOL_BUILDER} -g ${GO}
 
