@@ -1,12 +1,3 @@
 collections:
-    - name: community.docker
-      version: 3.4.0
-    - name: community.general
     - name: git+https://github.com/newrelic-experimental/caos-ansible-roles.git#/caos.ansible_roles/
       type: git
-
-roles:
-    - src: geerlingguy.docker
-      name: docker
-    - src: geerlingguy.pip
-      name: pip

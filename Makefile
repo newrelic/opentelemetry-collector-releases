@@ -8,3 +8,6 @@ include $(PROJECT_WORKSPACE)/build.mk
 # common utils
 include ./Makefile.Common
 
+.PHONY: canaries
+canaries:
+	$(MAKE) -C "$(CURDIR)/test/canaries" canaries

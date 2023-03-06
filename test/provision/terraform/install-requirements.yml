@@ -1,6 +1,6 @@
 ---
 
-- hosts: testing_hosts_linux
+- hosts: all
   become: true
   gather_facts: no
 
@@ -21,7 +21,7 @@
       include_role:
         name: caos.ansible_roles.install_gpg
 
-- hosts: testing_hosts_linux
+- hosts: all
   become: true
   gather_facts: yes
 

@@ -1,0 +1,13 @@
+---
+- name: Create folder for docker-compose
+  file:
+    path: "/srv/otel_collector/"
+    state: directory
+    mode: '0755'
+- name: copy compose to the machine
+  template:
+    src: ../files/docker-compose.yml.j2
+    dest: "/srv/otel_collector/otel_collector.yml"
+    mode: 0644
+- name: Run docker-docker
+  include: "docker-compose-{{ ansible_distribution }}.yaml"

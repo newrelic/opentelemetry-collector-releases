@@ -1,0 +1,26 @@
+name: . 🐤 🦺 Canaries on demand
+
+on:
+  push:
+#  workflow_dispatch:
+#    inputs:
+#      unique_tag:
+#        description: 'Unique tag or prefix'
+#        required: true
+#      branch:
+#        description: 'Branch to test'
+#        required: false
+#        type: string
+#        default: "main"
+
+jobs:
+  packaging:
+    uses: ./.github/workflows/component_canaries.yml
+    with:
+      TAG: "0.0.6"
+      PREVIOUS_TAG: "0.0.5"
+      BRANCH_REF: "canaries_ec2"
+      PLATFORM: "linux"
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
