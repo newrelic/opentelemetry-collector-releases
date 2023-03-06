@@ -1,6 +1,6 @@
 
 module "alerts" {
-  source = "git::https://github.com/newrelic-experimental/otel-env-provisioner//terraform/nr-alerts?ref=NR-83107_nr_alerts"
+  source = "git::https://github.com/newrelic-experimental/otel-env-provisioner//terraform/nr-alerts"
 
   api_key               = var.api_key
   account_id            = var.account_id
