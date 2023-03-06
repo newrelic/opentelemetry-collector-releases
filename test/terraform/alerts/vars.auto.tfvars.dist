@@ -1,0 +1,396 @@
+#api_key               = "" # NR User Api Key
+#account_id            = 0 # NR Account ID
+#region                = "" # US | EU | Staging
+#instance_name_pattern = "canary:v0.0.0:*" # ec2 instances name pattern
+#policies_prefix       = "[pre-release] Collector Canaries metric comparator"
+conditions = [
+  {
+    name          = "host receiver cpu.utilization"
+    metric        = "system.cpu.utilization"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "user"
+    }
+  },
+  {
+    name          = "host receiver disk.io read"
+    metric        = "system.disk.io"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "read"
+    }
+  },
+  {
+    name          = "host receiver disk.io write"
+    metric        = "system.disk.io"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "write"
+    }
+  },
+  {
+    name          = "host receiver disk.io_time"
+    metric        = "system.disk.io_time"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+  },
+  {
+    name          = "host receiver disk.operation_time read"
+    metric        = "system.disk.operation_time"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "read"
+    }
+  },
+  {
+    name          = "host receiver disk.operation_time write"
+    metric        = "system.disk.operation_time"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "write"
+    }
+  },
+  {
+    name          = "host receiver disk.operations read"
+    metric        = "system.disk.operations"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "read"
+    }
+  },
+  {
+    name          = "host receiver disk.operations write"
+    metric        = "system.disk.operations"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "write"
+    }
+  },
+  {
+    name          = "host receiver disk.operations write"
+    metric        = "system.disk.operations"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "write"
+    }
+  },
+  {
+    name          = "host receiver system.load 1m"
+    metric        = "`system.cpu.load_average.1m`"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+  },
+  {
+    name          = "host receiver system.load 5m"
+    metric        = "`system.cpu.load_average.5m`"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+  },
+  {
+    name          = "host receiver system.load 15m"
+    metric        = "`system.cpu.load_average.15m`"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+  },
+  {
+    name          = "host receiver memory.usage cached"
+    metric        = "system.memory.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "cached"
+    }
+  },
+  {
+    name          = "host receiver memory.usage free"
+    metric        = "system.memory.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "free"
+    }
+  },
+  {
+    name          = "host receiver memory.usage slab_reclaimable"
+    metric        = "system.memory.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "slab_reclaimable"
+    }
+  },
+  {
+    name          = "host receiver memory.usage buffered"
+    metric        = "system.memory.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "buffered"
+    }
+  },
+  {
+    name          = "host receiver memory.usage used"
+    metric        = "system.memory.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "used"
+    }
+  },
+  {
+    name          = "host receiver memory.utilization free"
+    metric        = "system.memory.utilization"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "free"
+    }
+  },
+  {
+    name          = "host receiver memory.utilization used"
+    metric        = "system.memory.utilization"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "used"
+    }
+  },
+  {
+    name          = "host receiver system.paging.operations out"
+    metric        = "system.paging.operations"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "page_out"
+    }
+  },
+  {
+    name          = "host receiver system.paging.operations in"
+    metric        = "system.paging.operations"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "page_in"
+    }
+  },
+  {
+    name          = "host receiver paging.usage used"
+    metric        = "system.paging.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "used"
+    }
+  },
+  {
+    name          = "host receiver paging.usage free"
+    metric        = "system.paging.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state = "free"
+    }
+  },
+  {
+    name          = "host receiver inodes.usage free"
+    metric        = "system.filesystem.inodes.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state      = "free"
+      mountpoint = "/"
+    }
+  },
+  {
+    name          = "host receiver inodes.usage used"
+    metric        = "system.filesystem.inodes.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state      = "used"
+      mountpoint = "/"
+    }
+  },
+  {
+    name          = "host receiver filesystem.usage used"
+    metric        = "system.filesystem.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state      = "used"
+      mountpoint = "/"
+    }
+  },
+  {
+    name          = "host receiver filesystem.usage free"
+    metric        = "system.filesystem.usage"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      state      = "free"
+      mountpoint = "/"
+    }
+    function = latest # try `function` in template
+  },
+  {
+    name          = "host receiver filesystem.utilization"
+    metric        = "system.filesystem.utilization"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      mountpoint = "/"
+    }
+  },
+  {
+    name          = "host receiver network dropped receive"
+    metric        = "system.network.dropped"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "receive"
+    }
+  },
+  {
+    name          = "host receiver network dropped transmit"
+    metric        = "system.network.dropped"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "transmit"
+    }
+  },
+  {
+    name          = "host receiver network errors receive"
+    metric        = "system.network.errors"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "receive"
+    }
+  },
+  {
+    name          = "host receiver network errors transmit"
+    metric        = "system.network.errors"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "transmit"
+    }
+  },
+  {
+    name          = "host receiver network io receive"
+    metric        = "system.network.io"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "receive"
+    }
+  },
+  {
+    name          = "host receiver network io transmit"
+    metric        = "system.network.io"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "transmit"
+    }
+  },
+  {
+    name          = "host receiver network packets receive"
+    metric        = "system.network.packets"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "receive"
+    }
+  },
+  {
+    name          = "host receiver network packets transmit"
+    metric        = "system.network.packets"
+    threshold     = 0
+    duration      = 600
+    operator      = "above"
+    template_name = "./nrql_templates/single_metric_comparator.tftpl"
+    wheres        = {
+      direction = "transmit"
+    }
+  }
+]

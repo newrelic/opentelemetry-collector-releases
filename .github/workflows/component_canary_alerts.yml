@@ -1,0 +1,81 @@
+name: .. 🚧 Canary alerts | Create
+
+on:
+  workflow_call:
+    secrets:
+      AWS_VPC_SUBNET:
+        required: true
+      CANARIES_NR_API_KEY:
+        required: true
+    inputs:
+      TAG:
+        required: true
+        type: string
+      REF:
+        required: true
+        type: string
+        default: "main"
+      POLICIES_PREFIX:
+        required: true
+        type: string
+      NR_ACCOUNT_ID:
+        required: true
+        type: string
+      NR_REGION:
+        required: true
+        type: string
+      INSTANCE_NAME_PATTERN:
+        required: true
+        type: string
+      TF_STATE_BUCKET:
+        required: true
+        type: string
+      TF_STATE_KEY:
+        required: true
+        type: string
+      TF_STATE_REGION:
+        required: true
+        type: string
+
+env:
+  AWS_ASSUME_ROLE: 'arn:aws:iam::018789649883:role/caos-pipeline-oidc-otel-releases'
+  ANSIBLE_FORKS: 20
+
+permissions:
+  id-token: write
+
+jobs:
+  provision:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ASSUME_ROLE }}
+          aws-region: us-east-2
+
+      - name: Creating alerts for canaries
+        uses: newrelic/fargate-runner-action@main
+        with:
+          aws_region: us-east-2
+          container_make_target: >
+            provision-alerts-terraform
+            TF_VAR_api_key=${{ secrets.CANARIES_NR_API_KEY }}
+            TF_VAR_account_id=${{ inputs.NR_ACCOUNT_ID }}
+            TF_VAR_region=${{ inputs.NR_REGION }}
+            TF_VAR_policies_prefix='${{ inputs.POLICIES_PREFIX }}'
+            TF_VAR_instance_name_pattern=${{ inputs.INSTANCE_NAME_PATTERN }}
+            TF_VAR_tf_state_bucket=${{ inputs.TF_STATE_BUCKET }}
+            TF_VAR_tf_state_region=${{ inputs.TF_STATE_REGION }}
+            TF_VAR_tf_state_key=${{ inputs.TF_STATE_KEY }}
+          ecs_cluster_name: caos_otel_releases
+          task_definition_name: otel-releases-td
+          cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
+          cloud_watch_logs_stream_name: ecs/test-otel-releases
+          aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
+          repo_name: "newrelic/opentelemetry-collector-releases"
+          ref: "${{ inputs.REF }}"
+          log_filters: |
+            provisioning\salerts\sfor
