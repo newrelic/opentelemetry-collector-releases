@@ -17,6 +17,6 @@
     - role: caos.ansible_roles.docker_install
     - role: caos.ansible_roles.dockerized_agent
       vars:
-        container_prefix: "otel_colllector"
+        custom_dockerfile: "./templates/docker-compose.yml.j2"
         current_image: "{{ current_image }}"
         previous_image: "{{ previous_image }}"

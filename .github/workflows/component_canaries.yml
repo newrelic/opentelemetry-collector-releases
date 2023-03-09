@@ -49,7 +49,7 @@ jobs:
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "test/provision-${{ env.PLATFORM }} TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2 TAG_OR_UNIQUE_NAME=canary2:${{ env.TAG }}-${{ env.PLATFORM }}"
+          container_make_target: "test/provision-${{ env.PLATFORM }} TF_VAR_inventory_output=/srv/runner/inventory/${{ env.GITHUB_REFERENCE_NAME }}-${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2 TAG_OR_UNIQUE_NAME=canary3:${{ env.TAG }}-${{ env.PLATFORM }}"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases-td
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
@@ -69,7 +69,7 @@ jobs:
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "canaries PREVIOUS_IMAGE='cciutea768/nr-otel-collector:${{ env.PREVIOUS_TAG }}-rc' CURRENT_IMAGE='cciutea768/nr-otel-collector:${{ env.TAG }}-rc' ANSIBLE_INVENTORY='/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2' LIMIT=all"
+          container_make_target: "canaries PREVIOUS_IMAGE='cciutea768/nr-otel-collector:${{ env.PREVIOUS_TAG }}-rc' CURRENT_IMAGE='cciutea768/nr-otel-collector:${{ env.TAG }}-rc' ANSIBLE_INVENTORY='/srv/runner/inventory/${{ env.GITHUB_REFERENCE_NAME }}-${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2' LIMIT=all"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases-td
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
