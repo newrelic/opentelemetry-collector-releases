@@ -15,5 +15,8 @@
     - role: caos.ansible_roles.install_python
     - role: caos.ansible_roles.install_gpg
     - role: caos.ansible_roles.docker_install
-    - role: otel-dockerized
-
+    - role: caos.ansible_roles.dockerized_agent
+      vars:
+        current_image: "{{ current_image }}"
+        previous_image: "{{ previous_image }}"
+        container_prefix: "otel_colllector"

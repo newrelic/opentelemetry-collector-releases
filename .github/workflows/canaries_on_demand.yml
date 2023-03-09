@@ -19,7 +19,7 @@ jobs:
     with:
       TAG: "0.0.6"
       PREVIOUS_TAG: "0.0.5"
-      BRANCH_REF: "canaries_ec2"
+      BRANCH_REF: "use_caos_roles"
       PLATFORM: "linux"
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
