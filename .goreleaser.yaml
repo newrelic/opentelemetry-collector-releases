@@ -69,44 +69,44 @@ nfpms:
 
 checksum:
   name_template: '{{ .ProjectName }}_checksums.txt'
-dockers:
-  - goos: linux
-    goarch: amd64
-    dockerfile: distributions/nr-otel-collector/Dockerfile
-    image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
-    extra_files:
-      - configs/nr-otel-collector-agent.yaml
-    build_flag_templates:
-      - --pull
-      - --platform=linux/amd64
-      - --label=org.opencontainers.image.created={{.Date}}
-      - --label=org.opencontainers.image.name={{.ProjectName}}
-      - --label=org.opencontainers.image.revision={{.FullCommit}}
-      - --label=org.opencontainers.image.version={{.Version}}
-      - --label=org.opencontainers.image.source={{.GitURL}}
-    use: buildx
-  - goos: linux
-    goarch: arm64
-    dockerfile: distributions/nr-otel-collector/Dockerfile
-    image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
-    extra_files:
-      - configs/nr-otel-collector-agent.yaml
-    build_flag_templates:
-      - --pull
-      - --platform=linux/arm64
-      - --label=org.opencontainers.image.created={{.Date}}
-      - --label=org.opencontainers.image.name={{.ProjectName}}
-      - --label=org.opencontainers.image.revision={{.FullCommit}}
-      - --label=org.opencontainers.image.version={{.Version}}
-      - --label=org.opencontainers.image.source={{.GitURL}}
-    use: buildx
-docker_manifests:
-  - name_template: newrelic/nr-otel-collector:{{ .Version }}-rc
-    image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
+#dockers:
+#  - goos: linux
+#    goarch: amd64
+#    dockerfile: distributions/nr-otel-collector/Dockerfile
+#    image_templates:
+#      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
+#    extra_files:
+#      - configs/nr-otel-collector-agent.yaml
+#    build_flag_templates:
+#      - --pull
+#      - --platform=linux/amd64
+#      - --label=org.opencontainers.image.created={{.Date}}
+#      - --label=org.opencontainers.image.name={{.ProjectName}}
+#      - --label=org.opencontainers.image.revision={{.FullCommit}}
+#      - --label=org.opencontainers.image.version={{.Version}}
+#      - --label=org.opencontainers.image.source={{.GitURL}}
+#    use: buildx
+#  - goos: linux
+#    goarch: arm64
+#    dockerfile: distributions/nr-otel-collector/Dockerfile
+#    image_templates:
+#      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
+#    extra_files:
+#      - configs/nr-otel-collector-agent.yaml
+#    build_flag_templates:
+#      - --pull
+#      - --platform=linux/arm64
+#      - --label=org.opencontainers.image.created={{.Date}}
+#      - --label=org.opencontainers.image.name={{.ProjectName}}
+#      - --label=org.opencontainers.image.revision={{.FullCommit}}
+#      - --label=org.opencontainers.image.version={{.Version}}
+#      - --label=org.opencontainers.image.source={{.GitURL}}
+#    use: buildx
+#docker_manifests:
+#  - name_template: newrelic/nr-otel-collector:{{ .Version }}-rc
+#    image_templates:
+#      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
+#      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
 
 publishers:
   - name: GH Publisher
