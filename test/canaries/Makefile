@@ -21,4 +21,4 @@ endif
 ifndef CURRENT_IMAGE
 	$(error CURRENT_IMAGE is not set)
 endif
-	ansible-playbook -i $(ANSIBLE_INVENTORY) deploy_canaries.yml -e "current_image=$(CURRENT_IMAGE) previous_image=$(PREVIOUS_IMAGE)"
+	ansible-playbook -i $(ANSIBLE_INVENTORY) deploy_canaries.yml -e "current_image=$(CURRENT_IMAGE) previous_image=$(PREVIOUS_IMAGE) nr_license_key=$(NR_LICENSE_KEY)"
