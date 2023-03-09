@@ -4,12 +4,16 @@ services:
   previous_collector:
     container_name: "otel_collector-previous"
     image: "{{ previous_image }}"
+    volumes:
+      - "./nr-otel-collector-agent-previous.yml:/etc/nr-otel-collector/config.yaml"
     restart: always
     logging:
       driver: "journald"
   current_collector:
     container_name: "otel_collector-current"
     image: "{{ current_image }}"
+    volumes:
+      - "./nr-otel-collector-agent-current.yml:/etc/nr-otel-collector/config.yaml"
     restart: always
     logging:
       driver: "journald"
