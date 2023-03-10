@@ -28,7 +28,7 @@ test/provision-linux: terraform/backend terraform/prepare_ec2_list-linux ansible
 	terraform apply -auto-approve
 
 .PHONY: test/provision-destroy
-test/provision-destroy: terraform/backend
+test/provision-destroy: terraform/backend terraform/prepare_ec2_list-linux
 	cd "$(CURDIR)/test/provision/terraform" && \
     terraform init -reconfigure && \
     terraform destroy -auto-approve

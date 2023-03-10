@@ -1,19 +1,19 @@
 ---
 
-- hosts: all
-  become: true
-  gather_facts: no
-
-  tasks:
-    - name: install python
-      include_role:
-        name: caos.ansible_roles.install_python
+#- hosts: all
+#  become: true
+#  gather_facts: no
+#
+#  tasks:
+#    - name: install python
+#      include_role:
+#        name: caos.ansible_roles.install_python
 
 - hosts: all
   become: true
   roles:
-    - role: caos.ansible_roles.install_python
-    - role: caos.ansible_roles.install_gpg
+#    - role: caos.ansible_roles.install_python
+#    - role: caos.ansible_roles.install_gpg
     - role: caos.ansible_roles.docker_install
     - role: otel-dockerized
 
