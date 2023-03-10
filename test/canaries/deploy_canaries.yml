@@ -1,13 +1,13 @@
 ---
-#
-#- hosts: all
-#  become: true
-#
-#  tasks:
-#    - name: Log into DockerHub
-#      community.docker.docker_login:
-#        username: "{{ docker_username }}"
-#        password: "{{ docker_password }}"
+
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Log into DockerHub
+      community.docker.docker_login:
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
 
 - hosts: all
   become: true
