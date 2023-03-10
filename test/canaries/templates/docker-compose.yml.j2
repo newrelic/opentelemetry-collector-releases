@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  previous_image:
+    container_name: "otel-collector-previous"
+    image: "{{ previous_image }}"
+    restart: always
+    logging:
+      driver: "journald"
+  current_image:
+    container_name: "otel-collector-current"
+    image: "{{ current_image }}"
+    restart: always
+    logging:
+      driver: "journald"
