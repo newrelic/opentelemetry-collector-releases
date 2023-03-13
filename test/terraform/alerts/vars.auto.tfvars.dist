@@ -292,7 +292,7 @@ conditions = [
       state      = "free"
       mountpoint = "/"
     }
-    function = latest # try `function` in template
+    function = "latest" # try `function` in template
   },
   {
     name          = "host receiver filesystem.utilization"
