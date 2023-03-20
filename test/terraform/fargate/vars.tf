@@ -56,6 +56,14 @@ variable "secret_name_nr_api_key" {
   default = "caos/canaries/nr_api_key-xadBYJ"
 }
 
+variable "secret_name_docker_username" {
+  default = "caos/canaries/docker-username-iksa0V"
+}
+
+variable "secret_name_docker_password" {
+  default = "caos/canaries/docker-password-jAtw3v"
+}
+
 variable "task_container_image" {
   default = "ghcr.io/newrelic/fargate-runner-action:latest"
 }

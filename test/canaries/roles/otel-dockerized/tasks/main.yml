@@ -1,0 +1,29 @@
+---
+- name: Create folder for docker-compose
+  file:
+    path: "/srv/otel_collector/"
+    state: directory
+    mode: '0755'
+- name: copy compose to the machine
+  template:
+    src: ../files/docker-compose.yml.j2
+    dest: "/srv/otel_collector/otel_collector.yml"
+    mode: 0644
+- name: set previous display_name
+  set_fact:
+    display_name: "{{ inventory_hostname }}-docker-previous"
+- name: copy previous config to the machine
+  template:
+    src: ../files/nr-otel-collector-agent.yml.j2
+    dest: "/srv/otel_collector/nr-otel-collector-agent-previous.yml"
+    mode: 0644
+- name: set current display_name
+  set_fact:
+    display_name: "{{ inventory_hostname }}-docker-current"
+- name: copy current config to the machine
+  template:
+    src: ../files/nr-otel-collector-agent.yml.j2
+    dest: "/srv/otel_collector/nr-otel-collector-agent-current.yml"
+    mode: 0644
+- name: Run docker-docker
+  include: "docker-compose-{{ ansible_distribution }}.yaml"

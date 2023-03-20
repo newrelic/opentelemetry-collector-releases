@@ -56,6 +56,14 @@ module "otel_infra" {
         {
           "name" : "NR_API_KEY",
           "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_nr_api_key}"
+        },
+        {
+          "name" : "DOCKER_USERNAME",
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_docker_username}"
+        },
+        {
+          "name" : "DOCKER_PASSWORD",
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_docker_password}"
         }
       ]
     task_custom_policies = [
@@ -75,7 +83,9 @@ module "otel_infra" {
                   "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_license_canaries}",
                   "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_account}",
                   "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_api}",
-                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_nr_api_key}"
+                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_nr_api_key}",
+                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_docker_username}",
+                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_docker_password}"
                 ]
               }
             ]

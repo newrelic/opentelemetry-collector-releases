@@ -1,0 +1,6 @@
+---
+
+- name: Run docker compose
+  shell: "/usr/local/lib/docker/cli-plugins/docker-compose -f /srv/otel_collector/otel_collector.yml up -d --force-recreate"
+
+...
