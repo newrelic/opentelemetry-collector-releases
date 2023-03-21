@@ -1,34 +1,25 @@
+# Include Ansible dependencies common installation strategy
+include ../Ansible.common
+
+TERRAFORM_DIR := ./terraform
+
+.DEFAULT_GOAL := provision
+
 .PHONY: terraform/backend
 terraform/backend:
 ifndef TAG_OR_UNIQUE_NAME
 	$(error TAG_OR_UNIQUE_NAME is undefined)
 endif
-	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(CURDIR)/test/provision/terraform/terraform.backend.tf.dist" > "$(CURDIR)/test/provision/terraform/terraform.backend.tf"
+	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(TERRAFORM_DIR)/terraform.backend.tf.dist" > "$(TERRAFORM_DIR)/terraform.backend.tf"
+	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(TERRAFORM_DIR)/caos.auto.tfvars.dist" > "$(TERRAFORM_DIR)/caos.auto.tfvars"
 
-.PHONY: terraform/prepare_ec2_list-linux
-terraform/prepare_ec2_list-linux:
-ifndef TAG_OR_UNIQUE_NAME
-	$(error TAG_OR_UNIQUE_NAME is undefined)
-endif
-	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(CURDIR)/test/provision/terraform/caos-linux.auto.tfvars.dist" > "$(CURDIR)/test/provision/terraform/caos.auto.tfvars"
+.PHONY: provision
+provision: terraform/backend ansible/dependencies
+	terraform -chdir=$(TERRAFORM_DIR) init -reconfigure && \
+	terraform -chdir=$(TERRAFORM_DIR) apply -auto-approve
 
-
-.PHONY: ansible/requirements
-ansible/requirements:
-	ansible-galaxy install -r "$(CURDIR)/test/packaging/ansible/requirements.yaml"
-
-.PHONY: terraform/clean
-terraform/clean:
-	rm "$(CURDIR)/test/provision/terraform/terraform.backend.tf" "$(CURDIR)/test/provision/terraform/caos.auto.tfvars"
-
-.PHONY: test/provision-linux
-test/provision-linux: terraform/backend terraform/prepare_ec2_list-linux ansible/requirements
-	cd "$(CURDIR)/test/provision/terraform" && \
-	terraform init -reconfigure && \
-	terraform apply -auto-approve
-
-.PHONY: test/provision-destroy
-test/provision-destroy: terraform/backend terraform/prepare_ec2_list-linux
-	cd "$(CURDIR)/test/provision/terraform" && \
-    terraform init -reconfigure && \
-    terraform destroy -auto-approve
+.PHONY: clean
+clean: terraform/backend ansible/clean
+	terraform -chdir=$(TERRAFORM_DIR) init -reconfigure && \
+    terraform -chdir=$(TERRAFORM_DIR) destroy -auto-approve && \
+	rm "$(TERRAFORM_DIR)/terraform.backend.tf" "$(TERRAFORM_DIR)/caos.auto.tfvars"

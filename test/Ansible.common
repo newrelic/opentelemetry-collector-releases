@@ -1,0 +1,14 @@
+ROLES_PATH:=$(CURDIR)/roles
+COLLECTIONS_PATH:=$(CURDIR)/collections
+
+$(ROLES_PATH) $(COLLECTIONS_PATH):
+	@mkdir -p $@
+
+.PHONY: ansible/dependencies
+ansible/dependencies: $(ROLES_PATH) $(COLLECTIONS_PATH)
+	ansible-galaxy role install -r requirements.yml -p $(ROLES_PATH)
+	ansible-galaxy collection install -r requirements.yml -p $(COLLECTIONS_PATH)
+
+.PHONY: ansible/clean
+ansible/clean:
+	rm -rf $(ROLES_PATH) $(COLLECTIONS_PATH)
