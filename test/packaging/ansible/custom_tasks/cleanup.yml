@@ -1,5 +1,4 @@
 ---
-
 - name: cleanup
   include_role:
     name: caos.ansible_roles.cleanup

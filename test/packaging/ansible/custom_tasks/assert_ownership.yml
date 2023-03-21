@@ -1,5 +1,4 @@
 ---
-
 - name: assert ownership
   include_role:
     name: caos.ansible_roles.assert_ownership
@@ -19,5 +18,4 @@
       - /etc/nr-otel-collector/nr-otel-collector.conf
       - /lib/systemd/system/nr-otel-collector.service
       - /usr/bin/nr-otel-collector
-
 ...
