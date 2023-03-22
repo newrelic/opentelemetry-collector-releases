@@ -1,3 +1,6 @@
+##########################################
+# 		     Dynamic targets 			 #
+##########################################
 # Exclude current and hidden directories
 FIND_PATH = . -not -path '*/\.*' -mindepth 2
 # Define the list of subdirectories that contain a Makefile
@@ -13,6 +16,12 @@ clean: $(addsuffix -clean,$(SUBDIRS))
 
 $(addsuffix -clean,$(TARGETS)):
 	$(MAKE) -C $(patsubst %-clean,%,$@) clean
+
+
+##########################################
+# 		     Static targets 			 #
+##########################################
+include build.mk
 
 help:
 	@echo "## Available targets:"
