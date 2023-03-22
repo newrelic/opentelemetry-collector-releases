@@ -11,7 +11,7 @@ ifndef TAG_OR_UNIQUE_NAME
 	$(error TAG_OR_UNIQUE_NAME is undefined)
 endif
 	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(TERRAFORM_DIR)/terraform.backend.tf.dist" > "$(TERRAFORM_DIR)/terraform.backend.tf"
-	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(TERRAFORM_DIR)/caos.auto.tfvars.dist" > "$(TERRAFORM_DIR)/caos.auto.tfvars"
+	sed "s/TAG_OR_UNIQUE_NAME/${TAG_OR_UNIQUE_NAME}/g" "$(TERRAFORM_DIR)/caos-linux.auto.tfvars.dist" > "$(TERRAFORM_DIR)/caos.auto.tfvars"
 
 .PHONY: provision
 provision: terraform/backend ansible/dependencies

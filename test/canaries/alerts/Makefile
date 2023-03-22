@@ -1,4 +1,9 @@
-PROVISION_ALERTS_TERRAFORM_WORKSPACE	?= $(CURDIR)/test/terraform/alerts
+# Include AWS common features
+include ../../Aws.common
+
+PROVISION_ALERTS_TERRAFORM_WORKSPACE	?= $(CURDIR)
+
+.DEFAULT_GOAL := provision-alerts-terraform
 
 .PHONY: provision-alerts-terraform-deps
 provision-alerts-terraform-deps:
@@ -50,7 +55,7 @@ provision-alerts-terraform: validate-aws-credentials provision-alerts-terraform-
 	@cd $(PROVISION_ALERTS_TERRAFORM_WORKSPACE) \
 	&& terraform apply -auto-approve
 
-.PHONY: provision-alerts-terraform-delete
-provision-alerts-terraform-delete: validate-aws-credentials provision-alerts-terraform-deps
+.PHONY: clean
+clean: validate-aws-credentials provision-alerts-terraform-deps
 	@cd $(PROVISION_ALERTS_TERRAFORM_WORKSPACE) \
 	&& terraform destroy -auto-approve
