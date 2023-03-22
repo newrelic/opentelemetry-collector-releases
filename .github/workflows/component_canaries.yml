@@ -12,6 +12,9 @@ on:
       TAG:
         required: true
         type: string
+      IMAGE:
+        required: true
+        type: string
       PREVIOUS_TAG:
         required: true
         type: string
