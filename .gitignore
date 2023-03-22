@@ -2,8 +2,6 @@ vendor
 **/_build
 **/collections
 **/roles
-# Include local roles
-!test/canaries/roles/otel-dockerized
 dist/
 .idea
 .generated-yaml/
