@@ -7,8 +7,7 @@
 
   pre_tasks:
     - name: Initial cleanup # Only required for shared infra.
-      include_role:
-        name: cleanup
+      include_tasks: ./custom_tasks/cleanup.yml
 
   tasks:
     - name: Installation tests suite
@@ -63,7 +62,5 @@
 
       always:
         - name: Final cleanup # Only required for shared infra.
-          include_role:
-            name: cleanup
-
+          include_tasks: ./custom_tasks/cleanup.yml
 ...

@@ -61,7 +61,7 @@ jobs:
         with:
           aws_region: us-east-2
           container_make_target: >
-            provision-alerts-terraform
+            test/canaries/alerts
             TF_VAR_api_key=${{ secrets.CANARIES_NR_API_KEY }}
             TF_VAR_account_id=${{ inputs.NR_ACCOUNT_ID }}
             TF_VAR_region=${{ inputs.NR_REGION }}

@@ -1,13 +1,30 @@
-PROJECT_WORKSPACE	?= $(CURDIR)
-INCLUDE_TEST_DIR	?= $(PROJECT_WORKSPACE)/test
+##########################################
+# 		     Dynamic targets 			 #
+##########################################
+# Exclude current and hidden directories
+FIND_PATH = . -not -path '*/\.*' -mindepth 2
+# Define the list of subdirectories that contain a Makefile
+SUBDIRS := $(patsubst ./%/Makefile,%,$(shell find $(FIND_PATH) -name Makefile))
+TARGETS := $(SUBDIRS)
 
-include $(INCLUDE_TEST_DIR)/test.mk
-include $(INCLUDE_TEST_DIR)/terraform/alerts/alerts-terraform.mk
-include $(PROJECT_WORKSPACE)/build.mk
+.PHONY: all $(TARGETS) clean $(addsuffix -clean,$(TARGETS)) help
 
-# common utils
-include ./Makefile.Common
+$(TARGETS):
+	$(MAKE) -C $@
 
-.PHONY: canaries
-canaries:
-	$(MAKE) -C "$(CURDIR)/test/canaries" canaries
+clean: $(addsuffix -clean,$(SUBDIRS))
+
+$(addsuffix -clean,$(TARGETS)):
+	$(MAKE) -C $(patsubst %-clean,%,$@) clean
+
+
+##########################################
+# 		     Static targets 			 #
+##########################################
+include build.mk
+
+help:
+	@echo "## Available targets:"
+	@echo $(TARGETS)
+	@echo "## Available clean targets:"
+	@echo $(addsuffix -clean,$(TARGETS))

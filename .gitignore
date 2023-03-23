@@ -2,10 +2,6 @@ vendor
 **/_build
 **/collections
 **/roles
-# Include local roles
-!test/canaries/roles/otel-dockerized
-!test/packaging/ansible/roles/assert_ownership
-!test/packaging/ansible/roles/cleanup
 dist/
 .idea
 .generated-yaml/

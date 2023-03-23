@@ -2,19 +2,40 @@
 
 - hosts: all
   become: true
-
+  vars:
+    dockerfile_directory: "/tmp/otel_canaries"
   tasks:
-    - name: Log into DockerHub
-      shell: "echo '{{ docker_password }}'| docker login --username {{ docker_username }} --password-stdin"
-#      community.docker.docker_login:
-#        username: "{{ docker_username }}"
-#        password: "{{ docker_password }}"
+    # - name: Log into DockerHub
+    #   shell: "echo '{{ docker_password }}'| docker login --username {{ docker_username }} --password-stdin"
+# #      community.docker.docker_login:
+# #        username: "{{ docker_username }}"
+# #        password: "{{ docker_password }}"
+    - name: Ensures {{ dockerfile_directory }} dir exists
+      file:
+        path: "{{ dockerfile_directory }}"
+        state: directory
+    - name: Copy previous config to the machine
+      template:
+        src: ./templates/nr-otel-collector-agent.yml.j2
+        dest: "{{ dockerfile_directory }}/nr-otel-collector-agent-previous.yml"
+        mode: 0644
+      vars:
+        display_name: "{{ inventory_hostname }}-docker-previous"
+    - name: Copy current config to the machine
+      template:
+        src: ./templates/nr-otel-collector-agent.yml.j2
+        dest: "{{ dockerfile_directory }}/nr-otel-collector-agent-current.yml"
+        mode: 0644
+      vars:
+        display_name: "{{ inventory_hostname }}-docker-current"
 
 - hosts: all
   become: true
   roles:
-#    - role: caos.ansible_roles.install_python
-#    - role: caos.ansible_roles.install_gpg
     - role: caos.ansible_roles.docker_install
-    - role: otel-dockerized
-
+    - role: caos.ansible_roles.dockerized_agent
+      vars:
+        custom_dockerfile: "{{ playbook_dir }}/templates/docker-compose.yml.j2"
+        dockerfile_directory: "/tmp/otel_canaries"
+        current_image: "{{ current_image }}"
+        previous_image: "{{ previous_image }}"
