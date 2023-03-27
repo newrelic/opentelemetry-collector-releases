@@ -1,15 +1,38 @@
-## Packaging tests
+# Distributions tests
 
-Run packaging tests:
-```shell
-# Default values
-NR_LICENSE_KEY=nr_license_key make test/packaging
+Once a prerelease is finished for a New Relic OpenTelemetry Collector distribution,
+the following tests will be launched to ensure packages are not malformed and can be easily
+installed on the corresponding platforms.
 
-# Limit to linux
-NR_LICENSE_KEY=nr_license_key LIMIT=testing_hosts_linux make test/packaging
-```
-Parameters/Default values:
-* `ANSIBLE_INVENTORY_FOLDER`: `PROJECT_ROOT/test/packaging/ansible`
-* `ANSIBLE_INVENTORY_FILE`: `inventory.ec2`
-* `LIMIT`: `testing_hosts`
-* `ANSIBLE_FORKS`: `5`
+1. Packaging installation
+2. Extended packaging and binaries tests
+3. Canaries
+
+Tests launched in steps two and three use Ansible to perform the validation, thus, an inventory
+file needs to be providedn. EC2 instances with the corresponding inventory file
+can be easily created using the [provision tool](./provision/README.md).
+
+## Packaging installation (Molecule)
+
+After all the packages are uploaded to the staging repositories, the pipeline will launch
+the [pkg-installation-testing-action](https://github.com/newrelic/pkg-installation-testing-action) to ensure all packages
+can be installed on the supported platforms. The action uses Molecule to run a container for each supported platform and
+Ansible to install and assert the package version.
+
+After a release, the action will be relaunch but pointing to the production bucket.
+
+## Packaging extended tests
+
+Given an Ansible inventory file, the packaging tests will execute a bunch of Ansible roles that
+verify the installation, upgrade and uninstallation of a given package. In addition, service (systemd) checks
+will be done to ensure the proper execution of the binaries.
+
+The executed Ansible playbooks can be found [here](./packaging/ansible/test.yaml).
+
+[Full documentation](./packaging/README.md).
+
+## Canaries
+
+Canaries is the name we use to denote a few instances that are launched for a few days before the release is triggered. Those instances run the latest two versions of the distribution as a docker container, so we can verify there are no major difference between them.
+
+[Full documentation](./canaries/README.md).
