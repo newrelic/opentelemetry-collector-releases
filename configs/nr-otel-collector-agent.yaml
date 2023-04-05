@@ -135,7 +135,7 @@ processors:
   # used to prevent out of memory situations on the collector
   memory_limiter:
     check_interval: 1s
-    limit_mib: 100
+    limit_mib: ${NEW_RELIC_MEMORY_LIMIT_MIB}
 
   batch:
 
@@ -162,6 +162,11 @@ processors:
 exporters:
   logging:
     verbosity: detailed
+  otlp:
+    endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+    headers:
+      api-key: ${NEW_RELIC_LICENSE_KEY}
+
 
 service:
   pipelines:
@@ -183,6 +188,6 @@ service:
         - resourcedetection
         - resource
         - cumulativetodelta
-      exporters: [logging]
+      exporters: [logging,otlp]
 
   extensions: [health_check]
