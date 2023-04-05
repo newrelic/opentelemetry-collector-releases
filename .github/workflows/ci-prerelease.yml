@@ -97,4 +97,5 @@ jobs:
       AWS_ROLE_ARN: ${{secrets.AWS_ROLE_ARN}}
       AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
     with:
+      BRANCH_REF: "${GITHUB_REF#refs/heads/}"
       TAG_OR_UNIQUE_NAME:  ${{ github.event.release.tag_name }}
