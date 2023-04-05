@@ -36,8 +36,4 @@
             name: caos.ansible_roles.assert_no_service
           vars:
             service_name: nr-otel-collector
-
-      always:
-        - name: Final cleanup # Only required for shared infra.
-          include_tasks: ./custom_tasks/cleanup.yml
 ...

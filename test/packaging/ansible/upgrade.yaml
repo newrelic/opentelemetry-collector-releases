@@ -59,8 +59,4 @@
         - name: assert collector has been reloaded
           assert:
             that: collector_pid.stdout != updated_collector_pid.stdout
-
-      always:
-        - name: Final cleanup # Only required for shared infra.
-          include_tasks: ./custom_tasks/cleanup.yml
 ...
