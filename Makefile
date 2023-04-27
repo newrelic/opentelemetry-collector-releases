@@ -22,6 +22,7 @@ $(addsuffix -clean,$(TARGETS)):
 # 		     Static targets 			 #
 ##########################################
 include build.mk
+include check.mk
 
 help:
 	@echo "## Available targets:"
