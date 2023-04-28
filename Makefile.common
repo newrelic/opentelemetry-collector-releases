@@ -10,14 +10,14 @@ TO_MOD_DIR=dirname {} \; | sort | grep -E '^./'
 DISTRIBUTIONS_MODS := $(shell find ./**/* $(FIND_MOD_ARGS) -exec $(TO_MOD_DIR) )
 
 ## Retrive all used dependencies in the same output
-RESULTS := $(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all))
+# RESULTS := $(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all))
 
 
 
 .PHONY: third-party-notices
 third-party-notices: OUT ?= THIRD_PARTY_NOTICES.md
 third-party-notices:
-	@echo "$(subst ",\",$(RESULTS))" | go-licence-detector \
+	@$(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all)) | go-licence-detector \
 		-rules $(SRC_ROOT)/internal/assets/license/rules.json \
 		-noticeTemplate $(SRC_ROOT)/internal/assets/license/THIRD_PARTY_NOTICES.md.tmpl \
 		-noticeOut $(OUT)

@@ -13,15 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '~1.19.4'
-          check-latest: true
       - name: Check unique distributions names
         run: ./.github/workflows/scripts/check_distro_names.sh
-      - name: Check distributions third party libraries
-        run: make licenses-check
   build:
     name: Build
     runs-on: ubuntu-20.04
@@ -37,5 +30,8 @@ jobs:
           go-version: '~1.19.4'
           check-latest: true
 
-      - name: Verify
+      - name: Verify build
         run: make ci
+
+      - name: Validate distributions third party libraries
+        run: make licenses-check
