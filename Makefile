@@ -1,8 +1,8 @@
 ##########################################
 # 		     Dynamic targets 			 #
 ##########################################
-# Exclude current and hidden directories
-FIND_PATH = . -not -path '*/\.*' -mindepth 2
+# Exclude current, distributions and hidden directories
+FIND_PATH = . -not -path '*/\.*' -not -path '*/distributions/*' -mindepth 2
 # Define the list of subdirectories that contain a Makefile
 SUBDIRS := $(patsubst ./%/Makefile,%,$(shell find $(FIND_PATH) -name Makefile))
 TARGETS := $(SUBDIRS)
@@ -21,6 +21,11 @@ $(addsuffix -clean,$(TARGETS)):
 ##########################################
 # 		     Static targets 			 #
 ##########################################
+FIND_MOD_ARGS=-type f -name "manifest.yaml"
+TO_DIR=dirname {} \; | sort | grep -E '^./'
+
+ALL_DISTRIBUTIONS := $(shell find ./distributions/* $(FIND_MOD_ARGS) -exec $(TO_DIR) )
+
 include build.mk
 include check.mk
 

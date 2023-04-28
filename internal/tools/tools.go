@@ -1,4 +1,3 @@
-// Copyright The OpenTelemetry Authors
 // Copyright New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
