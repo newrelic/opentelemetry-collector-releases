@@ -2,7 +2,7 @@
 # 		     Dynamic targets 			 #
 ##########################################
 # Exclude current, distributions and hidden directories
-FIND_PATH = . -not -path '*/\.*' -not -path '*/distributions/*' -mindepth 2
+FIND_PATH = . -mindepth 2 -not -path '*/\.*' -not -path '*/distributions/*'
 # Define the list of subdirectories that contain a Makefile
 SUBDIRS := $(patsubst ./%/Makefile,%,$(shell find $(FIND_PATH) -name Makefile))
 TARGETS := $(SUBDIRS)
