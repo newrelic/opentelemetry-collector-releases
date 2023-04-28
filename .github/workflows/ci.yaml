@@ -16,7 +16,7 @@ jobs:
       - name: Check unique distributions names
         run: ./.github/workflows/scripts/check_distro_names.sh
   build:
-    name: Build
+    name: Validate distributions build and third party libraries
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
