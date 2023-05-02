@@ -6,6 +6,5 @@
 
 package tools // import "github.com/newrelic/opentelemetry-collector-components/internal/tools"
 import (
-	_ "github.com/google/addlicense"
 	_ "go.elastic.co/go-licence-detector"
 )
