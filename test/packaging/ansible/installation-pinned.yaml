@@ -16,7 +16,9 @@
   tasks:
     - name: Pinned installation tests suite
       vars:
-        env_vars:
+        nrdot_version: "0.0.10"
+      # environment:
+      #   NRDOT_VERSION: "{{ nrdot_version }}"
 
       block:
 
@@ -26,7 +28,7 @@
           vars:
             distribution: "nr-otel-collector"
             repo_endpoint: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
-            target_version: "0.0.10"
+            target_version: "{{ nrdot_version }}"
             collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
 
         - name: Assert version
@@ -35,7 +37,7 @@
           vars:
             target_versions:
               - exec: "nr-otel-collector --version"
-                version: "0.0.10"
+                version: "{{ nrdot_version }}"
 
         - name: assert ownership
           include_tasks: ./custom_tasks/assert_ownership.yml
