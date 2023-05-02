@@ -17,8 +17,6 @@
     - name: Pinned installation tests suite
       vars:
         nrdot_version: "0.0.10"
-      # environment:
-      #   NRDOT_VERSION: "{{ nrdot_version }}"
 
       block:
 
