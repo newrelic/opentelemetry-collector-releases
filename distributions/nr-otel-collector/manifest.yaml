@@ -2,7 +2,7 @@ dist:
   module: github.com/newrelic/opentelemetry-collector-releases/nr-otel-collector
   name: nr-otel-collector
   description: New Relic OpenTelemetry Collector
-  version: 0.0.11
+  version: 0.0.12
   output_path: ./_build
   otelcol_version: 0.76.1
 

@@ -16,7 +16,7 @@
   tasks:
     - name: Pinned installation tests suite
       vars:
-        nrdot_version: "0.0.11"
+        nrdot_version: "0.0.12"
 
       block:
 
