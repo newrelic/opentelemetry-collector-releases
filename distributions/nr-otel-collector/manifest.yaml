@@ -4,38 +4,34 @@ dist:
   description: New Relic OpenTelemetry Collector
   version: 0.0.1
   output_path: ./_build
-  otelcol_version: 0.73.0
+  otelcol_version: 0.76.1
 
 extensions:
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.73.0
-  - gomod: go.opentelemetry.io/collector/extension/zpagesextension v0.73.0
-  - gomod: go.opentelemetry.io/collector/extension/ballastextension v0.73.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.76.3
+  - gomod: go.opentelemetry.io/collector/extension/zpagesextension v0.76.1
+  - gomod: go.opentelemetry.io/collector/extension/ballastextension v0.76.1
 
 exporters:
-  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.73.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.73.0
-  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.73.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.76.1
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.76.1
+  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.76.1
 
 processors:
-  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.73.0
-  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbytraceprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.73.0
-  # TODO: clarify schemaprocessor
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/schemaprocessor v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.73.0
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.76.1
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.76.1
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.76.3
 
 receivers:
-  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.73.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver v0.73.0
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.76.1
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.76.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.76.3
 
 
 # When adding a replace, add a comment before it to document why it's needed and when it can be removed
