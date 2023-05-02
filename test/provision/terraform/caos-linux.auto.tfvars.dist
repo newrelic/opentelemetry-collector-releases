@@ -359,8 +359,8 @@ ec2_otels = {
       "otel_role" = "agent"
     }
   }
-  "otel-TAG_OR_UNIQUE_NAME-amd64:al-2022" = {
-    ami             = "ami-09a0187acf6bdfe59"
+  "otel-TAG_OR_UNIQUE_NAME-amd64:al-2023" = {
+    ami             = "ami-0103f211a154d64a6"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
@@ -371,8 +371,8 @@ ec2_otels = {
       "otel_role" = "agent"
     }
   }
-  "otel-TAG_OR_UNIQUE_NAME-arm64:al-2022" = {
-    ami             = "ami-0d20d440a115a6737"
+  "otel-TAG_OR_UNIQUE_NAME-arm64:al-2023" = {
+    ami             = "ami-07d16074c2fdf3a19"
     subnet          = "subnet-09b64de757828cdd4"
     security_groups = ["sg-044ef7bc34691164a"]
     key_name        = "caos-dev-arm"
