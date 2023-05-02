@@ -98,3 +98,34 @@ jobs:
       AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
     with:
       TAG_OR_UNIQUE_NAME:  ${{ github.event.release.tag_name }}
+
+  # First release: does not use canaries from previous version
+  # canaries:
+  #   uses: ./.github/workflows/component_canaries.yml
+  #   needs: [packaging-tests]
+  #   with:
+  #     TAG: ${{ github.ref_name }}
+  #     PREVIOUS_TAG: "latest"
+  #     PLATFORM: "linux"
+  #     IMAGE: "newrelic/nr-otel-collector" #should be changed after pre-release
+  #   secrets:
+  #     AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  #     AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
+
+  # alerts:
+  #   needs: [canaries]
+  #   uses: ./.github/workflows/component_canary_alerts.yml
+  #   secrets:
+  #     AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
+  #     CANARIES_NR_API_KEY: ${{ secrets.CANARIES_NR_API_KEY }}
+  #   with:
+  #     TAG: ${{ github.ref_name }}
+  #     NR_ACCOUNT_ID: 1038907
+  #     NR_REGION: Staging
+  #     INSTANCE_NAME_PATTERN: otel-canary:${{ github.ref_name }}-*
+  #     TF_STATE_KEY: nr_otel_collector_prerelease_alerts/state_${{ github.ref_name }}
+  #     TF_STATE_BUCKET: automation-pipeline-terraform-state
+  #     TF_STATE_REGION: us-east-2
+  #     POLICIES_PREFIX: "nr-otel-collector-pre-release__canaries_metric_comparator"
+  #     REF: ${{ github.ref }}
+

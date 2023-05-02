@@ -23,7 +23,7 @@ jobs:
       PREVIOUS_TAG: ${{ inputs.previous_tag }}
       BRANCH_REF: ${{ inputs.branch }}
       PLATFORM: "linux"
-      IMAGE: "cciutea768/nr-otel-collector" #should be changed after pre-release
+      IMAGE: "newrelic/nr-otel-collector" #should be changed after pre-release
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
       AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
