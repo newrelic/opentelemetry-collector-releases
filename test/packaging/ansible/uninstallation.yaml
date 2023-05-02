@@ -37,7 +37,7 @@
           vars:
             service_name: nr-otel-collector
 
-      always:
-        - name: Final cleanup # Only required for shared infra.
-          include_tasks: ./custom_tasks/cleanup.yml
+      # always:
+      #   - name: Final cleanup # Only required for shared infra.
+      #     include_tasks: ./custom_tasks/cleanup.yml
 ...

@@ -16,7 +16,7 @@
   tasks:
     - name: Pinned installation tests suite
       vars:
-        nrdot_version: "0.0.10"
+        nrdot_version: "0.0.11"
 
       block:
 
@@ -43,7 +43,7 @@
             ownership_process: "nr-otel-collector"
             ownership_files: "root"
 
-      always:
-        - name: Final cleanup # Only required for shared infra.
-          include_tasks: ./custom_tasks/cleanup.yml
+      # always:
+      #   - name: Final cleanup # Only required for shared infra.
+      #     include_tasks: ./custom_tasks/cleanup.yml
 ...
