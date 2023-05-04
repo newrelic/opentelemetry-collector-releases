@@ -1,5 +1,7 @@
 collections:
   - name: git+https://github.com/newrelic-experimental/caos-ansible-roles.git#/caos.ansible_roles/
+    type: git
+    version: ci/NR-109510-NRDOT-select-default-if-no-config-or-template
 
 roles:
   - name: geerlingguy.pip
