@@ -13,7 +13,7 @@
     - name: Uninstallation tests suite
       vars:
         env_vars:
-          NRDOT_VERSION: "0.0.16"
+          NRDOT_VERSION: "0.0.17"
 
       block:
 

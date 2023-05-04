@@ -14,7 +14,7 @@ jobs:
         AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
       with:
         BRANCH_REF: "testing_prerelease"
-        TAG_OR_UNIQUE_NAME:  "0.0.16"
+        TAG_OR_UNIQUE_NAME:  "0.0.17"
   check-distributions:
     name: Check distributions name
     runs-on: ubuntu-latest
