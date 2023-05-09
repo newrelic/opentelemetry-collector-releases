@@ -21,7 +21,6 @@ jobs:
     with:
       TAG: ${{ inputs.tag }}
       PREVIOUS_TAG: ${{ inputs.previous_tag }}
-      BRANCH_REF: ${{ inputs.branch }}
       PLATFORM: "linux"
       IMAGE: "newrelic/nr-otel-collector" #should be changed after pre-release
     secrets:
