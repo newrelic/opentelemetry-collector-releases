@@ -8,7 +8,7 @@ on:
       - '*'
 
 env:
-  NRDOT_VERSION: "0.0.1"
+  NRDOT_VERSION: ${{ github.ref_name }}
 
 jobs:
   prerelease:
