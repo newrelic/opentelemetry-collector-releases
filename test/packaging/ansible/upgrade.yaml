@@ -21,7 +21,7 @@
             name: caos.ansible_roles.nr_otel_distribution
           vars:
             collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
-            repo_endpoint: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+            repo_endpoint: "http://nr-downloads-ohai-staging.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
             target_version: "{{ initial_version }}"
 
         - name: Assert version
@@ -41,7 +41,7 @@
             name: caos.ansible_roles.nr_otel_distribution
           vars:
             collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
-            repo_endpoint: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+            repo_endpoint: "http://nr-downloads-ohai-staging.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
 
         - name: register installed version
           shell: "nr-otel-collector --version | grep  -E -o '[0-9\\.]+'"
