@@ -13,8 +13,6 @@
     - name: Installation tests suite
       vars:
         initial_version: "0.0.1"
-        env_vars:
-          NRDOT_VERSION: "0.0.2"
 
       block:
 

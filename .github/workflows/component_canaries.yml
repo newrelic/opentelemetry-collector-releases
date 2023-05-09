@@ -21,12 +21,16 @@ on:
       PLATFORM:
         required: true
         type: string
+      NRDOT_VERSION:
+        required: true
+        type: string
 
 env:
   TAG: ${{ inputs.TAG }}
   PREVIOUS_TAG: ${{ inputs.PREVIOUS_TAG }}
   PLATFORM: ${{ inputs.PLATFORM }}
   IMAGE: ${{ inputs.IMAGE }}
+  NRDOT_VERSION: ${{ inputs.NRDOT_VERSION }}
 
 permissions:
   id-token: write
@@ -71,7 +75,7 @@ jobs:
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2 TAG_OR_UNIQUE_NAME=canary:${{ env.TAG }}-${{ env.PLATFORM }}"
+          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2 TAG_OR_UNIQUE_NAME=canary:${{ env.TAG }}-${{ env.PLATFORM }} NRDOT_VERSION=${{ env.NRDOT_VERSION }}"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases-td
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases

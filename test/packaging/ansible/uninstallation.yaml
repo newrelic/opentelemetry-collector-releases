@@ -12,8 +12,6 @@
   tasks:
     - name: Uninstallation tests suite
       vars:
-        env_vars:
-          NRDOT_VERSION: "0.0.1"
 
       block:
 
