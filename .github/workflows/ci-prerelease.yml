@@ -7,9 +7,6 @@ on:
     tags:
       - '*'
 
-env:
-  NRDOT_VERSION: "0.0.1"
-
 jobs:
   prerelease:
     name: Pre-release
@@ -100,7 +97,6 @@ jobs:
       AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
     with:
       TAG_OR_UNIQUE_NAME:  ${{ github.event.release.tag_name }}
-      NRDOT_VERSION: "0.0.1" # FIXME should come from a single value
 
   # First release: does not use canaries from previous version
   # canaries:
@@ -111,7 +107,6 @@ jobs:
   #     PREVIOUS_TAG: "latest"
   #     PLATFORM: "linux"
   #     IMAGE: "newrelic/nr-otel-collector" #should be changed after pre-release
-  #     NRDOT_VERSION: "0.0.1" # FIXME should come from a single value
   #   secrets:
   #     AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
   #     AWS_VPC_SUBNET: ${{secrets.AWS_VPC_SUBNET}}
