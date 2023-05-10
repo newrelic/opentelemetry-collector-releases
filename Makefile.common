@@ -17,6 +17,7 @@ DISTRIBUTIONS_MODS := $(shell find ./**/* $(FIND_MOD_ARGS) -exec $(TO_MOD_DIR) )
 .PHONY: third-party-notices
 third-party-notices: OUT ?= THIRD_PARTY_NOTICES.md
 third-party-notices:
+	@command -v go-licence-detector &> /dev/null || (echo "go-license-detector tool not found, install it from the base directory with \"make internal/tools\"" && exit 1)
 	$(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all >> /tmp/tmp_notices.json))
 	@go-licence-detector \
 		-in /tmp/tmp_notices.json \
