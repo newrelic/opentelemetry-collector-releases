@@ -9,7 +9,7 @@ installed on the corresponding platforms.
 3. Canaries
 
 Tests launched in steps two and three use Ansible to perform the validation, thus, an inventory
-file needs to be providedn. EC2 instances with the corresponding inventory file
+file needs to be provided. EC2 instances with the corresponding inventory file
 can be easily created using the [provision tool](./provision/README.md).
 
 ## Packaging installation (Molecule)
