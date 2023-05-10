@@ -1,3 +1,4 @@
+
 GROUP ?= all
 FOR_GROUP_TARGET=for-$(GROUP)-target
 
@@ -15,5 +16,5 @@ licenses: internal/tools build
 	@$(MAKE) $(FOR_GROUP_TARGET) TARGET="third-party-notices"
 
 .PHONY: licenses-check
-licenses-check: internal/tools
+licenses-check: internal/tools build
 	@$(MAKE) $(FOR_GROUP_TARGET) TARGET="third-party-notices-check"
