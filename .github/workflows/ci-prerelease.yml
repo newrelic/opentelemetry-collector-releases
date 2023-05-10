@@ -48,6 +48,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build docker image
+        run: docker build -t ci  -f .github/workflows/scripts/Dockerfile .
+
+      - name: Run signing script in docker
+        run: docker run --rm -t --name "assets-signer" -v ./:/srv/workdir -w /srv/workdir ci bash -c "/srv/scripts/sign.sh"
+
   publishing-to-s3:
     name: Publish artifacts into s3 testing bucket
     uses: ./.github/workflows/component_publish.yml

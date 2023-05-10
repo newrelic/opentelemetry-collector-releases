@@ -1,0 +1,20 @@
+name: 'Assets signer'
+description: 'Sign all compatible assets'
+#inputs:
+#  checksums_file_name:
+#    description: 'file name of the resulting file containing all the generated checksums'
+#
+#  run_sudo:
+#    description: 'specify if the command should be run as sudo'
+#    type: 'boolean'
+#    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build docker image
+      run: docker build -t assets_signer .
+      shell: bash
+    - name: Run docker signer image
+      run: docker run --rm -t --name "assets_signer" -v ${GITHUB_ACTION_PATH}../../:/srv/workdir -w /srv/workdir assets_signer
+      shell: bash
