@@ -14,21 +14,21 @@ jobs:
 
     secrets:
       # TODO: Change STAGING to production when testing is done
-      DOCKER_HUB_ID: ${{secrets.CAOS_DOCKER_HUB_ID}}
-      DOCKER_HUB_PASSWORD: ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
-      GPG_PASSPHRASE: ${{ secrets.CAOS_GPG_PASSPHRASE }}
-      GPG_PRIVATE_KEY_BASE64: ${{ secrets.CAOS_GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
-      AWS_ACCESS_KEY_ID: ${{ secrets.CAOS_AWS_ACCESS_KEY_ID_STAGING }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.CAOS_AWS_SECRET_ACCESS_KEY_STAGING }}
-      AWS_ROLE_ARN: ${{ secrets.CAOS_AWS_ROLE_ARN_STAGING }}
-      AWS_ROLE_SESSION_NAME: ${{ secrets.CAOS_AWS_ROLE_SESSION_NAME_STAGING }}
+      DOCKER_HUB_ID: ${{ secrets.OHAI_DOCKER_HUB_ID }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.OHAI_DOCKER_HUB_PASSWORD }}
+      GPG_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+      GPG_PRIVATE_KEY_BASE64: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
+      AWS_ACCESS_KEY_ID: ${{ secrets.OHAI_AWS_ACCESS_KEY_ID_PRODUCTION }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.OHAI_AWS_SECRET_ACCESS_KEY_PRODUCTION }}
+      AWS_ROLE_ARN: ${{ secrets.OHAI_AWS_ROLE_ARN_PRODUCTION }}
+      AWS_ROLE_SESSION_NAME: ${{ secrets.OHAI_AWS_ROLE_SESSION_NAME_PRODUCTION }}
     with:
-      ACCESS_POINT_HOST: "staging"
+      ACCESS_POINT_HOST: "production"
       SCHEMA_BRANCH: "main"
       RUN_ID: ${{ github.run_id }}
       TAG: ${{ github.event.release.tag_name }}
-      AWS_S3_BUCKET_NAME: "nr-downloads-ohai-staging"
-      AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-staging"
+      AWS_S3_BUCKET_NAME: "nr-downloads-ohai-production"
+      AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-production"
       ASSETS_TYPE: "all"
 
   release-docker:
@@ -47,8 +47,8 @@ jobs:
       - name: Log into Docker.io
         uses: docker/login-action@v2
         with:
-          username: ${{secrets.CAOS_DOCKER_HUB_ID}}
-          password:  ${{secrets.CAOS_DOCKER_HUB_PASSWORD}}
+          username: ${{ secrets.OHAI_DOCKER_HUB_ID }}
+          password:  ${{ secrets.OHAI_DOCKER_HUB_PASSWORD }}
 
       - name: Publish docker manifest
-        run: .github/workflows/scripts/docker_manifest_release.sh -i newrelic/${{env.NR_DISTRO}} -v ${{env.NR_VERSION}}
+        run: .github/workflows/scripts/docker_manifest_release.sh -i newrelic/${{ env.NR_DISTRO }} -v ${{ env.NR_VERSION }}

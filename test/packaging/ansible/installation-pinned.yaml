@@ -16,7 +16,6 @@
   tasks:
     - name: Pinned installation tests suite
       vars:
-        env_vars:
 
       block:
 
@@ -25,8 +24,8 @@
             name: caos.ansible_roles.nr_otel_distribution
           vars:
             distribution: "nr-otel-collector"
-            repo_endpoint: "http://nr-downloads-ohai-testing.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
-            target_version: "0.0.10"
+            repo_endpoint: "http://nr-downloads-ohai-staging.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
+            target_version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
             collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
 
         - name: Assert version
@@ -35,7 +34,7 @@
           vars:
             target_versions:
               - exec: "nr-otel-collector --version"
-                version: "0.0.10"
+                version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
 
         - name: assert ownership
           include_tasks: ./custom_tasks/assert_ownership.yml

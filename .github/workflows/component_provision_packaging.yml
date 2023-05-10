@@ -12,14 +12,9 @@ on:
       TAG_OR_UNIQUE_NAME:
         required: true
         type: string
-      BRANCH_REF:
-        required: false
-        type: string
-        default: "main"
 
 env:
   TAG_OR_UNIQUE_NAME: ${{ inputs.TAG_OR_UNIQUE_NAME }}
-  GITHUB_REFERENCE_NAME: ${{ inputs.BRANCH_REF }}
 
 permissions:
   id-token: write
@@ -37,18 +32,30 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-2
 
+      - name: Set branch name
+        run: |
+          # Short name for current branch. For PRs, use target branch (base ref)
+          GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          # Is the ref a tag? If so, remove refs/tags/ prefix
+          GIT_BRANCH=${GIT_BRANCH#refs/tags/}
+          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+
+      # This sets NR_VERSION which is used below
+      - name: Set and validate distribution name and version
+        run: .github/workflows/scripts/set_version.sh
+
       - name: Provision infra
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG_OR_UNIQUE_NAME }}-inventory.ec2 TAG_OR_UNIQUE_NAME=${{ env.TAG_OR_UNIQUE_NAME }}"
+          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG_OR_UNIQUE_NAME }}-inventory.ec2 TAG_OR_UNIQUE_NAME=${{ env.TAG_OR_UNIQUE_NAME }} NRDOT_VERSION=${{ env.NR_VERSION }}"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases-td
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+          ref: "${{ env.GIT_BRANCH }}"
           log_filters: |
             \[ALLOW_MSG\].+
             TASK\s\[.*\]\s
@@ -61,14 +68,14 @@ jobs:
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "test/packaging ANSIBLE_INVENTORY='/srv/runner/inventory/${{ env.TAG_OR_UNIQUE_NAME }}-inventory.ec2' LIMIT=testing_hosts_linux"
+          container_make_target: "test/packaging ANSIBLE_INVENTORY='/srv/runner/inventory/${{ env.TAG_OR_UNIQUE_NAME }}-inventory.ec2' LIMIT=testing_hosts_linux NRDOT_VERSION=${{ env.NR_VERSION }}"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases-td
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+          ref: "${{ env.GIT_BRANCH }}"
 
       - name: Destroy infra
         uses: newrelic/fargate-runner-action@main
@@ -81,6 +88,6 @@ jobs:
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
           repo_name: "newrelic/opentelemetry-collector-releases"
-          ref: "${{ env.GITHUB_REFERENCE_NAME }}"
+          ref: "${{ env.GIT_BRANCH }}"
           log_filters: |
             Destroy\scomplete!
