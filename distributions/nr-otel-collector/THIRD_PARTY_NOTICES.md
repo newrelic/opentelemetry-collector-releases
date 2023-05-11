@@ -61,14 +61,6 @@ Distributed under the following license(s):
 
 
 
-## [github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbytraceprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
 ## [github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 Distributed under the following license(s):
@@ -93,7 +85,7 @@ Distributed under the following license(s):
 
 
 
-## [github.com/open-telemetry/opentelemetry-collector-contrib/processor/schemaprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+## [github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 Distributed under the following license(s):
 
@@ -101,7 +93,7 @@ Distributed under the following license(s):
 
 
 
-## [github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 Distributed under the following license(s):
 
@@ -118,14 +110,6 @@ Distributed under the following license(s):
 
 
 ## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
-## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 Distributed under the following license(s):
 
