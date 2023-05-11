@@ -1,0 +1,31 @@
+#############################################
+#### Common Makefiles for distributions #####
+#############################################
+
+# SRC_ROOT is the top of the source tree.
+SRC_ROOT := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+
+FIND_MOD_ARGS=-type f -name "go.mod"
+TO_MOD_DIR=dirname {} \; | sort | grep -E '^./'
+DISTRIBUTIONS_MODS := $(shell find ./**/* $(FIND_MOD_ARGS) -exec $(TO_MOD_DIR) )
+
+## Retrive all used dependencies in the same output
+# RESULTS := $(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all))
+
+
+
+.PHONY: third-party-notices
+third-party-notices: OUT ?= THIRD_PARTY_NOTICES.md
+third-party-notices:
+	@command -v go-licence-detector &> /dev/null || (echo "go-license-detector tool not found, install it from the base directory with \"make internal/tools\"" && exit 1)
+	$(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all >> /tmp/tmp_notices.json))
+	@go-licence-detector \
+		-in /tmp/tmp_notices.json \
+		-rules $(SRC_ROOT)/internal/assets/license/rules.json \
+		-noticeTemplate $(SRC_ROOT)/internal/assets/license/THIRD_PARTY_NOTICES.md.tmpl \
+		-noticeOut $(OUT)
+	@echo '' > /tmp/tmp_notices.json
+
+.PHONY: third-party-notices-check
+third-party-notices-check: third-party-notices
+	@git diff --name-only | grep -q "THIRD_PARTY_NOTICES.md" && ( echo "Third party notices out of date, please run \"make licenses\" and commit the changes in this PR."; exit 1; ) || exit 0
