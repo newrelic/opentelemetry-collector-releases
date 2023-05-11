@@ -51,10 +51,17 @@ jobs:
           version: latest
           args: --snapshot --clean --timeout 2h
 
+      - name: Extract image version
+        run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
+
+      - name: Echo image version
+        run: echo "${{ env.version }}"
+
       - name: Trivy security check
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "newrelic/nr-otel-collector:build-amd64"
+          # local image
+          image-ref: "newrelic/nr-otel-collector:${{ env.version }}-rc-amd64"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
