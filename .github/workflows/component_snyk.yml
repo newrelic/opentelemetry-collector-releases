@@ -1,0 +1,58 @@
+name: .. 🚧 🐈‍⬛ Snyk
+
+on:
+  workflow_call:
+    secrets:
+      slack_webhook:
+        required: false
+      snyk_token:
+        required: true
+    inputs:
+      severity:
+        required: true
+        type: string
+
+jobs:
+  snyk:
+    name: Snyk scanner
+    runs-on: ubuntu-20.04
+    if: ${{ ! github.event.schedule }} # Table output
+    steps:
+      - name: ...
+        run: cd ./distributions/nr-otel-collector && pwd && ls -la
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/golang@master
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk_token }}
+
+  snyk_scheduled:
+    name: Scheduled Snyk scanner
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.schedule }} # Upload sarif when running periodically
+    steps:
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/golang@master
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk_token }}
+        with:
+          args: --sarif-file-output=snyk-results.sarif --severity-threshold=${{ inputs.severity }}
+
+      - name: Upload Snyk scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: ${{ always() }}
+        with:
+          sarif_file: 'snyk-results.sarif'
+
+      - name: Send notification to Slack Workflow
+        if: ${{ failure() }}
+        id: slack
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          # This data can be any valid JSON from a previous step in the GitHub Action
+          payload: |
+            {
+              "text": ":rotating_light: Hi CAOS (@hero), critical or high vulnerabilities found in NRDOT, see: https://github.com/newrelic/infrastructure-agent/security/code-scanning?query=is%3Aopen+branch%3Amaster+tool%3ASnyk :rotating_light:"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}
