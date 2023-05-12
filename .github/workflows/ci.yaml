@@ -40,12 +40,12 @@ jobs:
       - name: Validate distributions third party libraries
         run: make licenses-check
 
-      - name: Check vulnerabilities
-        uses: ./.github/workflows/component_snyk.yml
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/golang@master
+        env:
+          SNYK_TOKEN: ${{ secrets.CAOS_SNYK_TOKEN }}
         with:
-          severity: "HIGH"
-        secrets:
-          snyk_token: ${{ secrets.CAOS_SNYK_TOKEN }}
+          args: --all-projects --severity-threshold=high
 
       - uses: docker/setup-qemu-action@v2
 

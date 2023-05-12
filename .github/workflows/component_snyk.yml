@@ -14,29 +14,19 @@ on:
 
 jobs:
   snyk:
-    name: Snyk scanner
-    runs-on: ubuntu-20.04
-    if: ${{ ! github.event.schedule }} # Table output
-    steps:
-      - name: ...
-        run: cd ./distributions/nr-otel-collector && pwd && ls -la
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/golang@master
-        env:
-          SNYK_TOKEN: ${{ secrets.snyk_token }}
-
-  snyk_scheduled:
     name: Scheduled Snyk scanner
     runs-on: ubuntu-20.04
-    if: ${{ github.event.schedule }} # Upload sarif when running periodically
     steps:
+      - name: build to generate go.mod
+        run: make ci
+
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/golang@master
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.snyk_token }}
         with:
-          args: --sarif-file-output=snyk-results.sarif --severity-threshold=${{ inputs.severity }}
+          args: --sarif-file-output=snyk-results.sarif --severity-threshold=${{ inputs.severity }} --all-projects
 
       - name: Upload Snyk scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2

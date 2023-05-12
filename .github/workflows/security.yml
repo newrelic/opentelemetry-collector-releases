@@ -1,4 +1,4 @@
-name: . 🕵🏼 Trivy scanner for docker
+name: . 🕵🏼 Security scanner
 on:
   schedule:
     # Scheduled to run at 8 a.m on every day-of-week from Monday through Friday.
@@ -10,6 +10,14 @@ on:
         required: false
         default: '0.0.1-rc'
 jobs:
+  snyk:
+    uses: ./.github/workflows/component_snyk.yml
+    secrets:
+      snyk_token: ${{ secrets.CAOS_SNYK_TOKEN }}
+      slack_webhook: ${{ secrets.CAOS_SLACK_WEBHOOK }}
+    with:
+      # minimum level is high
+      severity: "high"
   docker-trivy:
     uses: ./.github/workflows/component_trivy.yml
     secrets:
