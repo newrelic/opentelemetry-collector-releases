@@ -54,9 +54,6 @@ jobs:
       - name: Extract image version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
 
-      - name: Echo image version
-        run: echo "${{ env.version }}"
-
       - name: Trivy security check
         uses: aquasecurity/trivy-action@master
         with:
