@@ -108,9 +108,26 @@ docker_manifests:
       - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
       - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
 
+signs:
+  -
+    # ID of the sign config, must be unique.
+    id: signing
+
+    # Path to the signature command
+    cmd: ./scripts/signing/sign.sh
+    args: [
+      "-f", "{{ .Env.artifact }}",
+      "-m", "{{ .Env.GPG_MAIL }}",
+      "-p", "{{ .Env.GPG_PASSPHRASE }}",
+      "-k", "{{ .Env.GPG_PRIVATE_KEY_BASE64 }}"
+    ]
+    artifacts: all
+
 publishers:
   - name: GH Publisher
     cmd: .github/workflows/scripts/gh_publisher.sh -t {{ .Env.NR_RELEASE_TAG }} -f {{ abs .ArtifactPath }}
+    extra_files:
+      - glob: "./dist/*.asc"
     env:
       - GITHUB_TOKEN={{ .Env.GITHUB_TOKEN }}
 
