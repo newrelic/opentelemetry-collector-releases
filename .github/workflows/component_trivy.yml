@@ -28,7 +28,7 @@ jobs:
       - name: newrelic/nr-otel-collector
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "${{ github.event.inputs.image }}:${{ github.event.inputs.tag }}"
+          image-ref: "${{ inputs.image }}:${{ inputs.tag }}"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -43,10 +43,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Sarif newrelic/infrastructure
+      - name: Sarif newrelic/nr-otel-collector
         uses: aquasecurity/trivy-action@0.8.0
         with:
-          image-ref: "${{ github.event.inputs.image }}:${{ github.event.inputs.tag }}"
+          image-ref: "${{ inputs.image }}:${{ inputs.tag }}"
           format: 'sarif'
           output: 'trivy-results.sarif'
           vuln-type: 'os,library'
@@ -68,7 +68,7 @@ jobs:
           # This data can be any valid JSON from a previous step in the GitHub Action
           payload: |
             {
-              "text": ":rotating_light: Hi CAOS (@hero), critical or high vulnerabilities found in NRDOT, see: https://github.com/newrelic/infrastructure-agent/security/code-scanning?query=is%3Aopen+branch%3Amaster+tool%3ATrivy :rotating_light:"
+              "text": ":rotating_light: Hi CAOS (@hero), critical or high vulnerabilities found in NRDOT, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}
