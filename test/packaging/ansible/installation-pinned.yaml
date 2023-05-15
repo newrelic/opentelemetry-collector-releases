@@ -39,7 +39,7 @@
         - name: assert ownership
           include_tasks: ./custom_tasks/assert_ownership.yml
           vars:
-            ownership_process: "nr-otel-collector"
+            ownership_process: "root"
             ownership_files: "root"
 
       always:
