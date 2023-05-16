@@ -15,6 +15,10 @@
 # limitations under the License.
 
 if command -v systemctl >/dev/null 2>&1; then
+    if [ "$NRDOT_MODE" = "ROOT" ]; then
+        sed -i "/User=nr-otel-collector/d" /lib/systemd/system/nr-otel-collector.service
+        sed -i "/Group=nr-otel-collector/d" /lib/systemd/system/nr-otel-collector.service
+    fi
     systemctl enable nr-otel-collector.service
     if [ -f /etc/nr-otel-collector/config.yaml ]; then
         systemctl start nr-otel-collector.service

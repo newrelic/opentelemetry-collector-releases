@@ -4,6 +4,10 @@
   hosts: testing_hosts_linux
   become: true
   gather_facts: yes
+  vars:
+    # This is the version of the agent that will be installed.
+    # It is set by the CI.
+    target_version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
 
   pre_tasks:
     - name: Update package repositories
@@ -25,7 +29,7 @@
           vars:
             distribution: "nr-otel-collector"
             repo_endpoint: "http://nr-downloads-ohai-staging.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
-            target_version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
+            target_version: "{{ target_version }}"
             collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
 
         - name: Assert version
@@ -34,12 +38,12 @@
           vars:
             target_versions:
               - exec: "nr-otel-collector --version"
-                version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
+                version: "{{ target_version }}"
 
         - name: assert ownership
           include_tasks: ./custom_tasks/assert_ownership.yml
           vars:
-            ownership_process: "root"
+            ownership_process: "{{ 'root' if install_mode == 'ROOT' else 'nr-otel-collector' }}"
             ownership_files: "root"
 
       always:
