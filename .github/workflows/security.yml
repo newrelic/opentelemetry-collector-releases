@@ -23,5 +23,5 @@ jobs:
     secrets:
       slack_webhook: ${{ secrets.CAOS_SLACK_WEBHOOK }}
     with:
-      tag: "${{ github.event.inputs.tag }}"
+      tag: "${{ inputs.tag }}"
       severity: "CRITICAL,HIGH"
