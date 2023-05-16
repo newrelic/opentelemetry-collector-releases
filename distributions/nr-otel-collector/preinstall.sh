@@ -15,6 +15,6 @@
 # limitations under the License.
 
 # Create the user if NRDOT_MODE is not set to root
-if [ "$NRDOT_MODE" != "ROOT" ]; then
+if [ "${NRDOT_MODE}" != "ROOT" ]; then
   getent passwd nr-otel-collector >/dev/null || useradd --system --user-group --no-create-home --shell /sbin/nologin nr-otel-collector
 fi
