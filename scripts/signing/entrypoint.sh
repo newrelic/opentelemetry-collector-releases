@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 print_usage() {
   printf -- "Usage: %s\n" "$(basename "${0}")"
