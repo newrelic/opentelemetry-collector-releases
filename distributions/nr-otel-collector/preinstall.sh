@@ -14,4 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-getent passwd nr-otel-collector >/dev/null || useradd --system --user-group --no-create-home --shell /sbin/nologin nr-otel-collector
+# Create the user if NRDOT_MODE is not set to root
+if [ "${NRDOT_MODE}" != "ROOT" ]; then
+  getent passwd nr-otel-collector >/dev/null || useradd --system --user-group --no-create-home --shell /sbin/nologin nr-otel-collector
+fi

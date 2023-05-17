@@ -4,6 +4,9 @@
   hosts: testing_hosts_linux
   become: true
   gather_facts: yes
+  vars:
+    nrdot_version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
+    process_user: "{{ 'root' if (install_mode is defined and install_mode == 'ROOT') else 'nr-otel-collector' }}"
 
   pre_tasks:
     - name: Update package repositories
@@ -22,10 +25,13 @@
         - name: NR Otel Distribution
           include_role:
             name: caos.ansible_roles.nr_otel_distribution
+            apply:
+              environment:
+                NRDOT_MODE: "{{ 'ROOT' if (install_mode is defined and install_mode == 'ROOT') | default(omit) }}"
           vars:
             distribution: "nr-otel-collector"
             repo_endpoint: "http://nr-downloads-ohai-staging.s3-website-us-east-1.amazonaws.com/infrastructure_agent"
-            target_version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
+            target_version: "{{ nrdot_version }}"
             collector_otlp_endpoint: "staging-otlp.nr-data.net:4317"
 
         - name: Assert version
@@ -34,12 +40,12 @@
           vars:
             target_versions:
               - exec: "nr-otel-collector --version"
-                version: "{{ lookup('ansible.builtin.env', 'NRDOT_VERSION') }}"
+                version: "{{ nrdot_version }}"
 
         - name: assert ownership
           include_tasks: ./custom_tasks/assert_ownership.yml
           vars:
-            ownership_process: "nr-otel-collector"
+            ownership_process: "{{ process_user }}"
             ownership_files: "root"
 
       always:
