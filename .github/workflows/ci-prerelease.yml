@@ -47,6 +47,9 @@ jobs:
           args: release --rm-dist --timeout 2h
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+          GPG_PRIVATE_KEY_BASE64: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
+          GPG_MAIL: 'infrastructure-eng@newrelic.com'
 
   publishing-to-s3:
     name: Publish artifacts into s3 testing bucket
