@@ -57,6 +57,8 @@ jobs:
           distribution: goreleaser
           version: latest
           args: --snapshot --clean --skip-validate --skip-sign --timeout 2h
+        env:
+          GORELEASER_CURRENT_TAG: 0.0.0
 
       - name: Extract image version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
