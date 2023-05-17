@@ -14,3 +14,15 @@
         - xenial
         - bullseye
         - buster
+
+#########################
+  # UPLOAD CHECKSUMS #
+#########################
+
+- src: "nr-otel-collector_{version}_linux_{arch}.deb"
+  arch:
+    - amd64
+    - arm64
+  uploads:
+    - type: file
+      dest: "{dest_prefix}linux/apt/pool/main/n/nr-otel-collector/{src}"

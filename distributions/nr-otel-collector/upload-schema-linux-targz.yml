@@ -6,3 +6,11 @@
   arch:
     - amd64
     - arm64
+
+- src: "nr-otel-collector_{version}_linux_{arch}.tar.gz.sum"
+  uploads:
+    - type: file
+      dest: "{dest_prefix}binaries/linux/{arch}/{src}"
+  arch:
+    - amd64
+    - arm64
