@@ -3,7 +3,7 @@ set -e
 
 #
 #
-# Upload file to GH Release assets
+# GPG signing for packages packages
 #
 #
 
