@@ -19,7 +19,7 @@
   # UPLOAD CHECKSUMS #
 #########################
 
-- src: "nr-otel-collector_{version}_linux_{arch}.deb"
+- src: "nr-otel-collector_{version}_linux_{arch}.deb.sum"
   arch:
     - amd64
     - arm64
