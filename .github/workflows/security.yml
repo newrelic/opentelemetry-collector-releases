@@ -8,7 +8,8 @@ on:
       tag:
         description: 'Tag to scan'
         required: false
-        default: '0.0.1-rc'
+        default: 'latest'
+
 jobs:
   snyk:
     uses: ./.github/workflows/component_snyk.yml
@@ -23,5 +24,5 @@ jobs:
     secrets:
       slack_webhook: ${{ secrets.CAOS_SLACK_WEBHOOK }}
     with:
-      tag: "${{ inputs.tag }}"
+      tag: "${{ inputs.tag || '0.0.1-rc' }}"
       severity: "CRITICAL,HIGH"
