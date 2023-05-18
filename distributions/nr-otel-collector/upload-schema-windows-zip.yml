@@ -4,3 +4,11 @@
     - type: file
       dest: "{dest_prefix}binaries/windows/amd64/{src}"
 
+#########################
+  # UPLOAD CHECKSUMS #
+#########################
+
+- src: "nr-otel-collector_{version}_windows_amd64.zip.sum"
+  uploads:
+    - type: file
+      dest: "{dest_prefix}binaries/windows/amd64/{src}"
