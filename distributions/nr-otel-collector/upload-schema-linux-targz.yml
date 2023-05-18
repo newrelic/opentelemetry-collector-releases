@@ -7,6 +7,11 @@
     - amd64
     - arm64
 
+
+#########################
+  # UPLOAD CHECKSUMS #
+#########################
+
 - src: "nr-otel-collector_{version}_linux_{arch}.tar.gz.sum"
   uploads:
     - type: file
