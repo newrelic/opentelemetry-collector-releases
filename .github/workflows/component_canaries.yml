@@ -52,6 +52,10 @@ jobs:
           GIT_BRANCH=${GIT_BRANCH#refs/tags/}
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
 
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       # This sets NR_VERSION which is used below
       - name: Set and validate distribution name and version
         run: .github/workflows/scripts/set_version.sh
