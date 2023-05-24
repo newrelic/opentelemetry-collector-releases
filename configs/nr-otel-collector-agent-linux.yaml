@@ -172,7 +172,6 @@ processors:
 
 exporters:
   logging:
-    verbosity: detailed
   otlp:
     endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
     headers:
