@@ -170,6 +170,11 @@ processors:
   resourcedetection:
     detectors: ["env", "system"]
 
+  resourcedetection/cloud:
+    detectors: ["gcp", "ec2", "azure", "ecs", "elastic_beanstalk", "eks", "lambda", "aks", "consul", "heroku"]
+    timeout: 2s
+    override: false
+
 exporters:
   logging:
   otlp:
@@ -196,15 +201,16 @@ service:
         - attributes/exclude_system_paging
         - batch
         - resourcedetection
+        - resourcedetection/cloud
         - resource
       exporters: [logging,otlp]
     traces:
       receivers: [otlp]
-      processors: [transform, resourcedetection, batch]
+      processors: [transform, resourcedetection, resourcedetection/cloud, resource, batch]
       exporters: [logging, otlp]
     logs:
       receivers: [otlp, filelog]
-      processors: [transform, resourcedetection, batch]
+      processors: [transform, resourcedetection, resourcedetection/cloud, resource, batch]
       exporters: [logging, otlp]
 
   extensions: [health_check]
