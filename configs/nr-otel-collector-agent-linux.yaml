@@ -171,7 +171,7 @@ processors:
     detectors: ["env", "system"]
 
   resourcedetection/cloud:
-    detectors: ["gcp", "ec2", "azure", "ecs", "elastic_beanstalk", "eks", "lambda", "aks", "consul", "heroku"]
+    detectors: ["gcp", "ec2", "azure"]
     timeout: 2s
     override: false
 
