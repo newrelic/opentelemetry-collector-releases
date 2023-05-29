@@ -26,7 +26,7 @@ jobs:
       ACCESS_POINT_HOST: "production"
       SCHEMA_BRANCH: "main"
       RUN_ID: ${{ github.run_id }}
-      TAG: ${{ github.event.release.tag_name }}
+      TAG: ${{ github.event.inputs.tag }}
       AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
       AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
       ASSETS_TYPE: "all"
