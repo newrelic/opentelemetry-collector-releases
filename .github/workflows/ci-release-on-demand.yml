@@ -1,0 +1,57 @@
+name: Release On Demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release'
+        required: true
+
+jobs:
+  publishing-to-s3:
+    name: Publish artifacts into s3 production bucket
+    uses: ./.github/workflows/component_publish.yml
+
+    secrets:
+      # TODO: Change STAGING to production when testing is done
+      DOCKER_HUB_ID: ${{ secrets.OHAI_DOCKER_HUB_ID }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.OHAI_DOCKER_HUB_PASSWORD }}
+      GPG_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+      GPG_PRIVATE_KEY_BASE64: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
+      AWS_ACCESS_KEY_ID: ${{ secrets.CAOS_AWS_ACCESS_KEY_ID_TESTING }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.CAOS_AWS_SECRET_ACCESS_KEY_TESTING }}
+      AWS_ROLE_ARN: ${{ secrets.CAOS_AWS_ROLE_ARN_TESTING }}
+      AWS_ROLE_SESSION_NAME: ${{ secrets.CAOS_AWS_ROLE_SESSION_NAME_TESTING }}
+    with:
+      ACCESS_POINT_HOST: "production"
+      SCHEMA_BRANCH: "main"
+      RUN_ID: ${{ github.run_id }}
+      TAG: ${{ github.event.inputs.tag }}
+      AWS_S3_BUCKET_NAME: "nr-downloads-ohai-testing"
+      AWS_S3_LOCK_BUCKET_NAME: "onhost-ci-lock-testing"
+      ASSETS_TYPE: "all"
+
+# TODO add this
+#  release-docker:
+#    name: Release docker images
+#
+#    runs-on: ubuntu-20.04
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Set and validate distribution name and version
+#        run: .github/workflows/scripts/set_version.sh
+#
+#      - name: Log into Docker.io
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.OHAI_DOCKER_HUB_ID }}
+#          password:  ${{ secrets.OHAI_DOCKER_HUB_PASSWORD }}
+#
+#      - name: Publish docker manifest
+#        run: .github/workflows/scripts/docker_manifest_release.sh -i newrelic/${{ env.NR_DISTRO }} -v ${{ env.NR_VERSION }}
+#        env:
+#          NR_VERSION: ${{ github.event.inputs.tag }}
