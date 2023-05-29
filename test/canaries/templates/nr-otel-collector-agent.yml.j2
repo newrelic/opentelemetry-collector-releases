@@ -164,8 +164,8 @@ processors:
   resource:
     attributes:
       - key: host.id
-        from_attribute: host.name
         action: upsert
+        value: {{ display_name }}
       - key: host.display_name
         action: upsert
         value: {{ display_name }}
