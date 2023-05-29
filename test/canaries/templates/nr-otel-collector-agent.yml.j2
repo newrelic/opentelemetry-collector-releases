@@ -1,9 +1,5 @@
-################################################################################
-# New Relic Otel collector config with infrastructure-agent feature parity     #
-################################################################################
-
 # The following environment variables require manual modification:
-# - NEW_RELIC_LICENSE_KEY: New Relic license key.
+# - NEW_RELIC_LICENSE_KEY: New Relic ingest key.
 
 # If the collector is not installed through a package manager, the following
 # environment variables need to be set:
@@ -13,8 +9,12 @@
 extensions:
   health_check:
 
-
 receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
   hostmetrics:
     collection_interval: 20s
     scrapers:
@@ -51,8 +51,19 @@ receivers:
         metrics:
           system.network.connections:
             enabled: false
+      processes:
+      process:
 
-
+  filelog:
+    include:
+      - /var/log/alternatives.log
+      - /var/log/cloud-init.log
+      - /var/log/auth.log
+      - /var/log/dpkg.log
+      - /var/log/syslog
+      - /var/log/messages
+      - /var/log/secure
+      - /var/log/yum.log
 
 processors:
   # group system.cpu metrics by cpu
@@ -122,7 +133,6 @@ processors:
       datapoint:
         - 'IsMatch(metric.name, "^system.network.*") == true and attributes["device"] == "lo"'
 
-
   attributes/exclude_system_paging:
     include:
       match_type: strict
@@ -132,6 +142,18 @@ processors:
       - key: type
         action: delete
 
+  transform:
+    trace_statements:
+      - context: span
+        statements:
+          - truncate_all(attributes, 4095)
+          - truncate_all(resource.attributes, 4095)
+    log_statements:
+      - context: log
+        statements:
+          - truncate_all(attributes, 4095)
+          - truncate_all(resource.attributes, 4095)
+
   # used to prevent out of memory situations on the collector
   memory_limiter:
     check_interval: 1s
@@ -139,18 +161,6 @@ processors:
 
   batch:
 
-  cumulativetodelta:
-    include:
-      metrics:
-        - system.disk.operations
-        - system.disk.merged
-        - system.disk.io
-        - system.disk.io_time
-        - system.disk.operation_time
-        - system.network.io
-        - system.network.dropped
-        - system.network.packets
-      match_type: strict
   resource:
     attributes:
       - key: host.id
@@ -159,22 +169,26 @@ processors:
       - key: host.display_name
         action: upsert
         value: {{ display_name }}
+
   resourcedetection:
-    detectors: ["env", "ec2", "system"]
+    detectors: ["env", "system"]
+
+  resourcedetection/cloud:
+    detectors: ["gcp", "ec2", "azure"]
+    timeout: 2s
+    override: false
 
 exporters:
   logging:
-    verbosity: detailed
   otlp:
     endpoint: staging-otlp.nr-data.net:4317
     headers:
       api-key: {{ nr_license_key_canaries }}
 
-
 service:
   pipelines:
     metrics:
-      receivers: [hostmetrics]
+      receivers: [otlp, hostmetrics]
       processors:
         - memory_limiter
         - metricstransform
@@ -189,8 +203,16 @@ service:
         - attributes/exclude_system_paging
         - batch
         - resourcedetection
+        - resourcedetection/cloud
         - resource
-        - cumulativetodelta
       exporters: [logging,otlp]
+    traces:
+      receivers: [otlp]
+      processors: [transform, resourcedetection, resourcedetection/cloud, resource, batch]
+      exporters: [logging, otlp]
+    logs:
+      receivers: [otlp, filelog]
+      processors: [transform, resourcedetection, resourcedetection/cloud, resource, batch]
+      exporters: [logging, otlp]
 
   extensions: [health_check]
