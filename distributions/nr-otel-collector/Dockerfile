@@ -1,9 +1,12 @@
-FROM alpine:3.16 as certs
+FROM alpine:3.18 as certs
 RUN apk --update add ca-certificates
 
-FROM scratch
+FROM alpine:3.18
 
-ARG USER_UID=10001
+RUN apk add --no-cache bash
+
+ARG USER_UID_ARG=10001
+ENV USER_UID=$USER_UID_ARG
 USER ${USER_UID}
 
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
