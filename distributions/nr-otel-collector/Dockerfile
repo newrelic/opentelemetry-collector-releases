@@ -5,8 +5,7 @@ FROM alpine:3.18
 
 RUN apk add --no-cache bash
 
-ARG USER_UID_ARG=10001
-ENV USER_UID=$USER_UID_ARG
+ARG USER_UID=10001
 USER ${USER_UID}
 
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
