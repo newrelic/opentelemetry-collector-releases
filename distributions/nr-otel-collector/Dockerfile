@@ -1,7 +1,9 @@
-FROM alpine:3.16 as certs
+FROM alpine:3.18 as certs
 RUN apk --update add ca-certificates
 
-FROM scratch
+FROM alpine:3.18
+
+RUN apk add --no-cache bash
 
 ARG USER_UID=10001
 USER ${USER_UID}
