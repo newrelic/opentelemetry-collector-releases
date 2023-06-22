@@ -149,6 +149,14 @@ Distributed under the following license(s):
 
 
 
+## [go.opentelemetry.io/collector/connector](https://go.opentelemetry.io/collector/connector)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
 ## [go.opentelemetry.io/collector/exporter](https://go.opentelemetry.io/collector/exporter)
 
 Distributed under the following license(s):
@@ -181,6 +189,14 @@ Distributed under the following license(s):
 
 
 
+## [go.opentelemetry.io/collector/extension](https://go.opentelemetry.io/collector/extension)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
 ## [go.opentelemetry.io/collector/extension/ballastextension](https://go.opentelemetry.io/collector/extension/ballastextension)
 
 Distributed under the following license(s):
@@ -190,6 +206,14 @@ Distributed under the following license(s):
 
 
 ## [go.opentelemetry.io/collector/extension/zpagesextension](https://go.opentelemetry.io/collector/extension/zpagesextension)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/processor](https://go.opentelemetry.io/collector/processor)
 
 Distributed under the following license(s):
 

@@ -53,6 +53,11 @@ receivers:
             enabled: false
       processes:
       process:
+        metrics:
+          process.cpu.utilization:
+            enabled: true
+          process.cpu.time:
+            enabled: false
 
   filelog:
     include:
