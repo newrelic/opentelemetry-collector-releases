@@ -121,7 +121,7 @@ jobs:
       CANARIES_NR_API_KEY: ${{ secrets.CANARIES_NR_API_KEY }}
     with:
       TAG: ${{ github.ref_name }}
-      NR_ACCOUNT_ID: 1038907
+      NR_ACCOUNT_ID: 11859954
       NR_REGION: Staging
       INSTANCE_NAME_PATTERN: otel-canary:${{ github.ref_name }}-*
       TF_STATE_KEY: nr_otel_collector_prerelease_alerts/state_${{ github.ref_name }}
