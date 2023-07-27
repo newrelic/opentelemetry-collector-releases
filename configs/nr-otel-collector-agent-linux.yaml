@@ -167,10 +167,6 @@ processors:
   batch:
 
   resource:
-    attributes:
-      - key: host.id
-        from_attribute: host.name
-        action: upsert
 
   resourcedetection:
     detectors: ["env", "system"]
