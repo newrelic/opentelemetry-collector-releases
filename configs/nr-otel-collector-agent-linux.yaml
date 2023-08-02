@@ -201,7 +201,6 @@ service:
         - batch
         - resourcedetection
         - resourcedetection/cloud
-        - resource
       exporters: [logging,otlp]
     traces:
       receivers: [otlp]
