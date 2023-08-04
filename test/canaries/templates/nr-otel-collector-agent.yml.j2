@@ -53,6 +53,11 @@ receivers:
             enabled: false
       processes:
       process:
+        metrics:
+          process.cpu.utilization:
+            enabled: true
+          process.cpu.time:
+            enabled: false
 
   filelog:
     include:
@@ -163,20 +168,25 @@ processors:
 
   resource:
     attributes:
-      - key: host.id
-        action: upsert
-        value: {{ display_name }}
       - key: host.display_name
         action: upsert
         value: {{ display_name }}
 
   resourcedetection:
     detectors: ["env", "system"]
+    system:
+      hostname_sources: ["os"]
+      resource_attributes:
+        host.id:
+          enabled: true
 
   resourcedetection/cloud:
     detectors: ["gcp", "ec2", "azure"]
     timeout: 2s
-    override: false
+    ec2:
+      resource_attributes:
+        host.name:
+          enabled: false
 
 exporters:
   logging:
