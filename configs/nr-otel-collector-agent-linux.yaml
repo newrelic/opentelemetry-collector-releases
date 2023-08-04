@@ -168,11 +168,19 @@ processors:
 
   resourcedetection:
     detectors: ["env", "system"]
+    system:
+      hostname_sources: ["os"]
+      resource_attributes:
+        host.id:
+          enabled: true
 
   resourcedetection/cloud:
     detectors: ["gcp", "ec2", "azure"]
     timeout: 2s
-    override: false
+    ec2:
+      resource_attributes:
+        host.name:
+          enabled: false
 
 exporters:
   logging:
