@@ -9,7 +9,8 @@ git fetch --prune --unshallow 2> /dev/null || true
 tag=$(git describe --tags --abbrev=0)
 
 prev_tag_commit=$(git rev-list --tags --skip=1 --max-count=1)
-prev_tag=$(git describe --tags --abbrev=0 "${prev_tag_commit}")
+prev_tag_git=$(git describe --tags --abbrev=0 "${prev_tag_commit}")
+prev_tag=${PREVIOUS_TAG:-${prev_tag_git}}
 
 # Expected tag format <distro>-<version> e.g. distro_name-major.minor.patch
 regex="^(.*)-([0-9]+\.[0-9]+\.[0-9]+)$"
