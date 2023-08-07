@@ -13,7 +13,7 @@ Run provisioning:
 TAG_OR_UNIQUE_NAME=release_1.0 make provision
 ```
 
-In the background, it automates the deployment of the [Otel-ec2](https://github.com/newrelic-experimental/otel-env-provisioner/tree/main/terraform/otel-ec2) Terraform module.
+In the background, it automates the deployment of the [Otel-ec2](https://github.com/newrelic-experimental/env-provisioner/tree/main/terraform/otel-ec2) Terraform module.
 
 Destroy the provisioned instances:
 ```shell
