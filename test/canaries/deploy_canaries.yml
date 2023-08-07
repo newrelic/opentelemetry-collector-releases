@@ -16,7 +16,7 @@
         state: directory
     - name: Copy previous config to the machine
       template:
-        src: ./templates/nr-otel-collector-agent.yml.j2
+        src: ./templates/nr-otel-collector-agent-0.2.0.yml.j2
         dest: "{{ dockerfile_directory }}/nr-otel-collector-agent-previous.yml"
         mode: 0644
       vars:
