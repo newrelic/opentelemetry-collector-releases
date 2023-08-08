@@ -52,7 +52,7 @@ jobs:
           GPG_MAIL: 'infrastructure-eng@newrelic.com'
 
   publishing-to-s3:
-    name: Publish artifacts into s3 testing bucket
+    name: Publish artifacts into s3 staging bucket
     uses: ./.github/workflows/component_publish.yml
     needs: [prerelease]
     secrets:

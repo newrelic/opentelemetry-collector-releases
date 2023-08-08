@@ -66,7 +66,7 @@ env:
 
 jobs:
   publish:
-    name: Publish linux artifacts into s3 staging bucket
+    name: Publish linux artifacts into s3 bucket
     runs-on: ubuntu-20.04
 
     strategy:
