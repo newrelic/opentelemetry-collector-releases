@@ -133,6 +133,14 @@ Distributed under the following license(s):
 
 
 
+## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
 ## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 Distributed under the following license(s):
