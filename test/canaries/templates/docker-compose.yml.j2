@@ -6,6 +6,7 @@ services:
     image: "{{ previous_image }}"
     volumes:
       - "./nr-otel-collector-agent-previous.yml:/etc/nr-otel-collector/config.yaml"
+      - "/var/log/syslog:/var/log/syslog" #filelog receiver requires a file
     restart: always
     logging:
       driver: "journald"
@@ -14,6 +15,7 @@ services:
     image: "{{ current_image }}"
     volumes:
       - "./nr-otel-collector-agent-current.yml:/etc/nr-otel-collector/config.yaml"
+      - "/var/log/syslog:/var/log/syslog" #filelog receiver requires a file
     restart: always
     logging:
       driver: "journald"
