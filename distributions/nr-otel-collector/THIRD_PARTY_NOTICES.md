@@ -173,14 +173,6 @@ Distributed under the following license(s):
 
 
 
-## [go.opentelemetry.io/collector](https://go.opentelemetry.io/collector)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
 ## [go.opentelemetry.io/collector/component](https://go.opentelemetry.io/collector/component)
 
 Distributed under the following license(s):
@@ -246,6 +238,14 @@ Distributed under the following license(s):
 
 
 ## [go.opentelemetry.io/collector/extension/zpagesextension](https://go.opentelemetry.io/collector/extension/zpagesextension)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/otelcol](https://go.opentelemetry.io/collector/otelcol)
 
 Distributed under the following license(s):
 
