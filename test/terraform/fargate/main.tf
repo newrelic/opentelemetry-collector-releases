@@ -67,15 +67,15 @@ module "otel_infra" {
         },
         {
           "name" : "CROWDSTRIKE_CLIENT_ID",
-          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.crowdstrike_client_id}" 
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_id}" 
         },
         {
           "name" : "CROWDSTRIKE_CLIENT_SECRET",
-          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.crowdstrike_client_secret}" 
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_secret}" 
         },
         {
           "name" : "CROWDSTRIKE_CUSTOMER_ID",
-          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.crowdstrike_customer_id}" 
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_customer_id}" 
         }
       ]
     task_custom_policies = [
