@@ -7,7 +7,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "ubuntu"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -20,7 +20,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "ubuntu"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -33,7 +33,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "centos"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -46,7 +46,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "cloud-user"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -59,7 +59,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "ec2-user"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -72,7 +72,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "ec2-user"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -85,7 +85,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "ec2-user"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -98,7 +98,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "ec2-user"
     python          = "/usr/bin/python"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -111,7 +111,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "admin"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -124,7 +124,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "admin"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -137,7 +137,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "admin"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -150,7 +150,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "admin"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -163,7 +163,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "ec2-user"
     python          = "/usr/bin/python"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -176,7 +176,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "ec2-user"
     python          = "/usr/bin/python"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -189,7 +189,7 @@ ec2_otels = {
     instance_type   = "t3a.small"
     username        = "ec2-user"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
@@ -202,7 +202,7 @@ ec2_otels = {
     instance_type   = "t4g.small"
     username        = "ec2-user"
     python          = "/usr/bin/python3"
-    platform = "linux"
+    platform        = "linux"
     tags            = {
       "otel_role" = "agent"
     }
