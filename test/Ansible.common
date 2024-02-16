@@ -8,17 +8,19 @@ $(ROLES_PATH) $(COLLECTIONS_PATH):
 	@mkdir -p $@
 
 .PHONY: ansible/dependencies
-.ONESHELL:
-.SHELLFLAGS = -e
 ansible/dependencies: $(ROLES_PATH) $(COLLECTIONS_PATH)
-ifdef CROWDSTRIKE_ROLE_PULL_KEY
-ifneq ($(wildcard $(CROWDSTRIKE_ROLE_PULL_KEY)),)
-	eval $$(ssh-agent -s)
-	ssh-add $(CROWDSTRIKE_ROLE_PULL_KEY)
-endif
-endif
+ifndef CROWDSTRIKE_ROLE_PULL_KEY
 	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH)
 	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
+else ifeq ($(wildcard $(CROWDSTRIKE_ROLE_PULL_KEY)),)
+	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH)
+	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
+else
+	eval $$(ssh-agent -s) && \
+	ssh-add $(CROWDSTRIKE_ROLE_PULL_KEY) && \
+	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH) && \
+	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
+endif
 
 .PHONY: ansible/clean
 ansible/clean:
