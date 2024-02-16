@@ -16,7 +16,7 @@ endif
 
 .PHONY: provision
 provision: terraform/backend
-	$(MAKE) ansible/dependencies ANSIBLE_FOLDER=$(ANSIBLE_FOLDER) ANSIBLE_ENV_SCRIPT=$(ANSIBLE_FOLDER)/set_ansible_env.sh
+	$(MAKE) ansible/dependencies ANSIBLE_FOLDER=$(ANSIBLE_FOLDER) CROWDSTRIKE_ROLE_PULL_KEY=$(HOME)/.ssh/crowdstrike_ansible_role_key
 	terraform -chdir=$(TERRAFORM_DIR) init -reconfigure && \
 	terraform -chdir=$(TERRAFORM_DIR) apply -auto-approve
 
