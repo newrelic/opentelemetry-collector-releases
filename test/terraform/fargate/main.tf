@@ -67,15 +67,19 @@ module "otel_infra" {
         },
         {
           "name" : "CROWDSTRIKE_CLIENT_ID",
-          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_id}" 
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_id}"
         },
         {
           "name" : "CROWDSTRIKE_CLIENT_SECRET",
-          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_secret}" 
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_secret}"
         },
         {
           "name" : "CROWDSTRIKE_CUSTOMER_ID",
-          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_customer_id}" 
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_customer_id}"
+        },
+        {
+          "name" : "CROWDSTRIKE_ANSIBLE_ROLE_KEY",
+          "valueFrom" : "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_ansible_role_key}"
         }
       ]
     task_custom_policies = [
@@ -100,7 +104,8 @@ module "otel_infra" {
                   "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_docker_password}",
                   "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_id}",
                   "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_client_secret}",
-                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_customer_id}"
+                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_customer_id}",
+                  "arn:aws:secretsmanager:${var.region}:${var.accountId}:secret:${var.secret_name_crowdstrike_ansible_role_key}"
                 ]
               }
             ]
