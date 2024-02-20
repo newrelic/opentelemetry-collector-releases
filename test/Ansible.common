@@ -9,16 +9,13 @@ $(ROLES_PATH) $(COLLECTIONS_PATH):
 
 .PHONY: ansible/dependencies
 ansible/dependencies: $(ROLES_PATH) $(COLLECTIONS_PATH)
-ifndef SSH_KEY
-	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH)
-	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
-else ifeq ($(wildcard $(SSH_KEY)),)
-	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH)
-	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
-else
+ifdef SSH_KEY
 	eval $$(ssh-agent -s) && \
 	ssh-add $(SSH_KEY) && \
 	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH) && \
+	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
+else
+	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH)
 	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
 endif
 
