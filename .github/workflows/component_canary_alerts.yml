@@ -71,7 +71,7 @@ jobs:
             TF_VAR_tf_state_region=${{ inputs.TF_STATE_REGION }}
             TF_VAR_tf_state_key=${{ inputs.TF_STATE_KEY }}
           ecs_cluster_name: caos_otel_releases
-          task_definition_name: otel-releases-td
+          task_definition_name: otel-releases
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
           cloud_watch_logs_stream_name: ecs/test-otel-releases
           aws_vpc_subnet: ${{ secrets.AWS_VPC_SUBNET }}
