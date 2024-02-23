@@ -8,4 +8,5 @@ module "alerts" {
   instance_name_pattern = var.instance_name_pattern
   policies_prefix       = var.policies_prefix
   conditions            = var.conditions
+  display_names         = var.linux_display_names
 }

@@ -42,6 +42,7 @@ ifndef TF_VAR_policies_prefix
 endif
 ifeq ("$(wildcard $(PROVISION_ALERTS_TERRAFORM_WORKSPACE)/vars.auto.tfvars)","")
 	@cp $(PROVISION_ALERTS_TERRAFORM_WORKSPACE)/vars.auto.tfvars.dist $(PROVISION_ALERTS_TERRAFORM_WORKSPACE)/vars.auto.tfvars
+	@$(PROVISION_ALERTS_TERRAFORM_WORKSPACE)/fetch_instances.sh $(TF_VAR_instance_name_pattern) >> $(PROVISION_ALERTS_TERRAFORM_WORKSPACE)/vars.auto.tfvars
 endif
 	@cd $(PROVISION_ALERTS_TERRAFORM_WORKSPACE) \
     && terraform get -update \
