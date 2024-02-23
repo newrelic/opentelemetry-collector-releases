@@ -18,7 +18,7 @@ jobs:
       CANARIES_NR_API_KEY: ${{ secrets.CANARIES_NR_API_KEY }}
     with:
       TAG: ${{ github.event.inputs.tag }}
-      NR_ACCOUNT_ID: 1038907
+      NR_ACCOUNT_ID: 11952800
       NR_REGION: Staging
       # To be decided 👇
       INSTANCE_NAME_PATTERN: otel-canary:${{ github.event.inputs.tag }}-*
