@@ -3,7 +3,7 @@ include ../Ansible.common
 
 TERRAFORM_DIR := ./terraform
 ANSIBLE_FOLDER := ./terraform
-SSH_KEY ?= $(HOME)/.ssh/crowdstrike_ansible_role_key
+SSH_KEY ?= "$(HOME)/.ssh/crowdstrike_ansible_role_key"
 .DEFAULT_GOAL := provision
 
 .PHONY: terraform/backend
