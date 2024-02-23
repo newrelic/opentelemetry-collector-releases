@@ -16,7 +16,7 @@ endif
 
 .PHONY: provision
 provision: terraform/backend
-	$(MAKE) ansible/dependencies ANSIBLE_FOLDER=$(ANSIBLE_FOLDER) SSH_KEY=$(CROWDSTRIKE_SSH_KEY)
+	$(MAKE) ansible/dependencies ANSIBLE_FOLDER=$(ANSIBLE_FOLDER) CUSTOM_SSH_KEY=$(CROWDSTRIKE_SSH_KEY)
 	terraform -chdir=$(TERRAFORM_DIR) init -reconfigure && \
 	terraform -chdir=$(TERRAFORM_DIR) apply -auto-approve
 

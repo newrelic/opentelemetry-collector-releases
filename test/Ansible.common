@@ -9,9 +9,9 @@ $(ROLES_PATH) $(COLLECTIONS_PATH):
 
 .PHONY: ansible/dependencies
 ansible/dependencies: $(ROLES_PATH) $(COLLECTIONS_PATH)
-ifdef SSH_KEY
+ifdef CUSTOM_SSH_KEY
 	eval $$(ssh-agent -s) && \
-	ssh-add $(SSH_KEY) && \
+	ssh-add $(CUSTOM_SSH_KEY) && \
 	ansible-galaxy role install -r $(REQUIREMENTS_FILE) -p $(ROLES_PATH) && \
 	ansible-galaxy collection install -r $(REQUIREMENTS_FILE) -p $(COLLECTIONS_PATH)
 else
