@@ -10,6 +10,6 @@ variable "tf_state_region" {}
 variable "account_id" {}
 variable "api_key" {}
 variable "region" {}
-variable "instance_name_pattern" {}
 variable "policies_prefix" {}
 variable "conditions" {}
+variable "linux_display_names" {}

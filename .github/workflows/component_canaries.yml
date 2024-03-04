@@ -64,7 +64,7 @@ jobs:
 #        uses: newrelic/fargate-runner-action@main
 #        with:
 #          aws_region: us-east-2
-#          container_make_target: "test/provision-clean TAG_OR_UNIQUE_NAME=canary:${{ env.TAG }}-${{ env.PLATFORM }}"
+#          container_make_target: "test/provision-clean TAG_OR_UNIQUE_NAME=otel-canary:${{ env.TAG }}-${{ env.PLATFORM }}"
 #          ecs_cluster_name: caos_otel_releases
 #          task_definition_name: otel-releases
 #          cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
@@ -79,7 +79,7 @@ jobs:
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2 TAG_OR_UNIQUE_NAME=canary:${{ env.TAG }}-${{ env.PLATFORM }} NRDOT_VERSION=${{ env.NR_VERSION }}"
+          container_make_target: "test/provision TF_VAR_inventory_output=/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2 TAG_OR_UNIQUE_NAME=otel-canary:${{ env.TAG }}-${{ env.PLATFORM }} NRDOT_VERSION=${{ env.NR_VERSION }}"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases

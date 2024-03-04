@@ -3,7 +3,7 @@ include ../Ansible.common
 
 TERRAFORM_DIR := ./terraform
 ANSIBLE_FOLDER := ./terraform
-SSH_KEY ?= $(HOME)/.ssh/crowdstrike_ansible_role_key
+CROWDSTRIKE_SSH_KEY ?= "$(HOME)/.ssh/crowdstrike_ansible_role_key"
 .DEFAULT_GOAL := provision
 
 .PHONY: terraform/backend
@@ -16,7 +16,7 @@ endif
 
 .PHONY: provision
 provision: terraform/backend
-	$(MAKE) ansible/dependencies ANSIBLE_FOLDER=$(ANSIBLE_FOLDER) SSH_KEY=$(SSH_KEY)
+	$(MAKE) ansible/dependencies ANSIBLE_FOLDER=$(ANSIBLE_FOLDER) CUSTOM_SSH_KEY=$(CROWDSTRIKE_SSH_KEY)
 	terraform -chdir=$(TERRAFORM_DIR) init -reconfigure && \
 	terraform -chdir=$(TERRAFORM_DIR) apply -auto-approve
 
