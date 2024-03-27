@@ -1,0 +1,25 @@
+{
+  "extends": [
+    "config:base",
+  ],
+  // Label PRs with `dependencies`.
+  "labels": ["dependencies"],
+  "enabledManagers": [
+    // Enable only the regex manager (for manifest).
+    "regex"
+  ],
+  "regexManagers": [
+    {
+      // Parse bundle image version from `base_image` ARG in Dockerfile.
+      "fileMatch": [
+        // ../distributions/*/manifest.yaml
+        "manifest.yaml"
+      ],
+      "datasourceTemplate": "golang",
+      "matchStrings": [
+        "gomod: (?<depName>.+) (?<currentValue>.+)"
+      ]
+    },
+  ]
+}
+
