@@ -18,6 +18,27 @@ e source code
 can be found at https://github.com/newrelic/infrastructure-agen
 t/.
 
+## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sclusterreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [github.com/open-telemetry/opentelemetry-collector-contrib/receiver/kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+
+Distributed under the following license(s):
+
+* Apache-2.0
 
 
 
