@@ -2,42 +2,42 @@ dist:
   module: github.com/newrelic/opentelemetry-collector-releases/nr-otel-collector
   name: nr-otel-collector
   description: New Relic OpenTelemetry Collector
-  version: 0.6.0
+  version: 0.7.0
   output_path: ./_build
-  otelcol_version: 0.88.0
+  otelcol_version: 0.91.0
 
 extensions:
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.88.0
-  - gomod: go.opentelemetry.io/collector/extension/zpagesextension v0.88.0
-  - gomod: go.opentelemetry.io/collector/extension/ballastextension v0.88.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.91.0
+  - gomod: go.opentelemetry.io/collector/extension/zpagesextension v0.91.0
+  - gomod: go.opentelemetry.io/collector/extension/ballastextension v0.91.0
 
 exporters:
-  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.88.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.88.0
-  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.88.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.91.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.91.0
+  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.91.0
 
 processors:
-  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.88.0
-  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor v0.88.0
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.91.0
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor v0.91.0
   - gomod: github.com/newrelic/opentelemetry-collector-components/processor/apmprocessor v0.0.1
 
 receivers:
-  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver v0.88.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver v0.88.0
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver v0.91.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver v0.91.0
 
 connectors:
   - gomod: github.com/newrelic/opentelemetry-collector-components/connector/apmconnector v0.0.1
