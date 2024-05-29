@@ -18,26 +18,25 @@ on:
         required: true
         type: string
 
-
 jobs:
   trivy_scanner:
     name: Trivy scanner for docker
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     if: ${{ ! github.event.schedule }} # Table output
     steps:
       - name: newrelic/nr-otel-collector
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "${{ inputs.image }}:${{ inputs.tag }}"
-          format: 'table'
-          exit-code: '1'
+          format: "table"
+          exit-code: "1"
           ignore-unfixed: true
-          vuln-type: 'os,library'
+          vuln-type: "os,library"
           severity: "${{ inputs.severity }}"
 
   trivy_scanner_scheduled:
     name: Scheduled Trivy scanner for docker
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     if: ${{ github.event.schedule }} # Upload sarif when running periodically
     steps:
       - name: Checkout
@@ -47,18 +46,18 @@ jobs:
         uses: aquasecurity/trivy-action@0.8.0
         with:
           image-ref: "${{ inputs.image }}:${{ inputs.tag }}"
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          vuln-type: 'os,library'
+          format: "sarif"
+          output: "trivy-results.sarif"
+          vuln-type: "os,library"
           severity: "${{ inputs.severity }}"
-          exit-code: '1'
+          exit-code: "1"
           ignore-unfixed: true
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         if: ${{ always() }}
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: Send notification to Slack Workflow
         if: ${{ failure() }}
