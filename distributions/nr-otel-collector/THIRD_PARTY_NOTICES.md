@@ -21,22 +21,6 @@ t/.
 
 
 
-## [github.com/newrelic/opentelemetry-collector-components/connector/apmconnector](https://github.com/newrelic/opentelemetry-collector-components)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
-## [github.com/newrelic/opentelemetry-collector-components/processor/apmprocessor](https://github.com/newrelic/opentelemetry-collector-components)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
 ## [github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 Distributed under the following license(s):
@@ -198,6 +182,62 @@ Distributed under the following license(s):
 
 
 ## [go.opentelemetry.io/collector/component](https://go.opentelemetry.io/collector/component)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap](https://go.opentelemetry.io/collector/confmap)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap/converter/expandconverter](https://go.opentelemetry.io/collector/confmap/converter/expandconverter)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap/provider/envprovider](https://go.opentelemetry.io/collector/confmap/provider/envprovider)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap/provider/fileprovider](https://go.opentelemetry.io/collector/confmap/provider/fileprovider)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap/provider/httpprovider](https://go.opentelemetry.io/collector/confmap/provider/httpprovider)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap/provider/httpsprovider](https://go.opentelemetry.io/collector/confmap/provider/httpsprovider)
+
+Distributed under the following license(s):
+
+* Apache-2.0
+
+
+
+## [go.opentelemetry.io/collector/confmap/provider/yamlprovider](https://go.opentelemetry.io/collector/confmap/provider/yamlprovider)
 
 Distributed under the following license(s):
 
