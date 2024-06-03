@@ -15,7 +15,7 @@ on:
 jobs:
   snyk:
     name: Scheduled Snyk scanner
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,9 +23,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
-          go-version: '~1.20.8'
+          go-version: "~1.22.3"
           check-latest: true
 
       - name: build to generate go.mod
@@ -43,7 +43,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         if: ${{ always() }}
         with:
-          sarif_file: 'snyk-results.sarif'
+          sarif_file: "snyk-results.sarif"
 
       - name: Send notification to Slack Workflow
         if: ${{ failure() }}

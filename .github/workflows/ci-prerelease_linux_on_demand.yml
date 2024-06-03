@@ -9,10 +9,13 @@ on:
       dest_prefix:
         description: 'Repo prefix'
         required: true
+      tag:
+        description: 'tag used for the testing release'
+        required: true
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  TAG: "0.2.0"
+  TAG: ${{ github.event.inputs.tag }}
   DOCKER_HUB_ID: ${{secrets.OHAI_DOCKER_HUB_ID}}
   DOCKER_HUB_PASSWORD: ${{secrets.OHAI_DOCKER_HUB_PASSWORD}}
   # required for GHA publish action, should be moved into optional
@@ -36,7 +39,7 @@ env:
 jobs:
   packaging:
     name: Build and publish packages to custom repo
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       max-parallel: 1
@@ -56,7 +59,8 @@ jobs:
           fetch-depth: 0
 
       - name: "Tag this commit" # required for Goreleaser
-        run: git tag nr-otel-collector-${{ env.TAG }}
+        # force tagging to allow to have a testing release with existing tag.
+        run: git tag -f nr-otel-collector-${{ env.TAG }}
 
       - name: Set and validate distribution name and version
         run: .github/workflows/scripts/set_version.sh
@@ -65,9 +69,9 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v5
         with:
-          go-version: '~1.20.8'
+          go-version: '~1.22.3'
           check-latest: true
 
       - name: Generate distribution sources

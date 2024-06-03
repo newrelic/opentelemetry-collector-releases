@@ -44,10 +44,10 @@ on:
         type: string
 
 env:
-  GPG_MAIL: 'infrastructure-eng@newrelic.com'
+  GPG_MAIL: "infrastructure-eng@newrelic.com"
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
   GPG_PRIVATE_KEY_BASE64: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }} # base64 encoded
-  TAG:  ${{ inputs.TAG }}
+  TAG: ${{ inputs.TAG }}
   DOCKER_HUB_ID: ${{ secrets.DOCKER_HUB_ID }}
   DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
   SCHEMA_BRANCH: ${{ inputs.SCHEMA_BRANCH }}
@@ -67,7 +67,7 @@ env:
 jobs:
   publish:
     name: Publish linux artifacts into s3 bucket
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       max-parallel: 1
