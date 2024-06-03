@@ -173,14 +173,6 @@ Distributed under the following license(s):
 
 
 
-## [github.com/stretchr/testify](https://github.com/stretchr/testify)
-
-Distributed under the following license(s):
-
-* MIT
-
-
-
 ## [go.opentelemetry.io/collector/component](https://go.opentelemetry.io/collector/component)
 
 Distributed under the following license(s):
