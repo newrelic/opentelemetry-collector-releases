@@ -4,8 +4,9 @@
 # If the collector is not installed through a package manager, the following
 # environment variables need to be set:
 # - NEW_RELIC_MEMORY_LIMIT_MIB: Maximum amount of memory to be used. (default: 100)
-# - OTEL_EXPORTER_OTLP_ENDPOINT: New Relic Otlp endpoint to export metrics to (see: https://docs.newrelic.com/docs/more-integrations/open-source-telemetry-integrations/opentelemetry/get-started/opentelemetry-set-up-your-app/#review-settings)
+# - OTEL_EXPORTER_OTLP_ENDPOINT: New Relic OTLP endpoint to export metrics to (see: https://docs.newrelic.com/docs/opentelemetry/best-practices/opentelemetry-otlp/)
 
+# Keep host monitoring configuration in sync with: https://github.com/newrelic/newrelic-opentelemetry-examples/blob/main/other-examples/collector/host-monitoring/k8s/collector.yaml
 extensions:
   health_check:
 
@@ -16,7 +17,8 @@ receivers:
       http:
 
   hostmetrics:
-    collection_interval: 20s
+    # Default collection interval is 60s. Lower if you need finer granularity.
+    collection_interval: 60s
     scrapers:
       cpu:
         metrics:
@@ -51,13 +53,14 @@ receivers:
         metrics:
           system.network.connections:
             enabled: false
-      processes:
-      process:
-        metrics:
-          process.cpu.utilization:
-            enabled: true
-          process.cpu.time:
-            enabled: false
+      # Uncomment to enable process metrics, which can be noisy but valuable.
+      # processes:
+      # process:
+      #  metrics:
+      #    process.cpu.utilization:
+      #      enabled: true
+      #    process.cpu.time:
+      #      enabled: false
 
   filelog:
     include:
@@ -147,6 +150,15 @@ processors:
       - key: type
         action: delete
 
+  cumulativetodelta:
+
+  transform/host:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "")
+          - set(unit, "")
+
   transform:
     trace_statements:
       - context: span
@@ -184,16 +196,15 @@ processors:
 
 exporters:
   logging:
-  otlp:
+  otlphttp:
     endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
     headers:
       api-key: ${NEW_RELIC_LICENSE_KEY}
 
-
 service:
   pipelines:
-    metrics:
-      receivers: [otlp, hostmetrics]
+    metrics/host:
+      receivers: [hostmetrics]
       processors:
         - memory_limiter
         - metricstransform
@@ -206,17 +217,27 @@ service:
         - filter/exclude_system_disk
         - filter/exclude_network
         - attributes/exclude_system_paging
-        - batch
+        - transform/host
         - resourcedetection
         - resourcedetection/cloud
-      exporters: [logging,otlp]
+        - cumulativetodelta
+        - batch
+      exporters: [logging, otlphttp]
+    logs/host:
+      receivers: [filelog]
+      processors: [transform, resourcedetection, resourcedetection/cloud, batch]
+      exporters: [logging, otlphttp]
     traces:
       receivers: [otlp]
       processors: [transform, resourcedetection, resourcedetection/cloud, batch]
-      exporters: [logging, otlp]
-    logs:
-      receivers: [otlp, filelog]
+      exporters: [logging, otlphttp]
+    metrics:
+      receivers: [otlp]
       processors: [transform, resourcedetection, resourcedetection/cloud, batch]
-      exporters: [logging, otlp]
+      exporters: [logging, otlphttp]
+    logs:
+      receivers: [otlp]
+      processors: [transform, resourcedetection, resourcedetection/cloud, batch]
+      exporters: [logging, otlphttp]
 
   extensions: [health_check]
