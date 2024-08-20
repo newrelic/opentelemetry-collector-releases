@@ -55,7 +55,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v4
         with:
           distribution: goreleaser
-          version: latest
+          version: '~> v1'
           args: --snapshot --clean --skip-sign --timeout 2h
         env:
           GORELEASER_CURRENT_TAG: 0.0.0
