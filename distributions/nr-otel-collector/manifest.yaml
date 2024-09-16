@@ -15,7 +15,7 @@ exporters:
   - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.106.1
   - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.106.1
   - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.106.1
-  - gomod: go.opentelemetry.io/collector/exporter/prometheusremotewriteexporter v0.106.1
+  - gomod: go.opentelemetry.io/collector/exporter/prometheusremotewriteexporter v0.33.0
 
 processors:
   - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.106.1
