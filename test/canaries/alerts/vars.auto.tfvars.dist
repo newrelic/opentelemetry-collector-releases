@@ -374,7 +374,7 @@ conditions = [
   {
     name          = "host receiver network packets receive"
     metric        = "system.network.packets"
-    threshold     = 0
+    threshold     = 2
     duration      = 600
     operator      = "above"
     template_name = "./nrql_templates/single_metric_comparator.tftpl"
@@ -385,7 +385,7 @@ conditions = [
   {
     name          = "host receiver network packets transmit"
     metric        = "system.network.packets"
-    threshold     = 0.6
+    threshold     = 2
     duration      = 600
     operator      = "above"
     template_name = "./nrql_templates/single_metric_comparator.tftpl"
