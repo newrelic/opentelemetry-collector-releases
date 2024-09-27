@@ -100,7 +100,7 @@ jobs:
 
       - name: Publish ${{ matrix.assetsType }} to S3 action
         if: ${{ (env.ASSETS_TYPE == 'all' || env.ASSETS_TYPE == matrix.assetsType) }}
-        uses: newrelic/infrastructure-publish-action@v1.2.6
+        uses: newrelic/infrastructure-publish-action@v1
         with:
           tag: ${{ env.TAG }}
           app_version: ${{ env.NR_VERSION }}

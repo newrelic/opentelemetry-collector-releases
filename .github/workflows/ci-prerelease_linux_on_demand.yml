@@ -96,7 +96,7 @@ jobs:
           GPG_MAIL: 'infrastructure-eng@newrelic.com'
 
       - name: Publish ${{ matrix.assetsType }} to S3 action
-        uses: newrelic/infrastructure-publish-action@v1.2.6
+        uses: newrelic/infrastructure-publish-action@v1
         with:
           tag: ${{ env.TAG }}
           app_version: ${{ env.NR_VERSION }}
