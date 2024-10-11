@@ -197,14 +197,6 @@ Distributed under the following license(s):
 
 
 
-## [go.opentelemetry.io/collector/confmap/converter/expandconverter](https://go.opentelemetry.io/collector/confmap/converter/expandconverter)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
 ## [go.opentelemetry.io/collector/confmap/provider/envprovider](https://go.opentelemetry.io/collector/confmap/provider/envprovider)
 
 Distributed under the following license(s):
