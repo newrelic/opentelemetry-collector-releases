@@ -253,7 +253,7 @@ Distributed under the following license(s):
 
 
 
-## [go.opentelemetry.io/collector/exporter/loggingexporter](https://go.opentelemetry.io/collector/exporter/loggingexporter)
+## [go.opentelemetry.io/collector/exporter/debugexporter](https://go.opentelemetry.io/collector/exporter/debugexporter)
 
 Distributed under the following license(s):
 
