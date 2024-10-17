@@ -253,7 +253,7 @@ Distributed under the following license(s):
 
 
 
-## [go.opentelemetry.io/collector/exporter/loggingexporter](https://go.opentelemetry.io/collector/exporter/loggingexporter)
+## [go.opentelemetry.io/collector/exporter/debugexporter](https://go.opentelemetry.io/collector/exporter/debugexporter)
 
 Distributed under the following license(s):
 
@@ -278,14 +278,6 @@ Distributed under the following license(s):
 
 
 ## [go.opentelemetry.io/collector/extension](https://go.opentelemetry.io/collector/extension)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
-## [go.opentelemetry.io/collector/extension/ballastextension](https://go.opentelemetry.io/collector/extension/ballastextension)
 
 Distributed under the following license(s):
 
