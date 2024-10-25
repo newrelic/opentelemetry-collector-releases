@@ -16,8 +16,10 @@ on:
         required: true
         type: string
       PREVIOUS_TAG:
-        required: true
+        required: false
         type: string
+        # by default set_version.sh will infer previous tag based on TAG
+        default: ''
       PLATFORM:
         required: true
         type: string
