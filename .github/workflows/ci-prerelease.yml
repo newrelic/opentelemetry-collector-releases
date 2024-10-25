@@ -106,7 +106,6 @@ jobs:
     needs: [packaging-tests]
     with:
       TAG: ${{ github.ref_name }}
-      PREVIOUS_TAG: "latest"
       PLATFORM: "linux"
       IMAGE: "newrelic/nr-otel-collector" #should be changed after pre-release
     secrets:
