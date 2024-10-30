@@ -7,7 +7,7 @@ conditions = [
   {
     name          = "host receiver cpu.utilization"
     metric        = "system.cpu.utilization"
-    threshold     = 0.0001
+    threshold     = 0.001
     duration      = 600
     operator      = "above"
     template_name = "./nrql_templates/single_metric_comparator.tftpl"
@@ -352,7 +352,7 @@ conditions = [
   {
     name          = "host receiver network io receive"
     metric        = "system.network.io"
-    threshold     = 50
+    threshold     = 200
     duration      = 600
     operator      = "above"
     template_name = "./nrql_templates/single_metric_comparator.tftpl"
@@ -374,7 +374,7 @@ conditions = [
   {
     name          = "host receiver network packets receive"
     metric        = "system.network.packets"
-    threshold     = 2
+    threshold     = 5
     duration      = 600
     operator      = "above"
     template_name = "./nrql_templates/single_metric_comparator.tftpl"
@@ -385,7 +385,7 @@ conditions = [
   {
     name          = "host receiver network packets transmit"
     metric        = "system.network.packets"
-    threshold     = 2
+    threshold     = 5
     duration      = 600
     operator      = "above"
     template_name = "./nrql_templates/single_metric_comparator.tftpl"
