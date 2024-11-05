@@ -285,14 +285,6 @@ Distributed under the following license(s):
 
 
 
-## [go.opentelemetry.io/collector/extension/ballastextension](https://go.opentelemetry.io/collector/extension/ballastextension)
-
-Distributed under the following license(s):
-
-* Apache-2.0
-
-
-
 ## [go.opentelemetry.io/collector/extension/zpagesextension](https://go.opentelemetry.io/collector/extension/zpagesextension)
 
 Distributed under the following license(s):
