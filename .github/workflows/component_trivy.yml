@@ -52,6 +52,10 @@ jobs:
           severity: "${{ inputs.severity }}"
           exit-code: "1"
           ignore-unfixed: true
+        env:
+          # dbs are downloaded async in download_trivy_db.yml
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
@@ -67,7 +71,7 @@ jobs:
           # This data can be any valid JSON from a previous step in the GitHub Action
           payload: |
             {
-              "text": ":rotating_light: Hi CAOS (@hero), critical or high vulnerabilities found in NRDOT, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"
+              "text": ":rotating_light: Hi from your Github Action, vulnerabilities found in NRDOT, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}
