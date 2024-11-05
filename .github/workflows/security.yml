@@ -15,14 +15,11 @@ jobs:
     uses: ./.github/workflows/component_snyk.yml
     secrets:
       snyk_token: ${{ secrets.CAOS_SNYK_TOKEN }}
-      slack_webhook: ${{ secrets.CAOS_SLACK_WEBHOOK }}
     with:
       # minimum level is high
       severity: "high"
   docker-trivy:
     uses: ./.github/workflows/component_trivy.yml
-    secrets:
-      slack_webhook: ${{ secrets.CAOS_SLACK_WEBHOOK }}
     with:
       tag: "${{ inputs.tag || 'latest' }}"
       severity: "CRITICAL,HIGH"
