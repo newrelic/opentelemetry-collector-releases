@@ -53,7 +53,7 @@ jobs:
           # This data can be any valid JSON from a previous step in the GitHub Action
           payload: |
             {
-              "text": ":rotating_light: Hi CAOS (@hero), critical or high vulnerabilities found in NRDOT, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"
+              "text": ":rotating_light: Hi from your Github Action, vulnerabilities found in NRDOT, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}

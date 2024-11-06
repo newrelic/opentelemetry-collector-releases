@@ -64,7 +64,7 @@ jobs:
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
 
       - name: Trivy security check
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: "newrelic/nr-otel-collector:${{ env.version }}-rc-amd64"
           format: 'table'
@@ -72,3 +72,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: "HIGH,CRITICAL"
+        env:
+          # dbs are downloaded async in download_trivy_db.yml
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
