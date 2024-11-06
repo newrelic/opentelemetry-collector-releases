@@ -64,7 +64,7 @@ jobs:
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
 
       - name: Trivy security check
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: "newrelic/nr-otel-collector:${{ env.version }}-rc-amd64"
           format: 'table'

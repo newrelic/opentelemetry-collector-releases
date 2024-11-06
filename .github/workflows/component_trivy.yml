@@ -25,7 +25,7 @@ jobs:
     if: ${{ ! github.event.schedule }} # Table output
     steps:
       - name: newrelic/nr-otel-collector
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: "${{ inputs.image }}:${{ inputs.tag }}"
           format: "table"
@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Sarif newrelic/nr-otel-collector
-        uses: aquasecurity/trivy-action@0.8.0
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: "${{ inputs.image }}:${{ inputs.tag }}"
           format: "sarif"
