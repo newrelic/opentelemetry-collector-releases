@@ -1,4 +1,4 @@
-name: 💥 Clean test infra on demand
+name: 🪲 Destroy Test Infra
 
 on:
   workflow_dispatch:
