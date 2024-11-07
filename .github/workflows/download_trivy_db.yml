@@ -20,19 +20,17 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/.cache/trivy/db
           # try GHCR, fallback to ECR
-          { oras pull ghcr.io/aquasecurity/trivy-db:2 } || { oras pull public.ecr.aws/aquasecurity/trivy-db:2 }
+          oras pull ghcr.io/aquasecurity/trivy-db:2 || oras pull public.ecr.aws/aquasecurity/trivy-db:2
           tar -xzf db.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/db
           rm db.tar.gz
-
-      # Also recommended by trivy docs for non-java projects as jars could be embedded in unexpected places
       - name: Download and extract the Java DB
+      # Also recommended by trivy docs for non-java projects as jars could be embedded in unexpected places
         run: |
           mkdir -p $GITHUB_WORKSPACE/.cache/trivy/java-db
           # try GHCR, fallback to ECR
-          { oras pull ghcr.io/aquasecurity/trivy-java-db:1 } || { oras pull public.ecr.aws/aquasecurity/trivy-java-db:1 }
+          { oras pull ghcr.io/aquasecurity/trivy-java-db:1; } || { oras pull public.ecr.aws/aquasecurity/trivy-java-db:1; }
           tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/java-db
           rm javadb.tar.gz
-
       - name: Cache DBs
         uses: actions/cache/save@v4
         with:
