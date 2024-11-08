@@ -40,7 +40,11 @@ jobs:
 
       - name: Print Trivy scan results # action can't do both table/sarif output, so we just print the sarif file
         run: |
-          cat trivy-results.sarif
+          if [[ -s trivy-results.sarif ]]; then
+            cat trivy-results.sarif
+          else
+            echo "No sarif file found"
+          fi
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         if: ${{ inputs.tag == 'latest' }} # Upload sarif only for latest
