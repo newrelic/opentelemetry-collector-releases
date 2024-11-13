@@ -33,6 +33,7 @@ jobs:
           severity: "${{ inputs.severity }}"
           exit-code: "1"
           ignore-unfixed: true
+          limit-severities-for-sarif: true
         env:
           # dbs are downloaded async in download_trivy_db.yml
           TRIVY_SKIP_DB_UPDATE: true
