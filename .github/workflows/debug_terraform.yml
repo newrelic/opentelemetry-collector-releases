@@ -1,0 +1,54 @@
+name: 🪲 Terraform
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to run the workflow on"
+        type: string
+        required: true
+      tf_work_subdir:
+        description: "Subdir of ./test/terraform/ to execute tf in. Used to separate different tf use cases"
+        type: string
+        required: true
+      execute_plan:
+        description: "Whether to run `terraform plan` or not"
+        type: boolean
+        required: true
+        default: false
+      execute_apply:
+        description: "Whether to run `terraform apply` or not"
+        type: boolean
+        required: true
+        default: false
+      execute_plan_destroy:
+        description: "Whether to run `terraform plan -destroy` or not"
+        type: boolean
+        required: true
+        default: false
+      execute_destroy:
+        description: "Whether to run `terraform destroy` or not"
+        type: boolean
+        required: true
+        default: false
+      tf_log:
+        description: "Terraform log level (TRACE, DEBUG, INFO, WARN or ERROR)"
+        type: string
+        required: false
+        default: "INFO"
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/component_terraform.yml
+    with:
+      branch: ${{ inputs.branch }}
+      tf_work_subdir: ${{inputs.tf_work_subdir}}
+      execute_plan: ${{ inputs.execute_plan }}
+      execute_apply: ${{ inputs.execute_apply }}
+      execute_plan_destroy: ${{ inputs.execute_plan_destroy }}
+      execute_destroy: ${{ inputs.execute_destroy }}
+      tf_log: ${{ inputs.tf_log }}
+    secrets:
+      aws_access_key_id: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{secrets.OTELCOMM_AWS_TEST_ACC_SECRET_ACCESS_KEY}}
+      aws_account_id: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}
