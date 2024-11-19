@@ -14,28 +14,28 @@ on:
       execute_plan:
         description: "Whether to run `terraform plan` or not"
         type: boolean
-        required: true
+        required: false
         default: false
       execute_apply:
         description: "Whether to run `terraform apply` or not"
         type: boolean
-        required: true
+        required: false
         default: false
       execute_plan_destroy:
         description: "Whether to run `terraform plan -destroy` or not"
         type: boolean
-        required: true
+        required: false
         default: false
       execute_destroy:
         description: "Whether to run `terraform destroy` or not"
         type: boolean
-        required: true
+        required: false
         default: false
       tf_log:
         description: "Terraform log level (TRACE, DEBUG, INFO, WARN or ERROR)"
         type: string
         required: false
-        default: "WARN"
+        default: "INFO"
     secrets:
       aws_access_key_id:
         description: "AWS credentials for tf with permission to assume resource-provider"
@@ -84,7 +84,7 @@ jobs:
         working-directory: ./test/terraform/${{ inputs.tf_work_subdir }}
         run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
+      - name: Terraform Plan Destroy
         if: ${{ inputs.execute_plan_destroy }}
         working-directory: ./test/terraform/${{ inputs.tf_work_subdir }}
         run: terraform plan -destroy
