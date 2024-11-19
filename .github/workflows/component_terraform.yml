@@ -84,7 +84,7 @@ jobs:
         working-directory: ./test/terraform/${{ inputs.tf_work_subdir }}
         run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
+      - name: Terraform Plan Destroy
         if: ${{ inputs.execute_plan_destroy }}
         working-directory: ./test/terraform/${{ inputs.tf_work_subdir }}
         run: terraform plan -destroy
