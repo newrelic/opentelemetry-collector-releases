@@ -35,7 +35,7 @@ on:
         description: "Terraform log level (TRACE, DEBUG, INFO, WARN or ERROR)"
         type: string
         required: false
-        default: "INFO"
+        default: "WARN"
     secrets:
       aws_access_key_id:
         description: "AWS credentials for tf with permission to assume resource-provider"
