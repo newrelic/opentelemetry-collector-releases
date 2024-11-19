@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -69,3 +69,15 @@ jobs:
           # dbs are downloaded async in download_trivy_db.yml
           TRIVY_SKIP_DB_UPDATE: true
           TRIVY_SKIP_JAVA_DB_UPDATE: true
+  terraform:
+    uses: ./.github/workflows/component_terraform.yml
+    with:
+      branch: ${{ github.ref }}
+      tf_work_subdir: permanent
+      execute_plan: true
+      # apply only after merge to main
+      execute_apply: ${{ github.ref_name == 'main' && github.event_name == 'push' }}
+    secrets:
+      aws_access_key_id: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{secrets.OTELCOMM_AWS_TEST_ACC_SECRET_ACCESS_KEY}}
+      aws_account_id: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}

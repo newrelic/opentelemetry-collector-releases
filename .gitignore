@@ -6,14 +6,14 @@ dist/
 .idea
 .generated-yaml/
 .vscode
-**/.terraform*
 ci/terraform/terraform.backend.tf
 inventory
 ci/terraform/caos.auto.tfvars
 # Local .terraform directories
-**/.terraform/*
+**/.terraform/
 # .tfstate files
 *.tfstate
 *.tfstate.*
 *.auto.tfvars
+# rely on pinned provider versions for now to avoid having to deal with multi-platform lock file hashes
 .terraform.lock.hcl
