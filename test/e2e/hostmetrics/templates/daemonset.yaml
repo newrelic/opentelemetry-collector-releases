@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nr-otel-collector
+  namespace: hostmetrics
+  labels:
+    app: nr-otel-collector
+spec:
+  selector:
+    matchLabels:
+      app: nr-otel-collector
+  template:
+    metadata:
+      labels:
+        app: nr-otel-collector
+    spec:
+      containers:
+        - name: nr-otel-collector
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
