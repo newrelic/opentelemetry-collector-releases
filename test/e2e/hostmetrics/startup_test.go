@@ -68,6 +68,7 @@ func TestCollectorStartup(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	time.Sleep(100 * time.Minute)
 	fmt.Println(stdout)
 	// TODO: verify collector working via healthcheck and daemonset logs maybe?
 }

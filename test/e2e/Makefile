@@ -1,4 +1,4 @@
-REQUIRED_BINS := go kind docker
+REQUIRED_BINS := go kind docker helm
 $(foreach bin,$(REQUIRED_BINS),\
     $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
 
@@ -21,4 +21,8 @@ test: load-image
 	E2E_TEST__K8S_CONTEXT_NAME=${K8S_CONTEXT_NAME} \
 	E2E_TEST__IMAGE_REPO=${IMAGE_REPO} \
 	E2E_TEST__IMAGE_TAG=${IMAGE_TAG} \
-	go test ./...
+	go test ./... -count=1
+
+# TODO: make this more generic
+cleanup:
+	helm uninstall --kube-context ${K8S_CONTEXT_NAME} -n hostmetrics collector-startup
