@@ -1,11 +1,14 @@
 package hostmetrics
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/helm"
+	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -56,19 +59,29 @@ func TestCollectorStartup(t *testing.T) {
 	helm.Upgrade(t, helmOptions, ".", chartReleaseName)
 	defer helm.Delete(t, helmOptions, chartReleaseName, true)
 
-	pods := k8s.ListPods(t, kubectlOptions, v1.ListOptions{
-		LabelSelector: "app=nr-otel-collector",
-	})
-	fmt.Println(pods)
-	if len(pods) != 1 {
-		t.Fatalf("Expected 1 pod but got %d", len(pods))
+	pods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{})
+	for _, pod := range pods {
+		k8s.WaitUntilPodAvailable(t, kubectlOptions, pod.Name, 10, 10*time.Second)
 	}
-	k8s.WaitUntilPodAvailable(t, kubectlOptions, pods[0].Name, 10, 10*time.Second)
-	stdout, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "pods")
-	if err != nil {
-		t.Fatal(err)
-	}
-	time.Sleep(100 * time.Minute)
-	fmt.Println(stdout)
+	// healthcheck exposed via
+	// 'kind extraPortMappings' > 'NodePort' > nginx sidecar > collector healthcheck
+	http_helper.HttpGetWithRetryWithCustomValidation(t, "http://localhost:30132/", &tls.Config{},
+		10, 5*time.Second, func(status int, body string) bool {
+			return status == 200 && strings.Contains(body, "Server available")
+		})
+	time.Sleep(10 * time.Minute)
+
+	// TODO: write some string based verification of metrics coming in
+	//var verificationPod *corev1.Pod
+	//for _, pod := range pods {
+	//	if strings.HasPrefix(pod.Name, "validation-backend") {
+	//		verificationPod = &pod
+	//	}
+	//}
+	//logs, err := k8s.GetPodLogsE(t, kubectlOptions, verificationPod, "validation-backend")
+	//if err != nil {
+	//	t.Fatal(err)
+	//}
+	//t.Log(logs)
 	// TODO: verify collector working via healthcheck and daemonset logs maybe?
 }
