@@ -6,8 +6,10 @@ import (
 	"github.com/gruntwork-io/terratest/modules/helm"
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -53,35 +55,42 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestCollectorStartup(t *testing.T) {
-
-	chartReleaseName := "collector-startup"
+func TestStartupBehavior(t *testing.T) {
+	chartReleaseName := "harvest-hostmetrics-and-publish-to-fake-backend"
 	helm.Upgrade(t, helmOptions, ".", chartReleaseName)
 	defer helm.Delete(t, helmOptions, chartReleaseName, true)
-
 	pods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{})
 	for _, pod := range pods {
 		k8s.WaitUntilPodAvailable(t, kubectlOptions, pod.Name, 10, 10*time.Second)
 	}
-	// healthcheck exposed via
-	// 'kind extraPortMappings' > 'NodePort' > nginx sidecar > collector healthcheck
-	http_helper.HttpGetWithRetryWithCustomValidation(t, "http://localhost:30132/", &tls.Config{},
-		10, 5*time.Second, func(status int, body string) bool {
-			return status == 200 && strings.Contains(body, "Server available")
-		})
-	time.Sleep(10 * time.Minute)
-
-	// TODO: write some string based verification of metrics coming in
-	//var verificationPod *corev1.Pod
-	//for _, pod := range pods {
-	//	if strings.HasPrefix(pod.Name, "validation-backend") {
-	//		verificationPod = &pod
-	//	}
-	//}
-	//logs, err := k8s.GetPodLogsE(t, kubectlOptions, verificationPod, "validation-backend")
-	//if err != nil {
-	//	t.Fatal(err)
-	//}
-	//t.Log(logs)
-	// TODO: verify collector working via healthcheck and daemonset logs maybe?
+	t.Run("healthcheck succeeds", func(t *testing.T) {
+		http_helper.HttpGetWithRetryWithCustomValidation(t, "http://localhost:30132/", &tls.Config{},
+			10, 5*time.Second, func(status int, body string) bool {
+				return status == 200 && strings.Contains(body, "Server available")
+			})
+	})
+	t.Run("validation-backend logs indicate processed metrics", func(t *testing.T) {
+		var verificationPod *corev1.Pod
+		for _, pod := range pods {
+			if strings.HasPrefix(pod.Name, "validation-backend") {
+				verificationPod = &pod
+			}
+		}
+		var logs string
+		for i := 0; i < 5; i++ {
+			logs = k8s.GetPodLogs(t, kubectlOptions, verificationPod, "validation-backend")
+			pattern := `Metrics\s*\{"kind":\s*"exporter", "data_type":\s*"metrics",\s*"name":\s*"debug",\s*"resource metrics":\s*\d+,\s*"metrics":\s*\d+,\s*"data points":\s*\d+\}`
+			matched, err := regexp.MatchString(pattern, logs)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if matched {
+				return
+			} else {
+				time.Sleep(1 * time.Second)
+				continue
+			}
+		}
+		t.Fatalf("validation-backend logs do not indicate processed metrics:\n=\n=\n=\n%s", logs)
+	})
 }

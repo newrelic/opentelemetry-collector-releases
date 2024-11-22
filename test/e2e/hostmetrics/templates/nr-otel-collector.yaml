@@ -9,7 +9,7 @@ spec:
     - name: nginx
       protocol: TCP
       nodePort: 30132
-      port: 13132
+      port: 13132 # nginx sidecar exposing healthcheckextension
   selector:
     app: nr-otel-collector
 ---
