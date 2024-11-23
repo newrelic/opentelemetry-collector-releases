@@ -22,6 +22,7 @@ jobs:
   build:
     name: Validate distributions build, third party libraries and security
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,6 +56,20 @@ jobs:
 
       - name: Extract image version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
+
+      - name: Setup local kind cluster
+        uses: helm/kind-action@v1
+        with:
+          version: v0.21.0
+          config: ./test/e2e/kind-config.yaml
+          cluster_name: ci-e2etest
+          wait: 60s
+
+      - name: Run local e2e tests
+        run: |
+          export IMAGE_TAG=${{ env.version }}-rc-amd64
+          export KIND_CLUSTER_NAME=ci-e2etest
+          make -f ./test/e2e/Makefile ci_test
 
       - name: Trivy security check
         uses: aquasecurity/trivy-action@0.28.0
