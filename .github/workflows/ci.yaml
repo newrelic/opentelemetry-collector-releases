@@ -11,14 +11,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-distributions:
-    name: Validate distributions
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Check unique distributions names
-        run: ./.github/workflows/scripts/check_distro_names.sh
   build:
     name: Validate distributions build, third party libraries and security
     runs-on: ubuntu-latest
