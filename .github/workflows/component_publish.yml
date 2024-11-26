@@ -104,10 +104,10 @@ jobs:
         with:
           tag: ${{ env.TAG }}
           app_version: ${{ env.NR_VERSION }}
-          app_name: "${{ env.NR_DISTRO }}"
+          app_name: "nr-otel-collector"
           repo_name: "newrelic/opentelemetry-collector-releases"
           schema: "custom"
-          schema_url: "https://raw.githubusercontent.com/newrelic/opentelemetry-collector-releases/${{ env.SCHEMA_BRANCH }}/distributions/${{ env.NR_DISTRO }}/upload-schema-${{ matrix.os }}-${{ matrix.assetsType }}.yml"
+          schema_url: "https://raw.githubusercontent.com/newrelic/opentelemetry-collector-releases/${{ env.SCHEMA_BRANCH }}/distributions/nr-otel-collector/upload-schema-${{ matrix.os }}-${{ matrix.assetsType }}.yml"
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws_s3_bucket_name: ${{ env.AWS_S3_BUCKET_NAME }}

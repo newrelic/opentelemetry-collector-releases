@@ -86,7 +86,7 @@ jobs:
         uses: newrelic/fargate-runner-action@main
         with:
           aws_region: us-east-2
-          container_make_target: "test/canaries PREVIOUS_IMAGE='newrelic/${{ env.PREVIOUS_NR_DISTRO }}:${{ env.PREVIOUS_NR_VERSION }}-rc' CURRENT_IMAGE='newrelic/${{ env.NR_DISTRO }}:${{ env.NR_VERSION }}-rc' ANSIBLE_INVENTORY='/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2' LIMIT=all"
+          container_make_target: "test/canaries PREVIOUS_IMAGE='newrelic/nr-otel-collector:${{ env.PREVIOUS_NR_VERSION }}-rc' CURRENT_IMAGE='newrelic/nr-otel-collector:${{ env.NR_VERSION }}-rc' ANSIBLE_INVENTORY='/srv/runner/inventory/${{ env.TAG }}-${{ env.PLATFORM }}-inventory.ec2' LIMIT=all"
           ecs_cluster_name: caos_otel_releases
           task_definition_name: otel-releases
           cloud_watch_logs_group_name: /ecs/test-prerelease-otel-releases
