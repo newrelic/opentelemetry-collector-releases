@@ -1,28 +1,21 @@
 #!/bin/bash
 
 REPO_DIR="$( cd "$(dirname $( dirname "${BASH_SOURCE[0]}" ))" &> /dev/null && pwd )"
-BUILDER=''
-GO=''
 
 # default values
 skipcompilation=false
 
-while getopts d:s:b:g: flag
+while getopts d:s: flag
 do
     case "${flag}" in
         d) distributions=${OPTARG};;
         s) skipcompilation=${OPTARG};;
-        b) BUILDER=${OPTARG};;
-        g) GO=${OPTARG};;
     esac
 done
 
-[[ -n "$BUILDER" ]] || BUILDER='ocb'
-[[ -n "$GO" ]] || GO='go'
-
 if [[ -z $distributions ]]; then
     echo "List of distributions to build not provided. Use '-d' to specify the names of the distributions to build. Ex.:"
-    echo "$0 -d otelcol"
+    echo "$0 -d nr-otel-collector"
     exit 1
 fi
 
@@ -35,22 +28,32 @@ echo "Distributions to build: $distributions";
 for distribution in $(echo "$distributions" | tr "," "\n")
 do
     pushd "${REPO_DIR}/distributions/${distribution}" > /dev/null
-    mkdir -p _build
+    ocb_config="manifest.yaml"
+    relative_output_dir=$(yq '.dist.output_path' "${ocb_config}")
+    echo "Output dir: $(pwd)/${relative_output_dir}"
+    mkdir -p ${relative_output_dir}
+
+    # TODO: submit PR to include git in ocb image (also delete custom Dockerfile from repo root)
+#    builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
+#    builder_image="otel/opentelemetry-collector-builder:${builder_version}"
+#    docker pull "${builder_image}"
+    builder_image="ocb-with-git:1"
+    docker build --tag "${builder_image}" . -f "${REPO_DIR}/scripts/Dockerfile"
+
+    # TODO: submit PR to update ocb docs which suggest to use '/build' instead
+    #  - docs: https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder#official-release-docker-image
+    #  - workdir defined in Dockerfile: https://github.com/open-telemetry/opentelemetry-collector-releases/blob/main/cmd/builder/Dockerfile#L11
+    #  - default is a /tmp dir: https://github.com/open-telemetry/opentelemetry-collector/blob/main/cmd/builder/internal/builder/config.go#L97
+    container_work_dir=$(docker image inspect -f '{{.Config.WorkingDir}}' ${builder_image})
+    container_path_ocb_config="${container_work_dir}/${ocb_config}"
 
     echo "Building: $distribution"
-    echo "Using Builder: $(command -v "$BUILDER")"
-    echo "Using Go: $(command -v "$GO")"
-
-    if "$BUILDER" --skip-compilation=${skipcompilation} --go "$GO" --config manifest.yaml > _build/build.log 2>&1; then
-        echo "✅ SUCCESS: distribution '${distribution}' built."
-    else
-        echo "❌ ERROR: failed to build the distribution '${distribution}'."
-        echo "🪵 Build logs for '${distribution}'"
-        echo "----------------------"
-        cat _build/build.log
-        echo "----------------------"
-        exit 1
-    fi
+    docker run \
+      -v "$(pwd)/${ocb_config}:${container_path_ocb_config}" \
+      -v "$(pwd)/${relative_output_dir}:${container_work_dir}/${relative_output_dir}" \
+      "${builder_image}" \
+      --config "${container_path_ocb_config}" \
+      --skip-compilation=${skipcompilation}
 
     popd > /dev/null
 done
