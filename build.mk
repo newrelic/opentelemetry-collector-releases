@@ -57,12 +57,3 @@ goreleaser:
 			exit 1; \
 		fi \
 	}
-
-REMOTE?=git@github.com:newrelic/opentelemetry-collector-releases.git
-.PHONY: push-tags
-push-tags:
-	@[ "${TAG}" ] || ( echo ">> env var TAG is not set"; exit 1 )
-	@echo "Adding tag ${TAG}"
-	@git tag -a ${TAG} -s -m "Version ${TAG}"
-	@echo "Pushing tag ${TAG}"
-	@git push ${REMOTE} ${TAG}

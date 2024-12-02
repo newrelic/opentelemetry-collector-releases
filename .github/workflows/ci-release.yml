@@ -50,4 +50,4 @@ jobs:
           password:  ${{ secrets.OHAI_DOCKER_HUB_PASSWORD }}
 
       - name: Publish docker manifest
-        run: .github/workflows/scripts/docker_manifest_release.sh -i newrelic/${{ env.NR_DISTRO }} -v ${{ env.NR_VERSION }}
+        run: .github/workflows/scripts/docker_manifest_release.sh -i newrelic/nr-otel-collector -v ${{ env.NR_VERSION }}

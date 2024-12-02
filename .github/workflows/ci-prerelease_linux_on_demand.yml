@@ -58,10 +58,6 @@ jobs:
           ref: ${{ env.BRANCH }}
           fetch-depth: 0
 
-      - name: "Tag this commit" # required for Goreleaser
-        # force tagging to allow to have a testing release with existing tag.
-        run: git tag -f nr-otel-collector-${{ env.TAG }}
-
       - name: Set and validate distribution name and version
         run: .github/workflows/scripts/set_version.sh
 
@@ -100,10 +96,10 @@ jobs:
         with:
           tag: ${{ env.TAG }}
           app_version: ${{ env.NR_VERSION }}
-          app_name: "${{ env.NR_DISTRO }}"
+          app_name: "nr-otel-collector"
           repo_name: "newrelic/opentelemetry-collector-releases"
           schema: "custom"
-          schema_url: "https://raw.githubusercontent.com/newrelic/opentelemetry-collector-releases/${{ env.SCHEMA_BRANCH }}/distributions/${{ env.NR_DISTRO }}/upload-schema-${{ matrix.os }}-${{ matrix.assetsType }}.yml"
+          schema_url: "https://raw.githubusercontent.com/newrelic/opentelemetry-collector-releases/${{ env.SCHEMA_BRANCH }}/distributions/nr-otel-collector/upload-schema-${{ matrix.os }}-${{ matrix.assetsType }}.yml"
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws_s3_bucket_name: ${{ env.AWS_S3_BUCKET_NAME }}
