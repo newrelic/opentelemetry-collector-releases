@@ -1,28 +1,23 @@
 #!/bin/bash
 
 REPO_DIR="$( cd "$(dirname $( dirname "${BASH_SOURCE[0]}" ))" &> /dev/null && pwd )"
-BUILDER=''
-GO=''
+# flag for ci-only behavior (CI is auto-populated with 'true' in github actions)
+ensure_docker_write_permissions=$CI
 
 # default values
 skipcompilation=false
 
-while getopts d:s:b:g: flag
+while getopts d:s: flag
 do
     case "${flag}" in
         d) distributions=${OPTARG};;
         s) skipcompilation=${OPTARG};;
-        b) BUILDER=${OPTARG};;
-        g) GO=${OPTARG};;
     esac
 done
 
-[[ -n "$BUILDER" ]] || BUILDER='ocb'
-[[ -n "$GO" ]] || GO='go'
-
 if [[ -z $distributions ]]; then
     echo "List of distributions to build not provided. Use '-d' to specify the names of the distributions to build. Ex.:"
-    echo "$0 -d otelcol"
+    echo "$0 -d nr-otel-collector"
     exit 1
 fi
 
@@ -35,21 +30,37 @@ echo "Distributions to build: $distributions";
 for distribution in $(echo "$distributions" | tr "," "\n")
 do
     pushd "${REPO_DIR}/distributions/${distribution}" > /dev/null
-    mkdir -p _build
+    ocb_config="manifest.yaml"
+    output_dir=$(yq '.dist.output_path' "${ocb_config}")
+    echo "Output dir: $(pwd)/${output_dir}"
+    if [[ -d "${output_dir}" ]]; then
+        # cleanup build dir as reruns of workflows seem to reuse the same filesystem
+        rm -rf "${output_dir}"
+    fi
+    mkdir "${output_dir}"
+    if [[ "$ensure_docker_write_permissions" == "true" ]]; then
+        # ocb dockerfile user/group id is 10001 (https://github.com/open-telemetry/opentelemetry-collector-releases/blob/main/cmd/builder/Dockerfile#L6)
+        sudo chown 10001:10001 "${output_dir}"
+    fi
+
+    builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
+    builder_image="otel/opentelemetry-collector-builder:${builder_version}"
+    docker pull "${builder_image}"
+
+    container_work_dir=$(docker image inspect -f '{{.Config.WorkingDir}}' ${builder_image})
+    container_path_ocb_config="${container_work_dir}/${ocb_config}"
 
     echo "Building: $distribution"
-    echo "Using Builder: $(command -v "$BUILDER")"
-    echo "Using Go: $(command -v "$GO")"
+    docker run \
+      -v "$(pwd)/${ocb_config}:${container_path_ocb_config}" \
+      -v "$(pwd)/${output_dir}:${container_work_dir}/${output_dir}:rw" \
+      "${builder_image}" \
+      --config "${container_path_ocb_config}" \
+      --skip-compilation=${skipcompilation}
 
-    if "$BUILDER" --skip-compilation=${skipcompilation} --go "$GO" --config manifest.yaml > _build/build.log 2>&1; then
-        echo "✅ SUCCESS: distribution '${distribution}' built."
-    else
-        echo "❌ ERROR: failed to build the distribution '${distribution}'."
-        echo "🪵 Build logs for '${distribution}'"
-        echo "----------------------"
-        cat _build/build.log
-        echo "----------------------"
-        exit 1
+    if [[ "$ensure_docker_write_permissions" == "true" ]]; then
+        # change owner of output dir back to the 'build' user to allow access for following steps
+        sudo chown -R $(id -u):$(id -g) "${output_dir}"
     fi
 
     popd > /dev/null
