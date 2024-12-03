@@ -33,17 +33,10 @@ do
     echo "Output dir: $(pwd)/${relative_output_dir}"
     mkdir -p ${relative_output_dir}
 
-    # TODO: submit PR to include git in ocb image (also delete custom Dockerfile from repo root)
-#    builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
-#    builder_image="otel/opentelemetry-collector-builder:${builder_version}"
-#    docker pull "${builder_image}"
-    builder_image="ocb-with-git:1"
-    docker build --tag "${builder_image}" . -f "${REPO_DIR}/scripts/Dockerfile"
+    builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
+    builder_image="otel/opentelemetry-collector-builder:${builder_version}"
+    docker pull "${builder_image}"
 
-    # TODO: submit PR to update ocb docs which suggest to use '/build' instead
-    #  - docs: https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder#official-release-docker-image
-    #  - workdir defined in Dockerfile: https://github.com/open-telemetry/opentelemetry-collector-releases/blob/main/cmd/builder/Dockerfile#L11
-    #  - default is a /tmp dir: https://github.com/open-telemetry/opentelemetry-collector/blob/main/cmd/builder/internal/builder/config.go#L97
     container_work_dir=$(docker image inspect -f '{{.Config.WorkingDir}}' ${builder_image})
     container_path_ocb_config="${container_work_dir}/${ocb_config}"
 
