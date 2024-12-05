@@ -31,7 +31,6 @@ do
     ocb_config="manifest.yaml"
     relative_output_dir=$(yq '.dist.output_path' "${ocb_config}")
     echo "Output dir: $(pwd)/${relative_output_dir}"
-    mkdir -p ${relative_output_dir}
 
     builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
     builder_image="otel/opentelemetry-collector-builder:${builder_version}"
