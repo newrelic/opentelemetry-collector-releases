@@ -54,5 +54,10 @@ do
       --config "${container_path_ocb_config}" \
       --skip-compilation=${skipcompilation}
 
+    if [[ "$ensure_docker_write_permissions" == "true" ]]; then
+        # change owner of output dir back to the 'build' user to allow access for following steps
+        sudo chown -R $(id -u):$(id -g) "${output_dir}"
+    fi
+
     popd > /dev/null
 done
