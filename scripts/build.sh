@@ -5,11 +5,12 @@ REPO_DIR="$( cd "$(dirname $( dirname "${BASH_SOURCE[0]}" ))" &> /dev/null && pw
 # default values
 skipcompilation=false
 
-while getopts d:s: flag
+while getopts d:s:c: flag
 do
     case "${flag}" in
         d) distributions=${OPTARG};;
         s) skipcompilation=${OPTARG};;
+        c) ci=${OPTARG};;
     esac
 done
 
@@ -29,8 +30,14 @@ for distribution in $(echo "$distributions" | tr "," "\n")
 do
     pushd "${REPO_DIR}/distributions/${distribution}" > /dev/null
     ocb_config="manifest.yaml"
-    relative_output_dir=$(yq '.dist.output_path' "${ocb_config}")
-    echo "Output dir: $(pwd)/${relative_output_dir}"
+    output_dir=$(yq '.dist.output_path' "${ocb_config}")
+    echo "Output dir: $(pwd)/${output_dir}"
+    mkdir "${output_dir}"
+    if [[ "$ci" == "true" ]]; then
+        # ci is running into permission issues when trying to write to output dir on host
+        # ocb dockerfile user/group id is 10001 (https://github.com/open-telemetry/opentelemetry-collector-releases/blob/main/cmd/builder/Dockerfile#L6)
+        sudo chown 10001:10001 "${output_dir}"
+    fi
 
     builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
     builder_image="otel/opentelemetry-collector-builder:${builder_version}"
@@ -42,7 +49,7 @@ do
     echo "Building: $distribution"
     docker run \
       -v "$(pwd)/${ocb_config}:${container_path_ocb_config}" \
-      -v "$(pwd)/${relative_output_dir}:${container_work_dir}/${relative_output_dir}:rw" \
+      -v "$(pwd)/${output_dir}:${container_work_dir}/${output_dir}:rw" \
       "${builder_image}" \
       --config "${container_path_ocb_config}" \
       --skip-compilation=${skipcompilation}
