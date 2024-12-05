@@ -42,7 +42,7 @@ do
     echo "Building: $distribution"
     docker run \
       -v "$(pwd)/${ocb_config}:${container_path_ocb_config}" \
-      -v "$(pwd)/${relative_output_dir}:${container_work_dir}/${relative_output_dir}" \
+      -v "$(pwd)/${relative_output_dir}:${container_work_dir}/${relative_output_dir}:rw" \
       "${builder_image}" \
       --config "${container_path_ocb_config}" \
       --skip-compilation=${skipcompilation}
