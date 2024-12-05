@@ -33,6 +33,10 @@ do
     ocb_config="manifest.yaml"
     output_dir=$(yq '.dist.output_path' "${ocb_config}")
     echo "Output dir: $(pwd)/${output_dir}"
+    if [[ -d "${output_dir}" ]]; then
+        # cleanup build dir as reruns of workflows seem to reuse the same filesystem
+        rm -rf "${output_dir}"
+    fi
     mkdir "${output_dir}"
     if [[ "$ensure_docker_write_permissions" == "true" ]]; then
         # ocb dockerfile user/group id is 10001 (https://github.com/open-telemetry/opentelemetry-collector-releases/blob/main/cmd/builder/Dockerfile#L6)
