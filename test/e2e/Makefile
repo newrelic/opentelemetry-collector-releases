@@ -26,10 +26,10 @@ assert_cluster-exists:
 ci_load-image: assert_cluster-exists assert_image-tag-present
 	kind load docker-image ${IMAGE_REPO}:${IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
 
-.PHONY=ci_build-load-mocked-otlp-image
+.PHONY: ci_build-load-mocked-otlp-image
 ci_build-load-mocked-otlp-image: assert_cluster-exists
-	docker build -t mocked_otlp:latest -f mocked_otlp/http/Dockerfile ./mocked_otlp/http \
-	kind load docker-image mocked_otlp --name ${KIND_CLUSTER_NAME}
+	docker build -t mocked_otlp:latest -f ${THIS_MAKEFILE_DIR}/mocked_otlp/http/Dockerfile ${THIS_MAKEFILE_DIR}/mocked_otlp/http
+	kind load docker-image mocked_otlp:latest --name ${KIND_CLUSTER_NAME}
 
 .PHONY: ci_test
 ci_test: ci_load-image ci_build-load-mocked-otlp-image
@@ -45,7 +45,7 @@ ci_test: ci_load-image ci_build-load-mocked-otlp-image
 .PHONY: local_create-cluster-if-not-exists
 local_create-cluster-if-not-exists:
 	kind get clusters | grep -q ${KIND_CLUSTER_NAME} \
-	|| kind create cluster --name ${KIND_CLUSTER_NAME} --config ${THIS_MAKEFILE_DIR}kind-config.yaml
+	|| kind create cluster --name ${KIND_CLUSTER_NAME}
 
 .PHONY: local_build-image
 local_build-image:
@@ -55,3 +55,8 @@ local_build-image:
 # hardcode an image you build with local_build-image, then run this target to run tests against it
 local_test: IMAGE_TAG=insert_locally_available_tag_to_test_here
 local_test: local_create-cluster-if-not-exists ci_test
+
+.PHONY: local_helm-cleanup
+local_helm-cleanup:
+	kubectl config use-context ${K8S_CONTEXT_NAME} && \
+	helm list -A --no-headers | awk 'NF {system("helm uninstall -n " $2 " " $1)}'

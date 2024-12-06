@@ -60,7 +60,6 @@ jobs:
         uses: helm/kind-action@v1
         with:
           version: v0.21.0
-          config: ./test/e2e/kind-config.yaml
           cluster_name: ci-e2etest
           wait: 60s
 

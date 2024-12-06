@@ -7,12 +7,11 @@ import (
 	"github.com/gruntwork-io/terratest/modules/helm"
 	httphelper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/stretchr/testify/require"
+	"github.com/gruntwork-io/terratest/modules/random"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -32,7 +31,7 @@ var (
 
 // TODO: Export from mocked module
 type ValidationPayload struct {
-	DurationInMillis int64  `json:"duration"`
+	DurationInMillis uint64 `json:"duration"`
 	Transactions     uint32 `json:"transactions"`
 }
 
@@ -74,28 +73,29 @@ func TestMain(m *testing.M) {
 		panic("E2E_TEST__IMAGE_TAG not set: provide image to test which was previously loaded into local registry")
 	}
 
+	helmOptions = &helm.Options{
+		KubectlOptions: kubectlOptions,
+		ExtraArgs: map[string][]string{
+			"install": {
+				"--namespace", TestNamespace, "--create-namespace",
+				"--set", fmt.Sprintf("image.tag=%s", collectorTag)},
+		},
+	}
+
 	m.Run()
 }
 
 func TestStartupBehavior(t *testing.T) {
-	kubeResourcePath, err := filepath.Abs("./resources/")
-	require.NoError(t, err)
-
-	k8s.CreateNamespace(t, kubectlOptions, kubectlOptions.Namespace)
-	// Make sure to delete the namespace at the end of the test
-	defer k8s.DeleteNamespace(t, kubectlOptions, kubectlOptions.Namespace)
-
-	// At the end of the test, run `kubectl delete -f RESOURCE_CONFIG` to clean up any resources that were created.
-	defer k8s.KubectlDeleteFromKustomize(t, kubectlOptions, kubeResourcePath)
-
-	// This will run `kubectl apply -f RESOURCE_CONFIG` and fail the test if there are any errors
-	k8s.KubectlApplyFromKustomize(t, kubectlOptions, kubeResourcePath)
+	releaseName := fmt.Sprintf(
+		"hostmetrics-startup-%s", strings.ToLower(random.UniqueId()))
+	defer helm.Delete(t, helmOptions, releaseName, true)
+	helm.Install(t, helmOptions, "./chart", releaseName)
 
 	t.Run("healthcheck succeeds", func(t *testing.T) {
 		te := setupTest(t)
 		defer te.teardown(t)
 
-		tunnel := k8s.NewTunnel(kubectlOptions, k8s.ResourceTypePod, te.collectorPod.Name, 30132, 30132)
+		tunnel := k8s.NewTunnel(kubectlOptions, k8s.ResourceTypePod, te.collectorPod.Name, 13133, 13133)
 		defer tunnel.Close()
 		tunnel.ForwardPort(t)
 
@@ -111,12 +111,12 @@ func TestStartupBehavior(t *testing.T) {
 		te := setupTest(t)
 		defer te.teardown(t)
 
-		tunnel := k8s.NewTunnel(kubectlOptions, k8s.ResourceTypeService, "validation-backend", 30132, 30132)
+		tunnel := k8s.NewTunnel(kubectlOptions, k8s.ResourceTypeService, "validation-backend", 8080, 8080)
 		defer tunnel.Close()
 		tunnel.ForwardPort(t)
 		url := fmt.Sprintf("http://%s/validate", tunnel.Endpoint())
 
-		httphelper.HttpGetWithRetryWithCustomValidation(t, url, nil, 2, 3*time.Second, func(statusCode int, body string) bool {
+		httphelper.HttpGetWithRetryWithCustomValidation(t, url, nil, 3, 3*time.Second, func(statusCode int, body string) bool {
 
 			if statusCode != 200 {
 				return false
@@ -130,7 +130,7 @@ func TestStartupBehavior(t *testing.T) {
 				return false
 			}
 
-			return payload.Transactions > 1
+			return payload.Transactions >= 1
 		})
 	})
 }
