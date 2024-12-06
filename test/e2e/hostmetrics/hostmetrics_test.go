@@ -2,14 +2,17 @@ package hostmetrics
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/helm"
-	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
+	httphelper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"log"
 	"os"
-	"regexp"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -27,6 +30,34 @@ var (
 	helmOptions    *helm.Options
 )
 
+// TODO: Export from mocked module
+type ValidationPayload struct {
+	DurationInMillis int64  `json:"duration"`
+	Transactions     uint32 `json:"transactions"`
+}
+
+type testEnv struct {
+	teardown     func(tb testing.TB)
+	collectorPod corev1.Pod
+}
+
+func setupTest(tb testing.TB) testEnv {
+	filters := metav1.ListOptions{
+		LabelSelector: "app=nr-otel-collector",
+	}
+	k8s.WaitUntilNumPodsCreated(tb, kubectlOptions, filters, 1, 30, 10*time.Second)
+
+	pods := k8s.ListPods(tb, kubectlOptions, filters)
+	for _, pod := range pods {
+		k8s.WaitUntilPodAvailable(tb, kubectlOptions, pod.Name, 30, 10*time.Second)
+	}
+
+	return testEnv{collectorPod: pods[0], teardown: func(tb testing.TB) {
+		log.Println("teardown test")
+	}}
+
+}
+
 func TestMain(m *testing.M) {
 	contextName = os.Getenv("E2E_TEST__K8S_CONTEXT_NAME")
 	if contextName == "" {
@@ -43,54 +74,63 @@ func TestMain(m *testing.M) {
 		panic("E2E_TEST__IMAGE_TAG not set: provide image to test which was previously loaded into local registry")
 	}
 
-	helmOptions = &helm.Options{
-		KubectlOptions: kubectlOptions,
-		ExtraArgs: map[string][]string{
-			"upgrade": {
-				"-i",
-				"--namespace", TestNamespace, "--create-namespace",
-				"--set", fmt.Sprintf("image.tag=%s", collectorTag)},
-		},
-	}
 	m.Run()
 }
 
 func TestStartupBehavior(t *testing.T) {
-	chartReleaseName := "harvest-hostmetrics-and-publish-to-fake-backend"
-	helm.Upgrade(t, helmOptions, ".", chartReleaseName)
-	defer helm.Delete(t, helmOptions, chartReleaseName, true)
-	pods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{})
-	for _, pod := range pods {
-		k8s.WaitUntilPodAvailable(t, kubectlOptions, pod.Name, 10, 10*time.Second)
-	}
+	kubeResourcePath, err := filepath.Abs("./resources/")
+	require.NoError(t, err)
+
+	k8s.CreateNamespace(t, kubectlOptions, kubectlOptions.Namespace)
+	// Make sure to delete the namespace at the end of the test
+	defer k8s.DeleteNamespace(t, kubectlOptions, kubectlOptions.Namespace)
+
+	// At the end of the test, run `kubectl delete -f RESOURCE_CONFIG` to clean up any resources that were created.
+	defer k8s.KubectlDeleteFromKustomize(t, kubectlOptions, kubeResourcePath)
+
+	// This will run `kubectl apply -f RESOURCE_CONFIG` and fail the test if there are any errors
+	k8s.KubectlApplyFromKustomize(t, kubectlOptions, kubeResourcePath)
+
 	t.Run("healthcheck succeeds", func(t *testing.T) {
-		http_helper.HttpGetWithRetryWithCustomValidation(t, "http://localhost:30132/", &tls.Config{},
+		te := setupTest(t)
+		defer te.teardown(t)
+
+		tunnel := k8s.NewTunnel(kubectlOptions, k8s.ResourceTypePod, te.collectorPod.Name, 30132, 30132)
+		defer tunnel.Close()
+		tunnel.ForwardPort(t)
+
+		url := fmt.Sprintf("http://%s/", tunnel.Endpoint())
+
+		httphelper.HttpGetWithRetryWithCustomValidation(t, url, &tls.Config{},
 			10, 5*time.Second, func(status int, body string) bool {
 				return status == 200 && strings.Contains(body, "Server available")
 			})
 	})
+
 	t.Run("validation-backend logs indicate processed metrics", func(t *testing.T) {
-		var verificationPod *corev1.Pod
-		for _, pod := range pods {
-			if strings.HasPrefix(pod.Name, "validation-backend") {
-				verificationPod = &pod
+		te := setupTest(t)
+		defer te.teardown(t)
+
+		tunnel := k8s.NewTunnel(kubectlOptions, k8s.ResourceTypeService, "validation-backend", 30132, 30132)
+		defer tunnel.Close()
+		tunnel.ForwardPort(t)
+		url := fmt.Sprintf("http://%s/validate", tunnel.Endpoint())
+
+		httphelper.HttpGetWithRetryWithCustomValidation(t, url, nil, 2, 3*time.Second, func(statusCode int, body string) bool {
+
+			if statusCode != 200 {
+				return false
 			}
-		}
-		var logs string
-		for i := 0; i < 5; i++ {
-			logs = k8s.GetPodLogs(t, kubectlOptions, verificationPod, "validation-backend")
-			pattern := `Metrics\s*\{"kind":\s*"exporter", "data_type":\s*"metrics",\s*"name":\s*"debug",\s*"resource metrics":\s*\d+,\s*"metrics":\s*\d+,\s*"data points":\s*\d+\}`
-			matched, err := regexp.MatchString(pattern, logs)
+
+			var payload ValidationPayload
+			err := json.NewDecoder(strings.NewReader(body)).Decode(&payload)
+
 			if err != nil {
-				t.Fatal(err)
+				fmt.Println(err)
+				return false
 			}
-			if matched {
-				return
-			} else {
-				time.Sleep(1 * time.Second)
-				continue
-			}
-		}
-		t.Fatalf("validation-backend logs do not indicate processed metrics:\n=\n=\n=\n%s", logs)
+
+			return payload.Transactions > 1
+		})
 	})
 }

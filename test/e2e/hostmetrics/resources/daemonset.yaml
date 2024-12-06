@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: &app nr-otel-collector
+  labels:
+    app: *app
+spec:
+  selector:
+    matchLabels:
+      app: *app
+  template:
+    metadata:
+      labels:
+        app: *app
+    spec:
+      initContainers:
+        # Wait for the backend to be up before starting the collector
+        - name: wait-for-validation
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/sh","-c" ]
+          args: [ 'while [ $(curl -ksw "%{http_code}" "http://validation-backend:8080" -o /dev/null) -ne 200 ]; do sleep 5; echo "health check failed . Waiting for validation service..."; done' ]
+      containers:
+        - name: *app
+          image: newrelic/nr-otel-collector:latest
+          imagePullPolicy: Never
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://validation-backend:4318"
+            - name: NEW_RELIC_MEMORY_LIMIT_MIB
+              value: "100"
