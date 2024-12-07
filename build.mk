@@ -1,11 +1,11 @@
-DISTRIBUTIONS ?= "nr-otel-collector"
-
-ci: build
-
+.PHONY: build
 build:
-	@./scripts/build.sh -d "${DISTRIBUTIONS}"
+	@$(MAKE) for-all-target TARGET="build-distro"
 
+.PHONY: generate-sources
 generate-sources:
-	@./scripts/build.sh -d "${DISTRIBUTIONS}" -s true
+	@$(MAKE) for-all-target TARGET="generate-sources-for-distro"
 
-
+.PHONY: clean-build-dir
+clean-build-dir:
+	@$(MAKE) for-all-target TARGET="clean-build-dir-distro"
