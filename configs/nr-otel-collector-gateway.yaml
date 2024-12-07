@@ -22,7 +22,7 @@ processors:
     limit_mib: ${NEW_RELIC_MEMORY_LIMIT_MIB}
 
 exporters:
-  logging:
+  debug:
     verbosity: detailed
   otlp:
     endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
@@ -36,11 +36,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [logging, otlp]
+      exporters: [debug, otlp]
 
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [logging, otlp]
+      exporters: [debug, otlp]
 
   extensions: [health_check]

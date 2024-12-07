@@ -1,18 +1,18 @@
 #############################################
 #### Common Makefiles for distributions #####
 #############################################
+# Note: file is included in Makefile within distro folders,
+#  so paths are relative to distro folder unless they use SRC_ROOT
 
 # SRC_ROOT is the top of the source tree.
 SRC_ROOT := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
+########################
+#### Check targets #####
+########################
 FIND_MOD_ARGS=-type f -name "go.mod"
 TO_MOD_DIR=dirname {} \; | sort | grep -E '^./'
 DISTRIBUTIONS_MODS := $(shell find ./**/* $(FIND_MOD_ARGS) -exec $(TO_MOD_DIR) )
-
-## Retrive all used dependencies in the same output
-# RESULTS := $(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all))
-
-
 
 .PHONY: third-party-notices
 third-party-notices: OUT ?= THIRD_PARTY_NOTICES.md
@@ -28,4 +28,26 @@ third-party-notices:
 
 .PHONY: third-party-notices-check
 third-party-notices-check: third-party-notices
-	@git diff --name-only | grep -q "THIRD_PARTY_NOTICES.md" && { echo "Third party notices out of date, please run \"make licenses\" and commit the changes in this PR.";  exit 1; } || exit 0
+	git diff --name-only | grep -q "THIRD_PARTY_NOTICES.md" \
+	    && { echo "Third party notices out of date, please run \"make licenses\" and commit the changes in this PR. Diff:"; git --no-pager diff HEAD -- '**/THIRD_PARTY_NOTICES.md'; exit 1; } \
+	    || exit 0
+
+
+########################
+#### Build targets #####
+########################
+DISTRO_NAME=$(shell basename $(shell pwd))
+BUILD_DIR=_build
+BINARY_NAME=$(shell yq '.dist.name' 'manifest.yaml')
+
+build-distro: $(BUILD_DIR)/$(BINARY_NAME)
+$(BUILD_DIR)/$(BINARY_NAME):
+	@$(SRC_ROOT)/scripts/build.sh -d $(DISTRO_NAME)
+
+generate-sources-for-distro: $(BUILD_DIR)/go.mod
+$(BUILD_DIR)/go.mod:
+	@$(SRC_ROOT)/scripts/build.sh -d $(DISTRO_NAME) -s true
+
+.PHONY: clean-build-dir-distro
+clean-build-dir-distro:
+	@rm -rf $(BUILD_DIR)
