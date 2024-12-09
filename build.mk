@@ -1,3 +1,6 @@
+.PHONY: ci
+ci: build
+
 .PHONY: build
 build:
 	@$(MAKE) for-all-target TARGET="build-distro"
