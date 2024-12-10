@@ -41,11 +41,11 @@ BUILD_DIR=_build
 BINARY_NAME=$(shell yq '.dist.name' 'manifest.yaml')
 
 build-distro: $(BUILD_DIR)/$(BINARY_NAME)
-$(BUILD_DIR)/$(BINARY_NAME):
+$(BUILD_DIR)/$(BINARY_NAME): manifest.yaml
 	@$(SRC_ROOT)/scripts/build.sh -d $(DISTRO_NAME)
 
 generate-sources-for-distro: $(BUILD_DIR)/go.mod
-$(BUILD_DIR)/go.mod:
+$(BUILD_DIR)/go.mod: manifest.yaml
 	@$(SRC_ROOT)/scripts/build.sh -d $(DISTRO_NAME) -s true
 
 .PHONY: clean-build-dir-distro
