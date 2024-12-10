@@ -1,31 +1,63 @@
 #############################################
 #### Common Makefiles for distributions #####
 #############################################
+# Note: file is included in Makefile within distro folders,
+#  so paths are relative to distro folder unless they use SRC_ROOT
 
 # SRC_ROOT is the top of the source tree.
 SRC_ROOT := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+BUILD_DIR=$(shell basename $(shell yq '.dist.output_path' 'manifest.yaml'))
 
-FIND_MOD_ARGS=-type f -name "go.mod"
-TO_MOD_DIR=dirname {} \; | sort | grep -E '^./'
-DISTRIBUTIONS_MODS := $(shell find ./**/* $(FIND_MOD_ARGS) -exec $(TO_MOD_DIR) )
+########################
+#### Check targets #####
+########################
 
-## Retrive all used dependencies in the same output
-# RESULTS := $(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all))
+.PHONY: assert_build-dir
+assert_build-dir:
+	@test $(BUILD_DIR) = _build || (echo "expected build directory _build but was $(BUILD_DIR): required because it is hardcoded for goreleaser" && exit 1)
 
-
+NOTICE_OUTPUT ?= THIRD_PARTY_NOTICES.md
+GO_MOD_TMP_FILE ?= /tmp/tmp_notices.json
 
 .PHONY: third-party-notices
-third-party-notices: OUT ?= THIRD_PARTY_NOTICES.md
-third-party-notices:
+third-party-notices: assert_build-dir
 	@command -v go-licence-detector &> /dev/null || (echo "go-license-detector tool not found, install it from the base directory with \"make internal/tools\"" && exit 1)
-	$(foreach dir,$(DISTRIBUTIONS_MODS),$(shell cd $(dir) && go list -mod=mod -m -json all >> /tmp/tmp_notices.json))
-	@go-licence-detector \
-		-in /tmp/tmp_notices.json \
-		-rules $(SRC_ROOT)/internal/assets/license/rules.json \
-		-noticeTemplate $(SRC_ROOT)/internal/assets/license/THIRD_PARTY_NOTICES.md.tmpl \
-		-noticeOut $(OUT)
-	@echo '' > /tmp/tmp_notices.json
+	echo '' > $(GO_MOD_TMP_FILE);\
+		cd $(BUILD_DIR) && go list -mod=mod -m -json all >> $(GO_MOD_TMP_FILE);\
+		go-licence-detector \
+			-in $(GO_MOD_TMP_FILE) \
+			-rules $(SRC_ROOT)/internal/assets/license/rules.json \
+			-noticeTemplate $(SRC_ROOT)/internal/assets/license/THIRD_PARTY_NOTICES.md.tmpl \
+			-noticeOut $(NOTICE_OUTPUT)
 
 .PHONY: third-party-notices-check
 third-party-notices-check: third-party-notices
-	@git diff --name-only | grep -q "THIRD_PARTY_NOTICES.md" && { echo "Third party notices out of date, please run \"make licenses\" and commit the changes in this PR.";  exit 1; } || exit 0
+	@git diff --name-only | grep -q $(NOTICE_OUTPUT) \
+		&& { \
+			echo "Third party notices out of date, please run \"make licenses\" and commit the changes in this PR.";\
+			echo "Diff of $(NOTICE_OUTPUT):";\
+			git --no-pager diff HEAD -- $(NOTICE_OUTPUT);\
+			echo "go.mod file used:";\
+			cat $(BUILD_DIR)/go.mod;\
+			exit 1;\
+		} \
+		|| exit 0
+
+
+########################
+#### Build targets #####
+########################
+DISTRO_NAME=$(shell basename $(shell pwd))
+BINARY_NAME=$(shell yq '.dist.name' 'manifest.yaml')
+
+build-distro: assert_build-dir $(BUILD_DIR)/$(BINARY_NAME)
+$(BUILD_DIR)/$(BINARY_NAME): manifest.yaml
+	$(SRC_ROOT)/scripts/build.sh -d $(DISTRO_NAME)
+
+generate-sources-for-distro: assert_build-dir $(BUILD_DIR)/go.mod
+$(BUILD_DIR)/go.mod: manifest.yaml
+	$(SRC_ROOT)/scripts/build.sh -d $(DISTRO_NAME) -s true
+
+.PHONY: clean-build-dir-distro
+clean-build-dir-distro:
+	rm -rf $(BUILD_DIR)

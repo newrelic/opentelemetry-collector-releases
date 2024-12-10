@@ -202,7 +202,7 @@ processors:
     override: true
 
 exporters:
-  logging:
+  debug:
   otlphttp:
     endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
     headers:
@@ -230,22 +230,22 @@ service:
         - resourcedetection/env
         - cumulativetodelta
         - batch
-      exporters: [logging, otlphttp]
+      exporters: [debug, otlphttp]
     logs/host:
       receivers: [filelog]
       processors: [transform, resourcedetection, resourcedetection/cloud, resourcedetection/env, batch]
-      exporters: [logging, otlphttp]
+      exporters: [debug, otlphttp]
     traces:
       receivers: [otlp]
       processors: [transform, resourcedetection, resourcedetection/cloud, resourcedetection/env, batch]
-      exporters: [logging, otlphttp]
+      exporters: [debug, otlphttp]
     metrics:
       receivers: [otlp]
       processors: [transform, resourcedetection, resourcedetection/cloud, resourcedetection/env, batch]
-      exporters: [logging, otlphttp]
+      exporters: [debug, otlphttp]
     logs:
       receivers: [otlp]
       processors: [transform, resourcedetection, resourcedetection/cloud, resourcedetection/env, batch]
-      exporters: [logging, otlphttp]
+      exporters: [debug, otlphttp]
 
   extensions: [health_check]
