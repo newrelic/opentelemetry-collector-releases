@@ -89,7 +89,7 @@ func TestStartupBehavior(t *testing.T) {
 	releaseName := fmt.Sprintf(
 		"hostmetrics-startup-%s", strings.ToLower(random.UniqueId()))
 	defer helm.Delete(t, helmOptions, releaseName, true)
-	helm.Install(t, helmOptions, "./chart", releaseName)
+	helm.Install(t, helmOptions, "../../../charts/mocked_backend", releaseName)
 
 	t.Run("healthcheck succeeds", func(t *testing.T) {
 		te := setupTest(t)

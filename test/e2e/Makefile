@@ -1,7 +1,8 @@
 KIND_CLUSTER_NAME ?=e2etest
 K8S_CONTEXT_NAME=kind-${KIND_CLUSTER_NAME}
 IMAGE_REPO=newrelic/nr-otel-collector
-THIS_MAKEFILE_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+THIS_MAKEFILE_DIR := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
+ROOT_DIR := $(realpath $(THIS_MAKEFILE_DIR)/../..)
 
 
 ################
@@ -27,13 +28,14 @@ ci_load-image: assert_cluster-exists assert_image-tag-present
 	kind load docker-image ${IMAGE_REPO}:${IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
 
 .PHONY: ci_build-load-mocked-otlp-image
+ci_build-load-mocked-otlp-image: BUILD_PATH=${THIS_MAKEFILE_DIR}/mocked_backend/mocked_otlp/http
 ci_build-load-mocked-otlp-image: assert_cluster-exists
-	docker build -t mocked_otlp:latest -f ${THIS_MAKEFILE_DIR}/mocked_otlp/http/Dockerfile ${THIS_MAKEFILE_DIR}/mocked_otlp/http
+	docker build -t mocked_otlp:latest -f ${BUILD_PATH}/Dockerfile ${BUILD_PATH}
 	kind load docker-image mocked_otlp:latest --name ${KIND_CLUSTER_NAME}
 
-.PHONY: ci_test
-ci_test: ci_load-image ci_build-load-mocked-otlp-image
-	cd ${THIS_MAKEFILE_DIR}hostmetrics && \
+.PHONY: ci_test-with-mockend-backend
+ci_test-with-mockend-backend: ci_load-image ci_build-load-mocked-otlp-image
+	cd ${THIS_MAKEFILE_DIR} && \
 	E2E_TEST__K8S_CONTEXT_NAME=${K8S_CONTEXT_NAME} \
 	E2E_TEST__IMAGE_REPO=${IMAGE_REPO} \
 	E2E_TEST__IMAGE_TAG=${IMAGE_TAG} \
@@ -49,12 +51,12 @@ local_create-cluster-if-not-exists:
 
 .PHONY: local_build-image
 local_build-image:
-	GORELEASER_CURRENT_TAG=0.0.999 goreleaser --snapshot --clean --skip-sign
+	cd $(ROOT_DIR) && goreleaser --snapshot --clean --skip-sign
 
-.PHONY: local_test
+.PHONY: local_test-with-mocked-backend
 # hardcode an image you build with local_build-image, then run this target to run tests against it
-local_test: IMAGE_TAG=insert_locally_available_tag_to_test_here
-local_test: local_create-cluster-if-not-exists ci_test
+local_test-with-mocked-backend: IMAGE_TAG=0.8.7-SNAPSHOT-e11d2bd-rc-arm64
+local_test-with-mocked-backend: local_create-cluster-if-not-exists ci_test-with-mockend-backend
 
 .PHONY: local_helm-cleanup
 local_helm-cleanup:

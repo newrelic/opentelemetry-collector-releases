@@ -57,7 +57,7 @@ jobs:
         run: |
           export IMAGE_TAG=${{ env.version }}-rc-amd64
           export KIND_CLUSTER_NAME=ci-e2etest
-          make -f ./test/e2e/Makefile ci_test
+          make -f ./test/e2e/Makefile ci_test-with-mockend-backend
 
       - name: Trivy security check
         uses: aquasecurity/trivy-action@0.28.0
