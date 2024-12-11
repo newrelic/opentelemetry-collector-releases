@@ -26,6 +26,15 @@ TO_DIR=dirname {} \; | sort | grep -E '^./'
 
 ALL_DISTRIBUTIONS := $(shell find ./distributions/* $(FIND_MOD_ARGS) -exec $(TO_DIR) )
 
+# Define a delegation target for each distribution
+.PHONY: $(ALL_DISTRIBUTIONS)
+$(ALL_DISTRIBUTIONS):
+	$(MAKE) -C $@ $(TARGET)
+
+# trigger target for each module's delegation target
+.PHONY: for-all-target
+for-all-target: $(ALL_DISTRIBUTIONS)
+
 include build.mk
 include check.mk
 

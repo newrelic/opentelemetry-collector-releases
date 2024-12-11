@@ -189,7 +189,7 @@ processors:
           enabled: false
 
 exporters:
-  logging:
+  debug:
   otlp:
     endpoint: https://staging-otlp.nr-data.net:4317
     headers:
@@ -215,14 +215,14 @@ service:
         - resourcedetection
         - resourcedetection/cloud
         - resource
-      exporters: [logging,otlp]
+      exporters: [debug,otlp]
     traces:
       receivers: [otlp]
       processors: [transform, resourcedetection, resourcedetection/cloud, resource, batch]
-      exporters: [logging, otlp]
+      exporters: [debug, otlp]
     logs:
       receivers: [otlp, filelog]
       processors: [transform, resourcedetection, resourcedetection/cloud, resource, batch]
-      exporters: [logging, otlp]
+      exporters: [debug, otlp]
 
   extensions: [health_check]
