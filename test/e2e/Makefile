@@ -28,17 +28,27 @@ ci_load-image: assert_cluster-exists assert_image-tag-present
 	kind load docker-image ${IMAGE_REPO}:${IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
 
 .PHONY: ci_build-load-mocked-otlp-image
-ci_build-load-mocked-otlp-image: BUILD_PATH=${THIS_MAKEFILE_DIR}/mocked_backend/mocked_otlp/http
+ci_build-load-mocked-otlp-image: BUILD_PATH=${THIS_MAKEFILE_DIR}/mocked_otlp/http
 ci_build-load-mocked-otlp-image: assert_cluster-exists
 	docker build -t mocked_otlp:latest -f ${BUILD_PATH}/Dockerfile ${BUILD_PATH}
 	kind load docker-image mocked_otlp:latest --name ${KIND_CLUSTER_NAME}
 
-.PHONY: ci_test-with-mockend-backend
-ci_test-with-mockend-backend: ci_load-image ci_build-load-mocked-otlp-image
+.PHONY: ci_test-fast
+ci_test-fast: ci_load-image ci_build-load-mocked-otlp-image
 	cd ${THIS_MAKEFILE_DIR} && \
 	E2E_TEST__K8S_CONTEXT_NAME=${K8S_CONTEXT_NAME} \
-	E2E_TEST__IMAGE_REPO=${IMAGE_REPO} \
 	E2E_TEST__IMAGE_TAG=${IMAGE_TAG} \
+	go test ./... -count=1 -short
+
+.PHONY: ci_test-slow
+ci_test-slow: ci_load-image ci_build-load-mocked-otlp-image
+	cd ${THIS_MAKEFILE_DIR} && \
+	E2E_TEST__K8S_CONTEXT_NAME=${K8S_CONTEXT_NAME} \
+	E2E_TEST__IMAGE_TAG=${IMAGE_TAG} \
+	E2E_TEST__NR_BACKEND_URL=${NR_BACKEND_URL} \
+	E2E_TEST__NR_INGEST_KEY=${NR_INGEST_KEY} \
+	E2E_TEST__NR_API_KEY=${NR_API_KEY} \
+	E2E_TEST__NR_ACCOUNT_ID=${NR_ACCOUNT_ID} \
 	go test ./... -count=1
 
 ################
@@ -53,10 +63,14 @@ local_create-cluster-if-not-exists:
 local_build-image:
 	cd $(ROOT_DIR) && goreleaser --snapshot --clean --skip-sign
 
-.PHONY: local_test-with-mocked-backend
+.PHONY: local_test-fast
 # hardcode an image you build with local_build-image, then run this target to run tests against it
-local_test-with-mocked-backend: IMAGE_TAG=0.8.7-SNAPSHOT-e11d2bd-rc-arm64
-local_test-with-mocked-backend: local_create-cluster-if-not-exists ci_test-with-mockend-backend
+local_test: IMAGE_TAG=insert_locally_available_tag_to_test_here
+local_test: local_create-cluster-if-not-exists ci_test-fast
+
+.PHONY: local_test-slow
+local_test-slow: IMAGE_TAG=insert_locally_available_tag_to_test_here
+local_test-slow: ci_test-slow
 
 .PHONY: local_helm-cleanup
 local_helm-cleanup:
