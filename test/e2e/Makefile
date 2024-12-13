@@ -61,4 +61,4 @@ local_test-with-mocked-backend: local_create-cluster-if-not-exists ci_test-with-
 .PHONY: local_helm-cleanup
 local_helm-cleanup:
 	kubectl config use-context ${K8S_CONTEXT_NAME} && \
-	helm list -A --no-headers | awk 'NF {system("helm uninstall -n " $2 " " $1)}'
+	helm list -A --no-headers | awk 'NF {system("helm uninstall -n " $$2 " " $$1)}'
