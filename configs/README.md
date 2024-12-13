@@ -15,7 +15,7 @@ OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.nr-data.net:443
 NEW_RELIC_MEMORY_LIMIT_MIB=100
 ```
 
-The `NEW_RELIC_LICENSE_KEY` environment variable must be set manually, it can be appended to the Systemd service environment file (`/etc/nr-otel-collector/nr-otel-collector.conf`) or direclty to the collector's configuration (`/etc/nr-otel-collector/config.yaml`).
+The `NEW_RELIC_LICENSE_KEY` environment variable must be set manually, it can be appended to the Systemd service environment file (`/etc/nr-otel-collector/nr-otel-collector.conf`) or directly to the collector's configuration (`/etc/nr-otel-collector/config.yaml`).
 
 #### Command line
 
