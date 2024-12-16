@@ -50,8 +50,6 @@ providers:
 
 # When adding a replace, add a comment before it to document why it's needed and when it can be removed
 replaces:
-  # See https://github.com/google/gnostic/issues/262
-  - github.com/googleapis/gnostic v0.5.6 => github.com/googleapis/gnostic v0.5.5
   ### Transitive deps determined via `go mod graph | grep $dep@$dep_replace_version`
   # Why: Fixes CVE-2024-41110
   # Transitive dep of: prometheusreceiver
