@@ -52,6 +52,10 @@ providers:
 replaces:
   # See https://github.com/google/gnostic/issues/262
   - github.com/googleapis/gnostic v0.5.6 => github.com/googleapis/gnostic v0.5.5
-  # Why: Fixes CVE-2024-41110 introduced by transitive docker dependency brought in by prometheusreceiver
-  # Remove: prometheusreceiver no longer brings in vulnerable docker dependency
+  ### Transitive deps determined via `go mod graph | grep $dep@$dep_replace_version`
+  # Why: Fixes CVE-2024-41110
+  # Transitive dep of: prometheusreceiver
   - github.com/docker/docker v27.0.3+incompatible => github.com/docker/docker v27.3.1+incompatible
+  # Why: Fixes CVE-2024-45337
+  # Transitive dep of: x/net, hostmetricsreceiver, prometheusreceiver
+  - golang.org/x/crypto v0.28.0 => golang.org/x/crypto v0.31.0
