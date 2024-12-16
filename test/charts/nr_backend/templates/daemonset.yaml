@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: &app nr-otel-collector
+  labels:
+    app: *app
+spec:
+  selector:
+    matchLabels:
+      app: *app
+  template:
+    metadata:
+      labels:
+        app: *app
+    spec:
+      initContainers:
+        # Wait for the backend to be up before starting the collector
+        - name: wait-for-validation
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/sh","-c" ]
+          args: [ 'while [ $(curl -ksw "%{http_code}" "http://validation-backend:8080" -o /dev/null) -ne 200 ]; do sleep 5; echo "health check failed. Waiting for validation service..."; done' ]
+      containers:
+        - name: *app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          ports:
+            - name: health
+              containerPort: 13133
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: daemonset-secrets
+                  key: backendUrl
+            - name: NEW_RELIC_MEMORY_LIMIT_MIB
+              value: "100"
+            - name: NEW_RELIC_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: daemonset-secrets
+                  key: nrIngestKey
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: daemonset-secrets
+type: Opaque
+data:
+  backendUrl: {{ .Values.secrets.nrBackendUrl | b64enc }}
+  nrIngestKey: {{ .Values.secrets.nrIngestKey | b64enc }}

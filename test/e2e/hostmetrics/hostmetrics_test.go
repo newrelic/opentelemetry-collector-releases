@@ -4,29 +4,25 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/gruntwork-io/terratest/modules/helm"
 	httphelper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/gruntwork-io/terratest/modules/random"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
-	"os"
 	"strings"
+	"test/e2e/util/chart"
+	helmutil "test/e2e/util/helm"
+	k8sutil "test/e2e/util/k8s"
 	"testing"
 	"time"
 )
 
 const (
-	TestNamespace = "hostmetrics"
+	TestNamespace = "mock-hostmetrics"
 )
 
 var (
-	contextName    string
-	collectorRepo  string
-	collectorTag   string
 	kubectlOptions *k8s.KubectlOptions
-	helmOptions    *helm.Options
+	testChart      chart.MockedBackendChart
 )
 
 // TODO: Export from mocked module
@@ -41,55 +37,22 @@ type testEnv struct {
 }
 
 func setupTest(tb testing.TB) testEnv {
-	filters := metav1.ListOptions{
-		LabelSelector: "app=nr-otel-collector",
-	}
-	k8s.WaitUntilNumPodsCreated(tb, kubectlOptions, filters, 1, 30, 10*time.Second)
+	collectorPod := k8sutil.WaitForCollectorReady(tb, kubectlOptions)
 
-	pods := k8s.ListPods(tb, kubectlOptions, filters)
-	for _, pod := range pods {
-		k8s.WaitUntilPodAvailable(tb, kubectlOptions, pod.Name, 30, 10*time.Second)
-	}
-
-	return testEnv{collectorPod: pods[0], teardown: func(tb testing.TB) {
+	return testEnv{collectorPod: collectorPod, teardown: func(tb testing.TB) {
 		log.Println("teardown test")
 	}}
-
 }
 
 func TestMain(m *testing.M) {
-	contextName = os.Getenv("E2E_TEST__K8S_CONTEXT_NAME")
-	if contextName == "" {
-		panic("E2E_TEST__K8S_CONTEXT_NAME not set: provide existing kubeconfig context")
-	}
-	kubectlOptions = k8s.NewKubectlOptions(contextName, "", TestNamespace)
-
-	collectorRepo = os.Getenv("E2E_TEST__IMAGE_REPO")
-	if collectorRepo == "" {
-		panic("E2E_TEST__IMAGE_REPO not set: provide image repo to test, e.g. newrelic/nr-otel-collector")
-	}
-	collectorTag = os.Getenv("E2E_TEST__IMAGE_TAG")
-	if collectorTag == "" {
-		panic("E2E_TEST__IMAGE_TAG not set: provide image to test which was previously loaded into local registry")
-	}
-
-	helmOptions = &helm.Options{
-		KubectlOptions: kubectlOptions,
-		ExtraArgs: map[string][]string{
-			"install": {
-				"--namespace", TestNamespace, "--create-namespace",
-				"--set", fmt.Sprintf("image.tag=%s", collectorTag)},
-		},
-	}
-
+	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
+	testChart = chart.MockedBackend
 	m.Run()
 }
 
 func TestStartupBehavior(t *testing.T) {
-	releaseName := fmt.Sprintf(
-		"hostmetrics-startup-%s", strings.ToLower(random.UniqueId()))
-	defer helm.Delete(t, helmOptions, releaseName, true)
-	helm.Install(t, helmOptions, "./chart", releaseName)
+	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup")
+	defer cleanup()
 
 	t.Run("healthcheck succeeds", func(t *testing.T) {
 		te := setupTest(t)

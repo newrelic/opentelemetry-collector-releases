@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  TEST_CLUSTER_NAME: ci-e2etest
+
 jobs:
   build:
     name: Validate distributions build, third party libraries and security
@@ -50,14 +53,14 @@ jobs:
         uses: helm/kind-action@v1
         with:
           version: v0.21.0
-          cluster_name: ci-e2etest
+          cluster_name: ${{ env.TEST_CLUSTER_NAME }}
           wait: 60s
 
       - name: Run local e2e tests
         run: |
-          export IMAGE_TAG=${{ env.version }}-rc-amd64
-          export KIND_CLUSTER_NAME=ci-e2etest
-          make -f ./test/e2e/Makefile ci_test
+          IMAGE_TAG=${{ env.version }}-rc-amd64 \
+          KIND_CLUSTER_NAME=${{ env.TEST_CLUSTER_NAME }} \
+          make -f ./test/e2e/Makefile ci_test-fast
 
       - name: Trivy security check
         uses: aquasecurity/trivy-action@0.28.0
