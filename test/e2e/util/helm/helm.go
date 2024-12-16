@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"strings"
 	"test/e2e/util/chart"
@@ -24,7 +25,7 @@ func NewHelmOptions(kubectlOptions *k8s.KubectlOptions, chartValues map[string]s
 			"install": installArg,
 		},
 		// Prevent logging of helm commands to avoid secrets leaking into CI logs
-		//Logger: logger.Discard,
+		Logger: logger.Discard,
 	}
 }
 
