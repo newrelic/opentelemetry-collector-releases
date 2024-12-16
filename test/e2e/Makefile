@@ -49,6 +49,7 @@ ci_test-slow: ci_load-image ci_build-load-mocked-otlp-image
 	E2E_TEST__NR_INGEST_KEY=${NR_INGEST_KEY} \
 	E2E_TEST__NR_API_KEY=${NR_API_KEY} \
 	E2E_TEST__NR_ACCOUNT_ID=${NR_ACCOUNT_ID} \
+	E2E_TEST__NR_API_BASE_URL=${NR_API_BASE_URL} \
 	go test ./... -count=1
 
 ################

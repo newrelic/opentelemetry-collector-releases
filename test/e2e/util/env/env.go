@@ -13,6 +13,7 @@ const (
 	NrIngestKey    = "E2E_TEST__NR_INGEST_KEY"
 	NrApiKey       = "E2E_TEST__NR_API_KEY"
 	NrAccountId    = "E2E_TEST__NR_ACCOUNT_ID"
+	NrApiBaseUrl   = "E2E_TEST__NR_API_BASE_URL"
 )
 
 func getEnvVar(envVar string) string {
@@ -50,4 +51,8 @@ func GetNrAccountId() int {
 		panic(fmt.Sprintf("Invalid accountId: %s", accountIdStr))
 	}
 	return accountId
+}
+
+func GetNrApiBaseUrl() string {
+	return getEnvVar(NrApiBaseUrl)
 }

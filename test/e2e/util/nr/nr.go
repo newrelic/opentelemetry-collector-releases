@@ -1,15 +1,24 @@
 package nr
 
 import (
+	"fmt"
 	"github.com/newrelic/newrelic-client-go/v2/newrelic"
+	"log"
 	utilenv "test/e2e/util/env"
 )
 
 func NewClient() *newrelic.NewRelic {
 	apiKey := utilenv.GetNrApiKey()
-	client, err := newrelic.New(newrelic.ConfigPersonalAPIKey(apiKey))
+	apiBaseUrl := utilenv.GetNrApiBaseUrl()
+	restApiUrl := fmt.Sprintf("%s/v2", apiBaseUrl)
+	nerdGraphUrl := fmt.Sprintf("%s/graphql", apiBaseUrl)
+	client, err := newrelic.New(
+		newrelic.ConfigPersonalAPIKey(apiKey),
+		newrelic.ConfigBaseURL(restApiUrl),
+		newrelic.ConfigNerdGraphBaseURL(nerdGraphUrl),
+	)
 	if err != nil {
-		panic(err)
+		log.Panicf("Couldn't create NewRelic client: %s", err)
 	}
 	return client
 }

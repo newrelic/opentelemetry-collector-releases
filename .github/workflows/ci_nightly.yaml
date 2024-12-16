@@ -59,4 +59,5 @@ jobs:
           NR_INGEST_KEY=${{ secrets.OTELCOMM_NR_INGEST_KEY }} \
           NR_API_KEY=${{ secrets.OTELCOMM_NR_API_KEY }} \
           NR_ACCOUNT_ID=${{ secrets.OTELCOMM_NR_TEST_ACCOUNT_ID }} \
+          NR_API_BASE_URL=${{ secrets.NR_STAGING_API_BASE_URL }} \
           make -f ./test/e2e/Makefile ci_test-slow
