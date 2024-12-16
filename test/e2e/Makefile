@@ -71,7 +71,7 @@ local_test: local_create-cluster-if-not-exists ci_test-fast
 
 .PHONY: local_test-slow
 local_test-slow: IMAGE_TAG=insert_locally_available_tag_to_test_here
-local_test-slow: ci_test-slow
+local_test-slow: local_create-cluster-if-not-exists ci_test-slow
 
 .PHONY: local_helm-cleanup
 local_helm-cleanup:
