@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	TestMode       = "E2E_TEST__TEST_MODE"
 	K8sContextName = "E2E_TEST__K8S_CONTEXT_NAME"
 	ImageTag       = "E2E_TEST__IMAGE_TAG"
 	NrBackendUrl   = "E2E_TEST__NR_BACKEND_URL"
@@ -22,6 +23,10 @@ func getEnvVar(envVar string) string {
 		panic(fmt.Sprintf("%s not set", envVar))
 	}
 	return value
+}
+
+func GetTestMode() string {
+	return os.Getenv(TestMode)
 }
 
 func GetK8sContextName() string {
