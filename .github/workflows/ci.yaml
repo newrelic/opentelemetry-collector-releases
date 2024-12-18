@@ -77,6 +77,7 @@ jobs:
           TRIVY_SKIP_JAVA_DB_UPDATE: true
   terraform:
     uses: ./.github/workflows/component_terraform.yml
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     with:
       branch: ${{ github.ref }}
       tf_work_subdir: permanent
