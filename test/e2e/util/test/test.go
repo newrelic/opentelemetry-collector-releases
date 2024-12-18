@@ -1,9 +1,28 @@
 package test
 
-import "testing"
+import (
+	"strings"
+	envutil "test/e2e/util/env"
+	"testing"
+)
+
+const (
+	slowOnly = "slowOnly"
+	fastOnly = "fastOnly"
+)
 
 func TagAsSlowTest(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping slow test in short mode: ", t.Name())
+	if isModeEnabled(fastOnly) {
+		t.Skip("Skipping slow test: ", t.Name())
 	}
+}
+
+func TagAsFastTest(t *testing.T) {
+	if isModeEnabled(slowOnly) {
+		t.Skip("Skipping fast test: ", t.Name())
+	}
+}
+
+func isModeEnabled(mode string) bool {
+	return strings.Contains(envutil.GetTestMode(), mode)
 }

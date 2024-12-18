@@ -12,6 +12,7 @@ import (
 	"test/e2e/util/chart"
 	helmutil "test/e2e/util/helm"
 	k8sutil "test/e2e/util/k8s"
+	testutil "test/e2e/util/test"
 	"testing"
 	"time"
 )
@@ -51,6 +52,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestStartupBehavior(t *testing.T) {
+	testutil.TagAsFastTest(t)
 	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup")
 	defer cleanup()
 
