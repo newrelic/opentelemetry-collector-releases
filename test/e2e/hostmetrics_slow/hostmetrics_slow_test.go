@@ -10,6 +10,7 @@ import (
 	helmutil "test/e2e/util/helm"
 	k8sutil "test/e2e/util/k8s"
 	"test/e2e/util/nr"
+	"test/e2e/util/spec"
 	testutil "test/e2e/util/test"
 	"testing"
 	"time"
@@ -48,26 +49,24 @@ func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsSlowTest(t)
 
 	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup")
-	defer cleanup()
-
-	t.Run("NRQL validation", func(t *testing.T) {
-		te := setupTest(t)
-		defer te.teardown(t)
-		time.Sleep(120 * time.Second)
-
-		client := nr.NewClient()
-		assertionFactory := assert.NewMetricAssertionFactory(
-			fmt.Sprintf("WHERE host.name = '%s'", te.collectorPod.Name),
-			"5 minutes ago",
-		)
-		assertionCpuUtil := assertionFactory.NewMetricAssertion("system.cpu.utilization", []assert.Assertion{
-			{AggregationFunction: "max", ComparisonOperator: ">", Threshold: 0},
-		})
-		assertionDiskIo := assertionFactory.NewMetricAssertion("system.disk.io", []assert.Assertion{
-			{AggregationFunction: "max", ComparisonOperator: ">", Threshold: 0},
-		})
-		for _, assertion := range []assert.MetricAssertion{assertionCpuUtil, assertionDiskIo} {
-			assertion.Execute(t, client)
-		}
+	t.Cleanup(cleanup)
+	te := setupTest(t)
+	t.Cleanup(func() {
+		te.teardown(t)
 	})
+	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
+	time.Sleep(70 * time.Second)
+
+	for _, testCase := range spec.GetOnHostTestCases() {
+		t.Run(fmt.Sprintf("%s-%s", testCase.Metric.Name, testCase.Metric.WhereClause), func(t *testing.T) {
+			t.Parallel()
+			assertionFactory := assert.NewMetricAssertionFactory(
+				fmt.Sprintf("WHERE host.name = '%s'", te.collectorPod.Name),
+				"5 minutes ago",
+			)
+			client := nr.NewClient()
+			assertion := assertionFactory.NewMetricAssertion(testCase.Metric, testCase.Assertions)
+			assertion.Execute(t, client)
+		})
+	}
 }

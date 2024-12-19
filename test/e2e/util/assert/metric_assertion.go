@@ -25,10 +25,10 @@ func NewMetricAssertionFactory(entityWhereClause string, since string) MetricAss
 	}
 }
 
-func (f *MetricAssertionFactory) NewMetricAssertion(metricName string, assertions []Assertion) MetricAssertion {
+func (f *MetricAssertionFactory) NewMetricAssertion(metric Metric, assertions []Assertion) MetricAssertion {
 	return MetricAssertion{
 		Query: BaseQuery{
-			MetricName:        metricName,
+			Metric:            metric,
 			EntityWhereClause: f.entityWhereClause,
 			Since:             f.since,
 			Until:             f.until,
@@ -43,10 +43,15 @@ type MetricAssertion struct {
 }
 
 type BaseQuery struct {
-	MetricName        string
+	Metric            Metric
 	EntityWhereClause string
 	Since             string
 	Until             string
+}
+
+type Metric struct {
+	Name        string
+	WhereClause string
 }
 
 type Assertion struct {
@@ -66,7 +71,7 @@ func (m *MetricAssertion) Execute(t testing.TB, client *newrelic.NewRelic) {
 	}
 	for i, assertion := range m.Assertions {
 		actualContainer := response.Results[i]
-		actualValue := actualContainer[assertion.AggregationFunction+"."+m.Query.MetricName]
+		actualValue := actualContainer[assertion.AggregationFunction+"."+m.Query.Metric.Name]
 		valueType := reflect.TypeOf(actualValue)
 		if valueType == nil || valueType.Kind() != reflect.Float64 {
 			t.Fatalf("Expected float64 for assertion %+v, but received %+v in response %+v", actualContainer, valueType, response.Results)
@@ -79,9 +84,10 @@ func (m *MetricAssertion) Execute(t testing.TB, client *newrelic.NewRelic) {
 
 func (m *MetricAssertion) AsQuery() string {
 	tmpl, err := template.New("query").Parse(`
-SELECT {{ range $idx, $assert := .Assertions }}{{ if $idx }},{{ end }}{{ $assert.AggregationFunction }}({{ $.Query.MetricName }}){{ end }}
+SELECT {{ range $idx, $assert := .Assertions }}{{ if $idx }},{{ end }}{{ $assert.AggregationFunction }}({{ $.Query.Metric.Name }}){{ end }}
 FROM Metric
-WHERE metricName = '{{ .Query.MetricName }}'
+WHERE metricName = '{{ .Query.Metric.Name }}'
+{{ .Query.Metric.WhereClause }}
 {{ .Query.EntityWhereClause }}
 SINCE {{ .Query.Since }} UNTIL {{ .Query.Until }}
 `)
