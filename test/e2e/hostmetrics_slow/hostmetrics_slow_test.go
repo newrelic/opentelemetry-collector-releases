@@ -56,25 +56,28 @@ func TestMain(m *testing.M) {
 
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsSlowTest(t)
+	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
+	testId := testutil.NewTestId()
+	testChart = chart.NewNrBackendChart(testId)
 
-	t.Logf("host.name used for test: %s", collectorReportedHostname)
+	t.Logf("host.name used for test: %s", testChart.CollectorHostname)
 	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup", testId)
 	t.Cleanup(cleanup)
 	te := setupTest(t)
 	t.Cleanup(func() {
 		te.teardown(t)
 	})
-	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
-	time.Sleep(70 * time.Second)
 	// space out requests to not run into 25 concurrent request limit
 	requestsPerSecond := 4.0
 	requestSpacing := time.Duration((1/requestsPerSecond)*1000) * time.Millisecond
+	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
+	time.Sleep(70 * time.Second)
 
 	for i, testCase := range spec.GetOnHostTestCases() {
-		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%s-%s", testCase.Metric.Name, testCase.Metric.WhereClause), func(t *testing.T) {
 			t.Parallel()
 			assertionFactory := assert.NewNrMetricAssertionFactory(
-				fmt.Sprintf("WHERE host.name = '%s'", collectorReportedHostname),
+				fmt.Sprintf("WHERE host.name = '%s'", testChart.CollectorHostname),
 				"5 minutes ago",
 			)
 			client := nr.NewClient()

@@ -1,14 +1,23 @@
 package chart
 
-import envutil "test/e2e/util/env"
+import (
+	"fmt"
+	envutil "test/e2e/util/env"
+)
 
 type NrBackendChart struct {
-	collectorHostname string
+	CollectorHostname string
 }
 
-func NewNrBackendChart(collectorHostname string) NrBackendChart {
+func NewNrBackendChart(testId string) NrBackendChart {
+	environmentName := "local"
+	if envutil.IsContinuousIntegration() {
+		environmentName = "ci"
+	}
+	collectorHostname := fmt.Sprintf("nr-otel-collector-%s-%s", environmentName, testId)
+
 	return NrBackendChart{
-		collectorHostname: collectorHostname,
+		CollectorHostname: collectorHostname,
 	}
 }
 
@@ -28,6 +37,6 @@ func (m *NrBackendChart) RequiredChartValues() map[string]string {
 		"image.tag":            envutil.GetImageTag(),
 		"secrets.nrBackendUrl": envutil.GetNrBackendUrl(),
 		"secrets.nrIngestKey":  envutil.GetNrIngestKey(),
-		"collector.hostname":   m.collectorHostname,
+		"collector.hostname":   m.CollectorHostname,
 	}
 }
