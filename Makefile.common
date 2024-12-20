@@ -7,6 +7,7 @@
 # SRC_ROOT is the top of the source tree.
 SRC_ROOT := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR=$(shell basename $(shell yq '.dist.output_path' 'manifest.yaml'))
+DISTRO_NAME=$(shell basename $(shell pwd))
 
 ########################
 #### Check targets #####
@@ -43,11 +44,19 @@ third-party-notices-check: third-party-notices
 		} \
 		|| exit 0
 
+trivy-check: IMAGE_NAME=newrelic/$(DISTRO_NAME)
+trivy-check: IMAGE_TAG_TO_CHECK=$(shell git describe --tags --abbrev=0)-SNAPSHOT-$(shell git rev-parse --short=7 HEAD)
+trivy-check:
+	docker images -a --filter 'reference=$(IMAGE_NAME)' | grep $(IMAGE_TAG_TO_CHECK) -q \
+	 || { echo 'Expected snapshot image "$(IMAGE_NAME):$(IMAGE_TAG_TO_CHECK)" to be present for trivy test' && exit 1; }; \
+	trivy image --scanners=vuln --vuln-type=os,library --severity=CRITICAL,HIGH --ignore-unfixed --format sarif \
+		--db-repository public.ecr.aws/aquasecurity/trivy-db:2 \
+		--java-db-repository public.ecr.aws/aquasecurity/trivy-java-db:1 \
+		 $(IMAGE_NAME):$(IMAGE_TAG_TO_CHECK)-rc-amd64
 
 ########################
 #### Build targets #####
 ########################
-DISTRO_NAME=$(shell basename $(shell pwd))
 BINARY_NAME=$(shell yq '.dist.name' 'manifest.yaml')
 
 build-distro: assert_build-dir $(BUILD_DIR)/$(BINARY_NAME)
