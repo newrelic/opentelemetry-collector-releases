@@ -17,9 +17,8 @@ func TestAsQueryWithSingleAssertion(t *testing.T) {
 		})
 	actual := singleAssertion.AsQuery()
 	assertEqual(actual, `
-SELECT max(system.cpu.utilization)
+SELECT max(^system.cpu.utilization^)
 FROM Metric
-WHERE metricName = 'system.cpu.utilization'
 WHERE state='user'
 WHERE host.name = 'nr-otel-collector-foobar'
 SINCE 5 minutes ago UNTIL now
@@ -38,9 +37,8 @@ func TestAsQueryWithMultipleAssertions(t *testing.T) {
 	})
 	actual := singleAssertion.AsQuery()
 	assertEqual(actual, `
-SELECT max(system.cpu.utilization),min(system.cpu.utilization),average(system.cpu.utilization)
+SELECT max(^system.cpu.utilization^),min(^system.cpu.utilization^),average(^system.cpu.utilization^)
 FROM Metric
-WHERE metricName = 'system.cpu.utilization'
 WHERE state='user'
 WHERE host.name = 'nr-otel-collector-foobar'
 SINCE 5 minutes ago UNTIL now
@@ -49,7 +47,8 @@ SINCE 5 minutes ago UNTIL now
 
 func assertEqual(actual string, expected string, t *testing.T) {
 	actualTrimmed := strings.TrimSpace(actual)
-	expectedTrimmed := strings.TrimSpace(expected)
+	// no way to escape backticks, so we use '^' as a placeholder
+	expectedTrimmed := strings.Replace(strings.TrimSpace(expected), "^", "`", -1)
 	if actualTrimmed != expectedTrimmed {
 		t.Fatalf("\nExpected:\n[%s]\nbut received:\n[%s]\n", expectedTrimmed, actualTrimmed)
 	}

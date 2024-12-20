@@ -56,9 +56,12 @@ func TestStartupBehavior(t *testing.T) {
 	})
 	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
 	time.Sleep(70 * time.Second)
+	// space out requests to not run into 25 concurrent request limit
+	requestsPerSecond := 4.0
+	requestSpacing := time.Duration((1/requestsPerSecond)*1000) * time.Millisecond
 
-	for _, testCase := range spec.GetOnHostTestCases() {
-		t.Run(fmt.Sprintf("%s-%s", testCase.Metric.Name, testCase.Metric.WhereClause), func(t *testing.T) {
+	for i, testCase := range spec.GetOnHostTestCases() {
+		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
 			t.Parallel()
 			assertionFactory := assert.NewMetricAssertionFactory(
 				fmt.Sprintf("WHERE host.name = '%s'", te.collectorPod.Name),
@@ -66,6 +69,8 @@ func TestStartupBehavior(t *testing.T) {
 			)
 			client := nr.NewClient()
 			assertion := assertionFactory.NewMetricAssertion(testCase.Metric, testCase.Assertions)
+			// space out requests to avoid rate limiting
+			time.Sleep(time.Duration(i) * requestSpacing)
 			assertion.Execute(t, client)
 		})
 	}

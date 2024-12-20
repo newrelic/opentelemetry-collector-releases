@@ -52,7 +52,7 @@ ci_test: ci_load-image ci_build-load-mocked-otlp-image
 	E2E_TEST__NR_ACCOUNT_ID=${NR_ACCOUNT_ID} \
 	E2E_TEST__NR_API_BASE_URL=${NR_API_BASE_URL} \
 	E2E_TEST__TEST_MODE=${TEST_MODE} \
-	go test ./... -count=1
+	go test ./... -count=1 -timeout=3m
 
 ################
 #### LOCAL #####

@@ -77,16 +77,17 @@ func (m *MetricAssertion) Execute(t testing.TB, client *newrelic.NewRelic) {
 			t.Fatalf("Expected float64 for assertion %+v, but received %+v in response %+v", actualContainer, valueType, response.Results)
 		}
 		if !assertion.satisfiesCondition(actualValue.(float64)) {
-			t.Fatalf("Assertion %+v failed for %+v", assertion, actualValue)
+			t.Fatalf("Expected %s(%s) %s %f, but received %f", assertion.AggregationFunction, m.Query.Metric.Name, assertion.ComparisonOperator, assertion.Threshold, actualValue)
 		}
 	}
 }
 
 func (m *MetricAssertion) AsQuery() string {
 	tmpl, err := template.New("query").Parse(`
-SELECT {{ range $idx, $assert := .Assertions }}{{ if $idx }},{{ end }}{{ $assert.AggregationFunction }}({{ $.Query.Metric.Name }}){{ end }}
+SELECT {{ range $idx, $assert := .Assertions -}}
+	{{- if $idx }},{{ end }}{{ $assert.AggregationFunction }}(` + "`" + `{{ $.Query.Metric.Name }}` + "`" + `)
+{{- end }}
 FROM Metric
-WHERE metricName = '{{ .Query.Metric.Name }}'
 {{ .Query.Metric.WhereClause }}
 {{ .Query.EntityWhereClause }}
 SINCE {{ .Query.Since }} UNTIL {{ .Query.Until }}
@@ -104,10 +105,10 @@ SINCE {{ .Query.Since }} UNTIL {{ .Query.Until }}
 
 func (a *Assertion) satisfiesCondition(actualValue float64) bool {
 	switch a.ComparisonOperator {
-	case "<":
-		return actualValue < a.Threshold
 	case ">":
 		return actualValue > a.Threshold
+	case ">=":
+		return actualValue >= a.Threshold
 	default:
 		log.Panicf("Unknown comparison operator: %s", a.ComparisonOperator)
 		return false
