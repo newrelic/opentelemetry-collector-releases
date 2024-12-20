@@ -58,6 +58,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
       TF_VAR_aws_account_id: ${{ secrets.aws_account_id }}
+      TF_VAR_nr_backend_url: ${{ secrets.nr_backend_url }}
+      TF_VAR_nr_ingest_key: ${{ secrets.nr_ingest_key }}
 
     steps:
       - name: Checkout repository
