@@ -46,6 +46,12 @@ on:
       aws_account_id:
         description: "AWS account for test purposes with existing role resource-provider"
         required: true
+      nr_backend_url:
+        description: "NR backend url for test purposes"
+        required: true
+      nr_ingest_key:
+        description: "NR ingest key for test purposes"
+        required: true
 
 
 jobs:
