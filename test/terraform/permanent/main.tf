@@ -18,8 +18,10 @@ resource "helm_release" "ci_e2e_nightly" {
   depends_on = [module.ci_e2e_cluster]
 
   name      = "ci-e2etest-nightly"
-  namespace = "ci-e2etest-nightly"
   chart     = "../../charts/nr_backend"
+
+  create_namespace = true
+  namespace = "nightly"
 
   set {
     name  = "image.pullPolicy"
