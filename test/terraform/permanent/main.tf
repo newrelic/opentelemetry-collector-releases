@@ -14,6 +14,11 @@ data "aws_eks_cluster_auth" "this" {
   name = module.ci_e2e_cluster.cluster_name
 }
 
+resource "random_string" "collector_hostname_suffix" {
+  length = 6
+  special = false
+}
+
 resource "helm_release" "ci_e2e_nightly" {
   depends_on = [module.ci_e2e_cluster]
 
@@ -36,5 +41,10 @@ resource "helm_release" "ci_e2e_nightly" {
   set {
     name  = "secrets.nrIngestKey"
     value = var.nr_ingest_key
+  }
+
+  set {
+    name = "collector.hostname"
+    value = "nr-otel-collector-nightly-${random_string.collector_hostname_suffix.result}"
   }
 }

@@ -7,6 +7,9 @@ terraform {
     helm = {
       version = "2.17.0"
     }
+    random ={
+      version = "3.6.3"
+    }
   }
 }
 

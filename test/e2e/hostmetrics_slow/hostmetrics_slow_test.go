@@ -3,8 +3,10 @@ package hostmetrics
 import (
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/random"
 	corev1 "k8s.io/api/core/v1"
 	"log"
+	"strings"
 	"test/e2e/util/assert"
 	"test/e2e/util/chart"
 	helmutil "test/e2e/util/helm"
@@ -23,6 +25,7 @@ const (
 var (
 	kubectlOptions *k8s.KubectlOptions
 	testChart      chart.NrBackendChart
+	testId         = strings.ToLower(random.UniqueId())
 )
 
 type testEnv struct {
@@ -41,14 +44,15 @@ func setupTest(tb testing.TB) testEnv {
 
 func TestMain(m *testing.M) {
 	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
-	testChart = chart.NrBackend
+	testChart = chart.NewNrBackendChart(testId)
 	m.Run()
 }
 
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsSlowTest(t)
 
-	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup")
+	releaseName := fmt.Sprintf("%s-%s", "hostmetrics-startup-slow", testId)
+	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), releaseName)
 	t.Cleanup(cleanup)
 	te := setupTest(t)
 	t.Cleanup(func() {
@@ -64,7 +68,7 @@ func TestStartupBehavior(t *testing.T) {
 		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
 			t.Parallel()
 			assertionFactory := assert.NewMetricAssertionFactory(
-				fmt.Sprintf("WHERE host.name = '%s'", te.collectorPod.Name),
+				fmt.Sprintf("WHERE host.name = '%s'", testChart.CollectorHostname),
 				"5 minutes ago",
 			)
 			client := nr.NewClient()
