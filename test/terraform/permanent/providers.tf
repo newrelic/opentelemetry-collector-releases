@@ -4,6 +4,9 @@ terraform {
     aws = {
       version = "5.81.0"
     }
+    helm = {
+      version = "2.17.0"
+    }
   }
 }
 
@@ -24,5 +27,13 @@ provider "aws" {
 
   assume_role {
     role_arn = "arn:aws:iam::${var.aws_account_id}:role/resource-provisioner"
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host  = module.ci_e2e_cluster.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.ci_e2e_cluster.cluster_certificate_authority_data)
+    token = data.aws_eks_cluster_auth.this.token
   }
 }

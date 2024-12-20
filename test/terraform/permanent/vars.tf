@@ -6,5 +6,17 @@ variable "aws_account_id" {
 variable "aws_region" {
   type        = string
   description = "AWS region to deploy to"
-  default = "us-east-1"
+  default     = "us-east-1"
+}
+
+variable "nr_backend_url" {
+  type        = string
+  description = "NR endpoint used in test cluster"
+  sensitive   = true
+}
+
+variable "nr_ingest_key" {
+  type        = string
+  description = "NR ingest key used in test cluster"
+  sensitive   = true
 }
