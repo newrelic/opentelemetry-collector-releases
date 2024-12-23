@@ -54,6 +54,7 @@ func TestStartupBehavior(t *testing.T) {
 	t.Cleanup(func() {
 		te.teardown(t)
 	})
+	reportedHostname := k8sutil.GetReportedHostname(t, kubectlOptions, te.collectorPod.Name)
 	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
 	time.Sleep(70 * time.Second)
 	// space out requests to not run into 25 concurrent request limit
@@ -64,7 +65,7 @@ func TestStartupBehavior(t *testing.T) {
 		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
 			t.Parallel()
 			assertionFactory := assert.NewMetricAssertionFactory(
-				fmt.Sprintf("WHERE host.name = '%s'", te.collectorPod.Name),
+				fmt.Sprintf("WHERE host.name = '%s'", reportedHostname),
 				"5 minutes ago",
 			)
 			client := nr.NewClient()
