@@ -24,6 +24,7 @@ const (
 var (
 	kubectlOptions *k8s.KubectlOptions
 	testChart      chart.MockedBackendChart
+	testId         string
 )
 
 // TODO: Export from mocked module
@@ -46,6 +47,7 @@ func setupTest(tb testing.TB) testEnv {
 }
 
 func TestMain(m *testing.M) {
+	testId = testutil.NewTestId()
 	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
 	testChart = chart.MockedBackend
 	m.Run()
@@ -53,7 +55,7 @@ func TestMain(m *testing.M) {
 
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsFastTest(t)
-	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup")
+	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup", testId)
 	defer cleanup()
 
 	t.Run("healthcheck succeeds", func(t *testing.T) {

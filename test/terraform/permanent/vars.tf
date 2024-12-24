@@ -20,3 +20,10 @@ variable "nr_ingest_key" {
   description = "NR ingest key used in test cluster"
   sensitive   = true
 }
+
+variable "test_environment" {
+  type        = string
+  description = "Name of test environment to distinguish entities"
+  default     = "nightly"
+}
+

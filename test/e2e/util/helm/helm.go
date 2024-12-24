@@ -5,8 +5,6 @@ import (
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/random"
-	"strings"
 	"test/e2e/util/chart"
 	"testing"
 )
@@ -29,9 +27,8 @@ func NewHelmOptions(kubectlOptions *k8s.KubectlOptions, chartValues map[string]s
 	}
 }
 
-func ApplyChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, chart chart.Chart, releaseNameSuffix string) func() {
-	releaseName := fmt.Sprintf(
-		"%s-%s", releaseNameSuffix, strings.ToLower(random.UniqueId()))
+func ApplyChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, chart chart.Chart, releaseNameSuffix string, testId string) func() {
+	releaseName := fmt.Sprintf("%s-%s", releaseNameSuffix, testId)
 	helmOptions := NewHelmOptions(kubectlOptions, chart.RequiredChartValues())
 	helm.Install(t, helmOptions, chart.Meta().ChartPath(), releaseName)
 	return func() {

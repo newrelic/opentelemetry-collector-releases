@@ -7,6 +7,7 @@ import (
 	"log"
 	"test/e2e/util/assert"
 	"test/e2e/util/chart"
+	envutil "test/e2e/util/env"
 	helmutil "test/e2e/util/helm"
 	k8sutil "test/e2e/util/k8s"
 	"test/e2e/util/nr"
@@ -21,8 +22,10 @@ const (
 )
 
 var (
-	kubectlOptions *k8s.KubectlOptions
-	testChart      chart.NrBackendChart
+	kubectlOptions            *k8s.KubectlOptions
+	testChart                 chart.NrBackendChart
+	testId                    string
+	collectorReportedHostname string
 )
 
 type testEnv struct {
@@ -40,21 +43,26 @@ func setupTest(tb testing.TB) testEnv {
 }
 
 func TestMain(m *testing.M) {
+	testId = testutil.NewTestId()
 	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
-	testChart = chart.NrBackend
+	environmentName := "local"
+	if envutil.IsContinuousIntegration() {
+		environmentName = "ci"
+	}
+	collectorReportedHostname = fmt.Sprintf("nr-otel-collector-%s-%s", environmentName, testId)
+	testChart = chart.NewNrBackendChart(collectorReportedHostname)
 	m.Run()
 }
 
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsSlowTest(t)
 
-	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup")
+	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup", testId)
 	t.Cleanup(cleanup)
 	te := setupTest(t)
 	t.Cleanup(func() {
 		te.teardown(t)
 	})
-	reportedHostname := k8sutil.GetReportedHostname(t, kubectlOptions, te.collectorPod.Name)
 	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
 	time.Sleep(70 * time.Second)
 	// space out requests to not run into 25 concurrent request limit
@@ -65,7 +73,7 @@ func TestStartupBehavior(t *testing.T) {
 		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
 			t.Parallel()
 			assertionFactory := assert.NewMetricAssertionFactory(
-				fmt.Sprintf("WHERE host.name = '%s'", reportedHostname),
+				fmt.Sprintf("WHERE host.name = '%s'", collectorReportedHostname),
 				"5 minutes ago",
 			)
 			client := nr.NewClient()

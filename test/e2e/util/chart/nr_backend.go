@@ -3,9 +3,14 @@ package chart
 import envutil "test/e2e/util/env"
 
 type NrBackendChart struct {
+	collectorHostname string
 }
 
-var NrBackend = NrBackendChart{}
+func NewNrBackendChart(collectorHostname string) NrBackendChart {
+	return NrBackendChart{
+		collectorHostname: collectorHostname,
+	}
+}
 
 func (m *NrBackendChart) AsChart() Chart {
 	var chart Chart = m
@@ -23,5 +28,6 @@ func (m *NrBackendChart) RequiredChartValues() map[string]string {
 		"image.tag":            envutil.GetImageTag(),
 		"secrets.nrBackendUrl": envutil.GetNrBackendUrl(),
 		"secrets.nrIngestKey":  envutil.GetNrIngestKey(),
+		"collector.hostname":   m.collectorHostname,
 	}
 }

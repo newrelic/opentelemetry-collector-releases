@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/gruntwork-io/terratest/modules/random"
 	"strings"
 	envutil "test/e2e/util/env"
 	"testing"
@@ -25,4 +26,8 @@ func TagAsFastTest(t *testing.T) {
 
 func isModeEnabled(mode string) bool {
 	return strings.Contains(envutil.GetTestMode(), mode)
+}
+
+func NewTestId() string {
+	return strings.ToLower(random.UniqueId())
 }
