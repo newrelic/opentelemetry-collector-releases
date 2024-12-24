@@ -24,6 +24,6 @@ variable "nr_ingest_key" {
 variable "test_environment" {
   type        = string
   description = "Name of test environment to distinguish entities"
-  default     = "nightly"
+  default     = "permanent"
 }
 
