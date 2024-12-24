@@ -57,6 +57,7 @@ func TestMain(m *testing.M) {
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsSlowTest(t)
 
+	t.Logf("host.name used for test: %s", collectorReportedHostname)
 	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup", testId)
 	t.Cleanup(cleanup)
 	te := setupTest(t)
