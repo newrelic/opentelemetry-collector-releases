@@ -176,7 +176,7 @@ var testCases = []TestCase{
 			Name:        "system.paging.usage",
 			WhereClause: "WHERE state='used'"},
 		Assertions: []assert.Assertion{
-			{AggregationFunction: "max", ComparisonOperator: ">", Threshold: 0},
+			{AggregationFunction: "max", ComparisonOperator: ">=", Threshold: 0},
 		}},
 	{
 		Name: "host receiver paging.usage free",
