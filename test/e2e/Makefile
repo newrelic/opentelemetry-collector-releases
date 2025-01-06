@@ -41,6 +41,10 @@ ci_test-fast: ci_test
 ci_test-slow: TEST_MODE=slowOnly
 ci_test-slow: ci_test
 
+.PHONY: ci_test-nightly
+ci_test-nightly: TEST_MODE=nightlyOnly
+ci_test-nightly: ci_test
+
 .PHONY: ci_test
 ci_test: ci_load-image ci_build-load-mocked-otlp-image
 	cd ${THIS_MAKEFILE_DIR} && \

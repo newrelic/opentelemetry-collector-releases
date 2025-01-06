@@ -55,7 +55,7 @@ jobs:
           cluster_name: ${{ env.TEST_CLUSTER_NAME }}
           wait: 60s
 
-      - name: Run local e2e tests
+      - name: Run slow local tests
         run: |
           IMAGE_TAG=${{ env.version }}-rc-amd64 \
           KIND_CLUSTER_NAME=${{ env.TEST_CLUSTER_NAME }} \
@@ -65,3 +65,10 @@ jobs:
           NR_ACCOUNT_ID=${{ secrets.OTELCOMM_NR_TEST_ACCOUNT_ID }} \
           NR_API_BASE_URL=${{ secrets.NR_STAGING_API_BASE_URL }} \
           make -f ./test/e2e/Makefile ci_test-slow
+
+      - name: Run nightly tests
+        run: |
+          NR_API_KEY=${{ secrets.OTELCOMM_NR_API_KEY }} \
+          NR_ACCOUNT_ID=${{ secrets.OTELCOMM_NR_TEST_ACCOUNT_ID }} \
+          NR_API_BASE_URL=${{ secrets.NR_STAGING_API_BASE_URL }} \
+          make -f ./test/e2e/Makefile ci_test-nightly

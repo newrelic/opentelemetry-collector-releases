@@ -21,19 +21,26 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region              = var.aws_region
   allowed_account_ids = [var.aws_account_id]
   # expect AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY as env vars
 
   assume_role {
     role_arn = "arn:aws:iam::${var.aws_account_id}:role/resource-provisioner"
   }
+  #   default_tags {
+  #     tags = {
+  #       "Terraform"    = "true"
+  #       "Repo"         = "newrelic-opentelemetry-collector-releases"
+  #       "TerraformDir" = "permanent"
+  #     }
+  #   }
 }
 
 provider "helm" {
   kubernetes {
-    host  = module.ci_e2e_cluster.cluster_endpoint
+    host                   = module.ci_e2e_cluster.cluster_endpoint
     cluster_ca_certificate = base64decode(module.ci_e2e_cluster.cluster_certificate_authority_data)
-    token = data.aws_eks_cluster_auth.this.token
+    token                  = data.aws_eks_cluster_auth.this.token
   }
 }

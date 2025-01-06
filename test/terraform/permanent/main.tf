@@ -14,9 +14,7 @@ data "aws_eks_cluster_auth" "this" {
   name = module.ci_e2e_cluster.cluster_name
 }
 
-provider "random" {}
-
-resource "random_string" "hostname_suffix" {
+resource "random_string" "deploy_id" {
   length  = 6
   special = false
 }
@@ -46,8 +44,8 @@ resource "helm_release" "ci_e2e_nightly" {
   }
 
   set {
-    name  = "collector.hostname"
-    value = "nr-otel-collector-${var.test_environment}-${random_string.hostname_suffix.result}"
+    name = "collector.hostname"
+    value = "${var.test_environment}-${random_string.deploy_id.result}-k8s_node"
   }
 }
 
@@ -60,8 +58,11 @@ module "ecr" {
 
   repository_name = "nr-otel-collector"
 
-  repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
-  repository_read_access_arns = [module.ci_e2e_cluster.cluster_iam_role_arn]
+  repository_read_write_access_arns = [data.aws_caller_identity.current.arn
+  ]
+  repository_read_access_arns = [
+    module.ci_e2e_cluster.cluster_iam_role_arn
+  ]
 
   repository_lifecycle_policy = jsonencode({
     rules = [
@@ -69,10 +70,10 @@ module "ecr" {
         rulePriority = 1,
         description  = "Keep last 10 nightly images",
         selection = {
-          tagStatus   = "tagged",
+          tagStatus     = "tagged",
           tagPrefixList = ["nightly"],
-          countType   = "imageCountMoreThan",
-          countNumber = 10
+          countType     = "imageCountMoreThan",
+          countNumber   = 10
         },
         action = {
           type = "expire"
@@ -80,4 +81,15 @@ module "ecr" {
       }
     ]
   })
+}
+
+
+module "ci_e2e_ec2" {
+  source = "../modules/ec2"
+  nr_ingest_key  =  var.nr_ingest_key
+  # reuse vpc to avoid having to pay for second NAT gateway for this simple use case
+  vpc_id = module.ci_e2e_cluster.eks_vpc_id
+  deploy_id = random_string.deploy_id.result
+  # TODO: use nightly instead
+  collector_version = "0.8.5"
 }

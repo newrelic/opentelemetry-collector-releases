@@ -2,22 +2,34 @@ package chart
 
 import (
 	"fmt"
+	"log"
+	osuser "os/user"
 	envutil "test/e2e/util/env"
+	testutil "test/e2e/util/test"
 )
 
 type NrBackendChart struct {
-	CollectorHostname string
+	collectorHostNamePrefix string
+	NrQueryHostNamePattern  string
 }
 
 func NewNrBackendChart(testId string) NrBackendChart {
-	environmentName := "local"
+	var environmentName string
 	if envutil.IsContinuousIntegration() {
 		environmentName = "ci"
+	} else {
+		user, err := osuser.Current()
+		if err != nil {
+			log.Panicf("Couldn't determine current user: %v", err)
+		}
+		environmentName = fmt.Sprintf("local_%s", user.Username)
 	}
-	collectorHostname := fmt.Sprintf("nr-otel-collector-%s-%s", environmentName, testId)
+	hostNamePrefix := testutil.NewHostNamePrefix(environmentName, testId, "k8s-node")
+	hostNamePattern := testutil.NewNrQueryHostNamePattern(environmentName, testId, "k8s-node")
 
 	return NrBackendChart{
-		CollectorHostname: collectorHostname,
+		collectorHostNamePrefix: hostNamePrefix,
+		NrQueryHostNamePattern:  hostNamePattern,
 	}
 }
 
@@ -37,6 +49,6 @@ func (m *NrBackendChart) RequiredChartValues() map[string]string {
 		"image.tag":            envutil.GetImageTag(),
 		"secrets.nrBackendUrl": envutil.GetNrBackendUrl(),
 		"secrets.nrIngestKey":  envutil.GetNrIngestKey(),
-		"collector.hostname":   m.CollectorHostname,
+		"collector.hostname":   m.collectorHostNamePrefix,
 	}
 }
