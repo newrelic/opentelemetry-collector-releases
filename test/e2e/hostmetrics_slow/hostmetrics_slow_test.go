@@ -73,12 +73,12 @@ func TestStartupBehavior(t *testing.T) {
 	for i, testCase := range spec.GetOnHostTestCases() {
 		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
 			t.Parallel()
-			assertionFactory := assert.NewMetricAssertionFactory(
+			assertionFactory := assert.NewNrMetricAssertionFactory(
 				fmt.Sprintf("WHERE host.name = '%s'", collectorReportedHostname),
 				"5 minutes ago",
 			)
 			client := nr.NewClient()
-			assertion := assertionFactory.NewMetricAssertion(testCase.Metric, testCase.Assertions)
+			assertion := assertionFactory.NewNrMetricAssertion(testCase.Metric, testCase.Assertions)
 			// space out requests to avoid rate limiting
 			time.Sleep(time.Duration(i) * requestSpacing)
 			assertion.Execute(t, client)

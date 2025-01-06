@@ -11,23 +11,23 @@ import (
 	"text/template"
 )
 
-type MetricAssertionFactory struct {
+type NrMetricAssertionFactory struct {
 	entityWhereClause string
 	since             string
 	until             string
 }
 
-func NewMetricAssertionFactory(entityWhereClause string, since string) MetricAssertionFactory {
-	return MetricAssertionFactory{
+func NewNrMetricAssertionFactory(entityWhereClause string, since string) NrMetricAssertionFactory {
+	return NrMetricAssertionFactory{
 		entityWhereClause: entityWhereClause,
 		since:             since,
 		until:             "now",
 	}
 }
 
-func (f *MetricAssertionFactory) NewMetricAssertion(metric Metric, assertions []Assertion) MetricAssertion {
-	return MetricAssertion{
-		Query: BaseQuery{
+func (f *NrMetricAssertionFactory) NewNrMetricAssertion(metric NrMetric, assertions []NrAssertion) NrMetricAssertion {
+	return NrMetricAssertion{
+		Query: NrBaseQuery{
 			Metric:            metric,
 			EntityWhereClause: f.entityWhereClause,
 			Since:             f.since,
@@ -37,30 +37,30 @@ func (f *MetricAssertionFactory) NewMetricAssertion(metric Metric, assertions []
 	}
 }
 
-type MetricAssertion struct {
-	Query      BaseQuery
-	Assertions []Assertion
+type NrMetricAssertion struct {
+	Query      NrBaseQuery
+	Assertions []NrAssertion
 }
 
-type BaseQuery struct {
-	Metric            Metric
+type NrBaseQuery struct {
+	Metric            NrMetric
 	EntityWhereClause string
 	Since             string
 	Until             string
 }
 
-type Metric struct {
+type NrMetric struct {
 	Name        string
 	WhereClause string
 }
 
-type Assertion struct {
+type NrAssertion struct {
 	AggregationFunction string
 	ComparisonOperator  string
 	Threshold           float64
 }
 
-func (m *MetricAssertion) Execute(t testing.TB, client *newrelic.NewRelic) {
+func (m *NrMetricAssertion) Execute(t testing.TB, client *newrelic.NewRelic) {
 	query := nrdb.NRQL(m.AsQuery())
 	response, err := client.Nrdb.Query(envutil.GetNrAccountId(), query)
 	if err != nil {
@@ -82,7 +82,7 @@ func (m *MetricAssertion) Execute(t testing.TB, client *newrelic.NewRelic) {
 	}
 }
 
-func (m *MetricAssertion) AsQuery() string {
+func (m *NrMetricAssertion) AsQuery() string {
 	tmpl, err := template.New("query").Parse(`
 SELECT {{ range $idx, $assert := .Assertions -}}
 	{{- if $idx }},{{ end }}{{ $assert.AggregationFunction }}(` + "`" + `{{ $.Query.Metric.Name }}` + "`" + `)
@@ -103,7 +103,7 @@ SINCE {{ .Query.Since }} UNTIL {{ .Query.Until }}
 	return query.String()
 }
 
-func (a *Assertion) satisfiesCondition(actualValue float64) bool {
+func (a *NrAssertion) satisfiesCondition(actualValue float64) bool {
 	switch a.ComparisonOperator {
 	case ">":
 		return actualValue > a.Threshold

@@ -7,12 +7,12 @@ import (
 )
 
 func TestAsQueryWithSingleAssertion(t *testing.T) {
-	assertionFactory := NewMetricAssertionFactory(
+	assertionFactory := NewNrMetricAssertionFactory(
 		fmt.Sprintf("WHERE host.name = 'nr-otel-collector-foobar'"),
 		"5 minutes ago",
 	)
-	singleAssertion := assertionFactory.NewMetricAssertion(
-		Metric{Name: "system.cpu.utilization", WhereClause: "WHERE state='user'"}, []Assertion{
+	singleAssertion := assertionFactory.NewNrMetricAssertion(
+		NrMetric{Name: "system.cpu.utilization", WhereClause: "WHERE state='user'"}, []NrAssertion{
 			{AggregationFunction: "max", ComparisonOperator: ">", Threshold: 0},
 		})
 	actual := singleAssertion.AsQuery()
@@ -26,11 +26,11 @@ SINCE 5 minutes ago UNTIL now
 }
 
 func TestAsQueryWithMultipleAssertions(t *testing.T) {
-	assertionFactory := NewMetricAssertionFactory(
+	assertionFactory := NewNrMetricAssertionFactory(
 		fmt.Sprintf("WHERE host.name = 'nr-otel-collector-foobar'"),
 		"5 minutes ago",
 	)
-	singleAssertion := assertionFactory.NewMetricAssertion(Metric{Name: "system.cpu.utilization", WhereClause: "WHERE state='user'"}, []Assertion{
+	singleAssertion := assertionFactory.NewNrMetricAssertion(NrMetric{Name: "system.cpu.utilization", WhereClause: "WHERE state='user'"}, []NrAssertion{
 		{AggregationFunction: "max", ComparisonOperator: "<", Threshold: 0},
 		{AggregationFunction: "min", ComparisonOperator: ">", Threshold: 0},
 		{AggregationFunction: "average", ComparisonOperator: ">", Threshold: 0},
