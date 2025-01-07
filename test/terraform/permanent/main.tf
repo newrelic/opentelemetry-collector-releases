@@ -24,11 +24,11 @@ resource "random_string" "hostname_suffix" {
 resource "helm_release" "ci_e2e_nightly" {
   depends_on = [module.ci_e2e_cluster]
 
-  name      = "ci-e2etest-nightly"
-  chart     = "../../charts/nr_backend"
+  name  = "ci-e2etest-nightly"
+  chart = "../../charts/nr_backend"
 
   create_namespace = true
-  namespace = "nightly"
+  namespace        = "nightly"
 
   set {
     name  = "image.pullPolicy"
@@ -46,7 +46,38 @@ resource "helm_release" "ci_e2e_nightly" {
   }
 
   set {
-    name = "collector.hostname"
+    name  = "collector.hostname"
     value = "nr-otel-collector-${var.test_environment}-${random_string.hostname_suffix.result}"
   }
+}
+
+data "aws_caller_identity" "current" {}
+
+module "ecr" {
+  depends_on = [module.ci_e2e_cluster]
+
+  source = "terraform-aws-modules/ecr/aws"
+
+  repository_name = "nr-otel-collector"
+
+  repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
+  repository_read_access_arns = [module.ci_e2e_cluster.cluster_iam_role_arn]
+
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep last 10 nightly images",
+        selection = {
+          tagStatus   = "tagged",
+          tagPrefixList = ["nightly"],
+          countType   = "imageCountMoreThan",
+          countNumber = 10
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
 }
