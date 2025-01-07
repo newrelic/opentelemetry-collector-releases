@@ -15,6 +15,7 @@ const (
 	NrApiKey       = "E2E_TEST__NR_API_KEY"
 	NrAccountId    = "E2E_TEST__NR_ACCOUNT_ID"
 	NrApiBaseUrl   = "E2E_TEST__NR_API_BASE_URL"
+	CI             = "CI" // auto-populated by github action
 )
 
 func getEnvVar(envVar string) string {
@@ -60,4 +61,8 @@ func GetNrAccountId() int {
 
 func GetNrApiBaseUrl() string {
 	return getEnvVar(NrApiBaseUrl)
+}
+
+func IsContinuousIntegration() bool {
+	return os.Getenv(CI) == "true"
 }

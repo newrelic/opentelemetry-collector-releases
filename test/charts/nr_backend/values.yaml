@@ -4,8 +4,9 @@ image:
   # Avoid accidentally pulling remote images in CI
   pullPolicy: Never
 
-resources: {}
-
 secrets:
   nrBackendUrl: PLACEHOLDER
   nrIngestKey: PLACEHOLDER
+
+collector:
+  hostname: nr-otel-collector-default-hostname

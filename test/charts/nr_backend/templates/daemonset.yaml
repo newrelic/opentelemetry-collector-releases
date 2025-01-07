@@ -41,6 +41,8 @@ spec:
                 secretKeyRef:
                   name: daemonset-secrets
                   key: nrIngestKey
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "host.name={{ .Values.collector.hostname }}"
 ---
 apiVersion: v1
 kind: Secret
