@@ -35,18 +35,18 @@ ci_build-load-mocked-otlp-image: assert_cluster-exists
 
 .PHONY: ci_test-fast
 ci_test-fast: TEST_MODE=fastOnly
-ci_test-fast: ci_test
+ci_test-fast: ci_load-image ci_build-load-mocked-otlp-image ci_test
 
 .PHONY: ci_test-slow
 ci_test-slow: TEST_MODE=slowOnly
-ci_test-slow: ci_test
+ci_test-slow: ci_load-image ci_test
 
 .PHONY: ci_test-nightly
 ci_test-nightly: TEST_MODE=nightlyOnly
 ci_test-nightly: ci_test
 
 .PHONY: ci_test
-ci_test: ci_load-image ci_build-load-mocked-otlp-image
+ci_test:
 	cd ${THIS_MAKEFILE_DIR} && \
 	E2E_TEST__K8S_CONTEXT_NAME=${K8S_CONTEXT_NAME} \
 	E2E_TEST__IMAGE_TAG=${IMAGE_TAG} \

@@ -54,10 +54,10 @@ func TestStartupBehavior(t *testing.T) {
 	})
 	// wait for at least one default metric harvest cycle (60s) and some buffer to allow NR ingest to process data
 	time.Sleep(70 * time.Second)
-	// TODO: build some kind of semaphore based client wrapper?
 	// space out requests to not run into 25 concurrent request limit
 	requestsPerSecond := 4.0
 	requestSpacing := time.Duration((1/requestsPerSecond)*1000) * time.Millisecond
+	client := nr.NewClient()
 
 	for i, testCase := range spec.GetOnHostTestCases() {
 		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
@@ -66,7 +66,6 @@ func TestStartupBehavior(t *testing.T) {
 				fmt.Sprintf("WHERE host.name like '%s'", testChart.NrQueryHostNamePattern),
 				"5 minutes ago",
 			)
-			client := nr.NewClient()
 			assertion := assertionFactory.NewNrMetricAssertion(testCase.Metric, testCase.Assertions)
 			// space out requests to avoid rate limiting
 			time.Sleep(time.Duration(i) * requestSpacing)

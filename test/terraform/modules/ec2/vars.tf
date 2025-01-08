@@ -23,4 +23,5 @@ variable "nr_ingest_key" {
 variable "collector_version" {
   description = "Version of nr-otel-collector to install"
   type        = string
+  default     = ""
 }

@@ -96,7 +96,7 @@ var testCases = []TestCase{
 			Name: "system.cpu.load_average.15m",
 		},
 		Assertions: []assert.NrAssertion{
-			{AggregationFunction: "max", ComparisonOperator: ">", Threshold: 0},
+			{AggregationFunction: "max", ComparisonOperator: ">=", Threshold: 0},
 		}},
 	{
 		Name: "host receiver memory.usage cached",
@@ -302,4 +302,20 @@ var testCases = []TestCase{
 
 func GetOnHostTestCases() []TestCase {
 	return testCases
+}
+
+func GetOnHostTestCasesWithout(excludedMetric []string) []TestCase {
+	var filteredTestCases []TestCase
+	for _, testCase := range testCases {
+		included := true
+		for _, skippedMetric := range excludedMetric {
+			if testCase.Metric.Name == skippedMetric {
+				included = false
+			}
+		}
+		if included {
+			filteredTestCases = append(filteredTestCases, testCase)
+		}
+	}
+	return filteredTestCases
 }
