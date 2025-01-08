@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 version: 2
-project_name: opentelemetry-collector-releases
+project_name: opentelemetry-collector-releases-nightly
 builds:
   - id: nr-otel-collector
     goos:
@@ -74,7 +74,7 @@ dockers:
     goarch: amd64
     dockerfile: distributions/nr-otel-collector/Dockerfile
     image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
+      - newrelic/nr-otel-collector:{{ .Version }}-nightly-amd64
     extra_files:
       - configs/nr-otel-collector-agent-linux.yaml
     build_flag_templates:
@@ -83,14 +83,14 @@ dockers:
       - --label=org.opencontainers.image.created={{.Date}}
       - --label=org.opencontainers.image.name={{.ProjectName}}
       - --label=org.opencontainers.image.revision={{.FullCommit}}
-      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.version={{.Version}}-nightly
       - --label=org.opencontainers.image.source={{.GitURL}}
     use: buildx
   - goos: linux
     goarch: arm64
     dockerfile: distributions/nr-otel-collector/Dockerfile
     image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
+      - newrelic/nr-otel-collector:{{ .Version }}-nightly-arm64
     extra_files:
       - configs/nr-otel-collector-agent-linux.yaml
     build_flag_templates:
@@ -99,55 +99,15 @@ dockers:
       - --label=org.opencontainers.image.created={{.Date}}
       - --label=org.opencontainers.image.name={{.ProjectName}}
       - --label=org.opencontainers.image.revision={{.FullCommit}}
-      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.version={{.Version}}-nightly
       - --label=org.opencontainers.image.source={{.GitURL}}
     use: buildx
+
 docker_manifests:
-  - name_template: newrelic/nr-otel-collector:{{ .Version }}-rc
+  - name_template: newrelic/nr-otel-collector:{{ .Version }}-nightly
     image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
-      - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
-
-signs:
-  -
-    id: checksums
-
-    # Path to the checksum command.
-    cmd: ./scripts/generate_checksum.sh
-    args: [
-      "-f", "{{ .Env.artifact }}",
-    ]
-    artifacts: all
-  -
-    id: signing
-
-    # Path to the signature command.
-    cmd: ./scripts/signing/sign.sh
-    args: [
-      "-f", "{{ .Env.artifact }}",
-      "-m", "{{ .Env.GPG_MAIL }}",
-      "-p", "{{ .Env.GPG_PASSPHRASE }}",
-      "-k", "{{ .Env.GPG_PRIVATE_KEY_BASE64 }}"
-    ]
-    artifacts: all
-
-publishers:
-  - name: GH Publisher
-    cmd: ./scripts/gh_publisher.sh -t {{ .Env.NR_RELEASE_TAG }} -f {{ abs .ArtifactPath }}
-    extra_files:
-      - glob: "./dist/*.asc"
-      - glob: "./dist/*.sum"
-    env:
-      - GITHUB_TOKEN={{ .Env.GITHUB_TOKEN }}
-
-git:
-  # What should be used to sort tags when gathering the current and previous
-  # tags if there are more than one tag in the same commit.
-  #
-  # This is required because of the SemVer tag renaming.
-  #
-  # Default: `-version:refname`
-  tag_sort: -version:creatordate
+      - newrelic/nr-otel-collector:{{ .Version }}-nightly-amd64
+      - newrelic/nr-otel-collector:{{ .Version }}-nightly-arm64
 
 # Skip creating/updating gh release.
 release:
@@ -160,3 +120,6 @@ checksum:
 # Skip auto-generating changelog.
 changelog:
   disable: true
+
+snapshot:
+  name_template: "nightly-next"
