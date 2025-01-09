@@ -2,7 +2,7 @@
 
 # New Relic OpenTelemetry collector releases
 
-This repository assembles New Relic's OpenTelemetry Collector distributions. All generated assets are available in the corresponding Github release page.
+This repository assembles New Relic's Distribution of OpenTelemetry Collector (NRDOT). All generated assets are available in the corresponding Github release page.
 
 Current list of distributions:
 
