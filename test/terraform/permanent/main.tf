@@ -53,6 +53,10 @@ resource "helm_release" "ci_e2e_nightly" {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_session_context" "current" {
+  arn = data.aws_caller_identity.current.arn
+}
+
 module "ecr" {
   depends_on = [module.ci_e2e_cluster]
 
@@ -60,7 +64,7 @@ module "ecr" {
 
   repository_name = "nr-otel-collector"
 
-  repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
+  repository_read_write_access_arns = [data.aws_iam_session_context.current.issuer_arn]
   repository_read_access_arns = [module.ci_e2e_cluster.cluster_iam_role_arn]
 
   repository_lifecycle_policy = jsonencode({
