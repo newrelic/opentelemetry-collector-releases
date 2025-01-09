@@ -1,0 +1,19 @@
+### Breaking Changes
+
+### Features
+* ...
+
+### Fixes
+* ...
+
+### Maintenance
+[comment]: # Changes not immediately relevant for customers
+* ...
+
+### TODO: Sort all changes into categories above and delete this section
+{{- range $index, $entry := .Entries }}
+
+[comment]: # {{ $entry.Semver }}
+{{- range $entry.Changes }}{{$note := splitList "\n" .Note}}
+* {{ first $note }}{{end}}
+{{- end }}
