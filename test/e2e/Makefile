@@ -64,7 +64,7 @@ local_create-cluster-if-not-exists:
 
 .PHONY: local_build-image
 local_build-image:
-	cd $(ROOT_DIR) && goreleaser --snapshot --clean --skip-sign
+	cd $(ROOT_DIR) && goreleaser --snapshot --clean --skip=sign
 
 .PHONY: local_test
 # hardcode an image you build with local_build-image, then run this target to run tests against it

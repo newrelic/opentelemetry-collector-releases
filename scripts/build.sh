@@ -50,13 +50,11 @@ container_path_ocb_config="${container_work_dir}/${ocb_config}"
 
 echo "Building: $distribution"
 docker run \
-  --name ocb \
   -v "$(pwd)/${ocb_config}:${container_path_ocb_config}" \
+  -v "$(pwd)/${output_dir}:${container_work_dir}/${output_dir}:rw" \
   "${builder_image}" \
   --config "${container_path_ocb_config}" \
   --skip-compilation=${skipcompilation}
-
-docker cp "ocb:${container_work_dir}/${output_dir}/." "${output_dir}"
 
 if [[ "$ensure_docker_write_permissions" == "true" ]]; then
     # change owner of output dir back to the 'build' user to allow access for following steps

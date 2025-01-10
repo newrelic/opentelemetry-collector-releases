@@ -1,6 +1,6 @@
 module github.com/newrelic/opentelemetry-collector-releases/internal/tools
 
-go 1.20
+go 1.23
 
 require go.elastic.co/go-licence-detector v0.6.0
 

@@ -21,6 +21,7 @@ builds:
       - -trimpath
     env:
       - CGO_ENABLED=0
+
 archives:
   - id: nr-otel-collector
     builds:
@@ -122,4 +123,4 @@ changelog:
   disable: true
 
 snapshot:
-  name_template: "nightly-next"
+  version_template: "{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}-nightly"
