@@ -67,7 +67,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '~1.22.3'
+          go-version: '1.23'
           check-latest: true
 
       - name: Generate distribution sources
@@ -80,10 +80,10 @@ jobs:
           password: ${{ secrets.OHAI_DOCKER_HUB_PASSWORD }}
 
       - name: Build binaries & packages with GoReleaser
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
-          version: '~> v1'
+          version: '~> v2'
           args: release --rm-dist --skip-docker --skip-publish --timeout 2h
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
