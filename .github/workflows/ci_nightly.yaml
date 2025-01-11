@@ -85,4 +85,4 @@ jobs:
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: --clean --timeout 2h --config .goreleaser-nightly.yaml
+          args: --skip=validate --clean --timeout 2h --config .goreleaser-nightly.yaml
