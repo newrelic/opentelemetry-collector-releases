@@ -83,8 +83,6 @@ jobs:
 
       - name: Build and publish nightly binaries & packages with GoReleaser
         uses: goreleaser/goreleaser-action@v6
-        env:
-          REGISTRY: ${{ env.REGISTRY }}
         with:
           distribution: goreleaser
           version: '~> v2'
