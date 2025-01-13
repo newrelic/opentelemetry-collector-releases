@@ -64,6 +64,8 @@ module "ecr" {
 
   repository_name = "nr-otel-collector"
 
+  repository_image_tag_mutability = "MUTABLE"
+
   repository_read_write_access_arns = [data.aws_iam_session_context.current.issuer_arn]
   repository_read_access_arns = [module.ci_e2e_cluster.cluster_iam_role_arn]
 
