@@ -1,0 +1,89 @@
+name: 🧩 Public Docs PR
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Version of release notes to use for public docs PR."
+        type: string
+        required: true
+      forking_github_user:
+        description: "Github user owning the fork. Must match the token with fork access."
+        type: string
+        required: true
+    secrets:
+      github_token_with_fork_access:
+        description: "Github token to push to fork"
+        required: true
+      github_token_with_org_access:
+        description: "Github token to create PR in upstream docs repo"
+        required: true
+
+
+
+jobs:
+  create-public-docs-pr:
+    name: Create public docs PR
+    runs-on: ubuntu-latest
+    env:
+      version: ${{ inputs.version }}
+    steps:
+      - name: scrape release notes and create branch
+        env:
+          forking_github_user: ${{ inputs.forking_github_user }}
+          GITHUB_TOKEN: ${{ secrets.github_token_with_fork_access }}
+        run: |
+          #!/bin/bash
+          set -e
+          
+          docs_repo_name='docs-website'
+          docs_repo_fork="${forking_github_user}/${docs_repo_name}"
+          docs_repo_upstream="newrelic/${docs_repo_name}"
+          nrdot_repo="newrelic/opentelemetry-collector-releases"
+          fork_base_branch=develop
+          
+          # prep fork for PR
+          git clone "git@github.com:${docs_repo_fork}.git" -b ${fork_base_branch} --single-branch --filter=blob:none
+          cd docs-website
+          git remote add upstream "git@github.com:${docs_repo_upstream}.git"
+          git fetch upstream develop
+          git rebase upstream/develop
+          branch_with_new_release_notes="nrdot-release-notes-${version}-$(date +%s)"
+          git switch -c ${branch_with_new_release_notes}
+          
+          # scrape release notes for ${version}
+          release_day_utc=$(gh release view "${version}" --repo "${nrdot_repo}" --json assets -q '.assets.[] | select (.name | contains("amd64.deb.sum")) | .createdAt | split("T")[0]')
+          release_date_utc_yy_mm_dd=${release_day_utc:2}
+          release_notes_file="src/content/docs/release-notes/nrdot-release-notes/nrdot-${release_date_utc_yy_mm_dd}.mdx"
+          printf "%s\nsubject: NRDOT\nreleaseDate: '%s'\nversion: %s\nmetaDescription: %s\n---\n\n" \
+            '---' "${release_day_utc}" "${version}" "Release notes for NRDOT version ${version}" > ${release_notes_file}
+          gh release view "${version}" --repo ${nrdot_repo} --json body --jq .body >> ${release_notes_file}
+          
+          # Strip out sections that are not relevant to end-users
+          h2_to_delete=("CI")
+          for h2_to_delete in "${h2_to_delete[@]}"; do
+            sed -i '' -e "/^## ${h2_to_delete}/,/^##/ { /^##/!d; }; /^## ${h2_to_delete}/d" ${release_notes_file}
+          done
+          h3_to_delete=("Maintenance")
+          for h3_to_delete in "${h3_to_delete[@]}"; do
+            sed -i '' -e "/^### ${h3_to_delete}/,/^###/ { /^###/!d; }; /^### ${h3_to_delete}/d" ${release_notes_file}
+          done
+          
+          git add ${release_notes_file}
+          git commit -m "feat: Add release notes for NRDOT ${version}"
+          git push origin ${branch_with_new_release_notes}
+          
+          # export env vars for next step
+          echo "docs_repo_fork=${docs_repo_fork}" >> "$GITHUB_ENV"
+          echo "nrdot_repo=${nrdot_repo}" >> "$GITHUB_ENV"
+          echo "docs_repo_upstream=${docs_repo_upstream}" >> "$GITHUB_ENV"
+          echo "fork_base_branch=${fork_base_branch}" >> "$GITHUB_ENV"
+          echo "branch_with_new_release_notes=${branch_with_new_release_notes}" >> "$GITHUB_ENV"
+      - name: create PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token_with_org_access }}
+        run: |
+          gh pr create --title "Add release notes for NRDOT ${version}" \
+           --body "Add release notes for NRDOT ${version}\n\n Note: PR is auto-generated. If anything looks off, please contact the maintainers of ${nrdot_repo}." \
+           --repo ${docs_repo_upstream} \
+           --base ${fork_base_branch} --head ${branch_with_new_release_notes}

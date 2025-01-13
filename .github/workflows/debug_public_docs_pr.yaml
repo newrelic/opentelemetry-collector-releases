@@ -1,0 +1,23 @@
+name: 🪲 Public Docs PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of release notes to use for public docs PR."
+        type: string
+        required: true
+      forking_github_user:
+        description: "Github user owning the fork. Must match token with fork access."
+        type: string
+        required: true
+
+jobs:
+  debug-public-docs-pr:
+    uses: ./.github/workflows/component_public_docs_pr.yaml
+    with:
+      version: ${{ inputs.version }}
+      fork_user: ${{ inputs.forking_github_user }}
+    secrets:
+        github_token_with_fork_access: ${{ secrets.github_token_with_fork_access }}
+        github_token_with_org_access: ${{ secrets.github_token_with_org_access }}
