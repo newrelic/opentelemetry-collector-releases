@@ -75,7 +75,8 @@ dockers:
     goarch: amd64
     dockerfile: distributions/nr-otel-collector/Dockerfile
     image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-nightly-amd64
+      - '{{ .Env.REGISTRY }}:{{ .Version }}-nightly-amd64'
+      - '{{ .Env.REGISTRY }}:nightly-amd64'
     extra_files:
       - configs/nr-otel-collector-agent-linux.yaml
     build_flag_templates:
@@ -91,7 +92,8 @@ dockers:
     goarch: arm64
     dockerfile: distributions/nr-otel-collector/Dockerfile
     image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-nightly-arm64
+      - '{{ .Env.REGISTRY }}:{{ .Version }}-nightly-arm64'
+      - '{{ .Env.REGISTRY }}:nightly-arm64'
     extra_files:
       - configs/nr-otel-collector-agent-linux.yaml
     build_flag_templates:
@@ -105,10 +107,14 @@ dockers:
     use: buildx
 
 docker_manifests:
-  - name_template: newrelic/nr-otel-collector:{{ .Version }}-nightly
+  - name_template: '{{ .Env.REGISTRY }}:{{ .Version }}-nightly'
     image_templates:
-      - newrelic/nr-otel-collector:{{ .Version }}-nightly-amd64
-      - newrelic/nr-otel-collector:{{ .Version }}-nightly-arm64
+      - '{{ .Env.REGISTRY }}:{{ .Version }}-nightly-amd64'
+      - '{{ .Env.REGISTRY }}:{{ .Version }}-nightly-arm64'
+  - name_template: '{{ .Env.REGISTRY }}:nightly'
+    image_templates:
+      - '{{ .Env.REGISTRY }}:nightly-amd64'
+      - '{{ .Env.REGISTRY }}:nightly-arm64'
 
 # Skip creating/updating gh release.
 release:
