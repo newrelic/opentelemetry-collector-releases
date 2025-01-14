@@ -47,6 +47,20 @@ module "ecr" {
   })
 }
 
+module "s3_bucket" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+
+  bucket = "nr-otel-collector"
+  acl    = "private"
+
+  control_object_ownership = true
+  object_ownership         = "ObjectWriter"
+
+  versioning = {
+    enabled = true
+  }
+}
+
 data "aws_eks_cluster_auth" "this" {
   name = module.ci_e2e_cluster.cluster_name
 }
