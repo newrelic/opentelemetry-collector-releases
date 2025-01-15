@@ -1,3 +1,10 @@
+locals {
+  distros = toset(distinct(flatten([
+    for _, v in fileset(path.module, "../../../distributions/**") :
+    regex("../../../distributions/([^/]*).*", dirname(v))
+  ])))
+}
+
 data "aws_vpc" "this" {
   id = "vpc-015d2f927c8b5dea7"
 }
@@ -19,9 +26,11 @@ data "aws_iam_session_context" "current" {
 module "ecr" {
   depends_on = [module.ci_e2e_cluster]
 
+  for_each = local.distros
+
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "nr-otel-collector"
+  repository_name = each.value
 
   repository_image_tag_mutability = "MUTABLE"
 
@@ -83,7 +92,7 @@ resource "helm_release" "ci_e2e_nightly" {
 
   set {
     name  = "image.repository"
-    value = module.ecr.repository_url
+    value = module.ecr["nr-otel-collector"].repository_url
   }
 
   set {
@@ -111,4 +120,3 @@ resource "helm_release" "ci_e2e_nightly" {
     value = "nr-otel-collector-${var.test_environment}-${random_string.hostname_suffix.result}"
   }
 }
-
