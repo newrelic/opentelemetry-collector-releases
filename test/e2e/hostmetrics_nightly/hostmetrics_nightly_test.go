@@ -15,7 +15,10 @@ type systemUnderTest struct {
 	excludedMetrics []string
 }
 
-var ec2 = systemUnderTest{
+var ec2Ubuntu22 = systemUnderTest{
+	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu22_04"),
+}
+var ec2Ubuntu24 = systemUnderTest{
 	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu24_04"),
 }
 var k8sNode = systemUnderTest{
@@ -31,13 +34,13 @@ func TestNightlyHostMetrics(t *testing.T) {
 	requestSpacing := time.Duration((1/requestsPerSecond)*1000) * time.Millisecond
 	client := nr.NewClient()
 
-	for _, sut := range []systemUnderTest{ec2, k8sNode} {
+	for _, sut := range []systemUnderTest{ec2Ubuntu22, ec2Ubuntu24, k8sNode} {
 		for i, testCase := range spec.GetOnHostTestCasesWithout(sut.excludedMetrics) {
 			t.Run(fmt.Sprintf("%s/%d/%s", sut.hostNamePattern, i, testCase.Name), func(t *testing.T) {
 				t.Parallel()
 				assertionFactory := assert.NewNrMetricAssertionFactory(
 					fmt.Sprintf("WHERE host.name like '%s'", sut.hostNamePattern),
-					"24 hour ago",
+					"2 hour ago",
 				)
 				assertion := assertionFactory.NewNrMetricAssertion(testCase.Metric, testCase.Assertions)
 				// space out requests to avoid rate limiting

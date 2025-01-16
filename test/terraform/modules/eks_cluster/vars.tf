@@ -3,7 +3,7 @@ variable "name" {
   type        = string
 }
 
-variable "account_id" {
-  description = "account id"
+variable "permission_boundary" {
+  description = "ARN of the IAM policy that is used to set the permissions boundary for the IAM roles created by this module"
   type        = string
 }
