@@ -1,5 +1,4 @@
 locals {
-  iam_role_permissions_boundary = "arn:aws:iam::${var.account_id}:policy/resource-provisioner-boundary"
 
   # We need to ensure we don't attempt to use any of the disallowed zones:
   # https://docs.aws.amazon.com/eks/latest/userguide/network-reqs.html
@@ -45,7 +44,7 @@ module "vpc" {
   # https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest#single-nat-gateway
   single_nat_gateway = true
 
-  vpc_flow_log_permissions_boundary = local.iam_role_permissions_boundary
+  vpc_flow_log_permissions_boundary = var.permission_boundary
 }
 
 
@@ -63,10 +62,10 @@ module "eks_cluster" {
   subnet_ids = module.vpc.private_subnets
 
   enable_cluster_creator_admin_permissions = true
-  iam_role_permissions_boundary            = local.iam_role_permissions_boundary
+  iam_role_permissions_boundary            = var.permission_boundary
 
   eks_managed_node_group_defaults = {
-    iam_role_permissions_boundary = local.iam_role_permissions_boundary
+    iam_role_permissions_boundary = var.permission_boundary
 
     instance_types = ["m5.large"]
 

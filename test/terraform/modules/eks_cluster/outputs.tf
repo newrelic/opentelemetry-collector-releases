@@ -13,3 +13,7 @@ output "cluster_certificate_authority_data" {
 output "cluster_iam_role_arn" {
   value = module.eks_cluster.cluster_iam_role_arn
 }
+
+output "eks_vpc_id" {
+  value = module.vpc.vpc_id
+}
