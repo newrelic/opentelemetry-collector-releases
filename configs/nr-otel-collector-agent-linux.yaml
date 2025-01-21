@@ -9,6 +9,21 @@
 # Keep host monitoring configuration in sync with: https://github.com/newrelic/newrelic-opentelemetry-examples/blob/main/other-examples/collector/host-monitoring/k8s/collector.yaml
 extensions:
   health_check:
+  healthcheckv2:
+    use_v2: true
+    component_health:
+      include_permanent_errors: true
+      include_recoverable_errors: true
+      recovery_duration: 5m
+    http:
+      endpoint: "localhost:13134"
+      status:
+        enabled: true
+        path: "/health/status"
+      config:
+        enabled: true
+        path: "/health/config"
+
 
 receivers:
   otlp:
@@ -248,4 +263,4 @@ service:
       processors: [transform, resourcedetection, resourcedetection/cloud, resourcedetection/env, batch]
       exporters: [debug, otlphttp]
 
-  extensions: [health_check]
+  extensions: [health_check, healthcheckv2]

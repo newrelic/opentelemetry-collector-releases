@@ -68,7 +68,7 @@ local_build-image:
 
 .PHONY: local_test
 # hardcode an image you build with local_build-image, then run this target to run tests against it
-local_test: IMAGE_TAG=insert_locally_available_tag_to_test_here
+local_test: IMAGE_TAG=0.8.7-SNAPSHOT-c16a5f4-rc-arm64
 local_test: local_create-cluster-if-not-exists ci_test
 
 .PHONY: local_test-fast

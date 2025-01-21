@@ -5,3 +5,10 @@ image:
   pullPolicy: Never
 
 resources: {}
+
+collector:
+  privileged: true
+  low_data_mode: false
+  kubeletstats:
+    enabled: false
+    scrapeInterval: 1m

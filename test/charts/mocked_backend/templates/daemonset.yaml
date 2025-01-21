@@ -29,7 +29,81 @@ spec:
             - name: health
               containerPort: 13133
           env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: "http://validation-backend:4318"
             - name: NEW_RELIC_MEMORY_LIMIT_MIB
               value: "100"
+            - name: EXTRA_COLLECTOR_ARGS
+              value: "--config=/etc/nr-otel-collector/extra-config.yaml"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/nr-otel-collector/extra-config.yaml
+              subPath: extra-config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nr-otel-collector-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nr-otel-collector-config
+data:
+  # debug effective config with tunnel to port 13134 and e.g. `curl http://localhost:13134/health/config | jq '.service.pipelines'`
+  extra-config.yaml: |
+    receivers:
+      kubeletstats:
+        # overwrite specific value in existing component config
+        collection_interval: {{ .Values.collector.kubeletstats.scrapeInterval }}
+        # switch between two (or more) configs blocks based on input for component
+        {{- if .Values.collector.privileged }}
+        # supports interpolation of env vars
+        endpoint: "${KUBE_NODE_NAME}:10250"
+        auth_type: "serviceAccount"
+        insecure_skip_verify: true
+        {{- else }}
+        endpoint: "${KUBE_NODE_NAME}:10255"
+        auth_type: "none"
+        {{- end }}
+        metrics:
+          k8s.container.cpu_limit_utilization:
+            enabled: true
+
+    service:
+      pipelines:
+        # example: toggle entire pipeline
+        {{- if .Values.collector.kubeletstats.enabled }}
+        metrics/k8s:
+          receivers: [kubeletstats]
+          processors:
+            - memory_limiter
+            - batch
+          exporters: [debug, otlphttp]
+        {{- end }}
+        metrics/host:
+          processors:
+            - memory_limiter
+            - metricstransform
+            - filter/exclude_cpu_utilization
+            # toggle processors in existing pipeline (requires redefining entire pipeline)
+            {{- if .Values.collector.low_data_mode }}
+            - filter/exclude_memory_utilization
+            - filter/exclude_memory_usage
+            {{- end }}
+            - filter/exclude_filesystem_utilization
+            - filter/exclude_filesystem_usage
+            - filter/exclude_filesystem_inodes_usage
+            - filter/exclude_system_disk
+            - filter/exclude_network
+            - attributes/exclude_system_paging
+            - transform/host
+            - resourcedetection
+            - resourcedetection/cloud
+            - resourcedetection/env
+            - cumulativetodelta
+            - batch
