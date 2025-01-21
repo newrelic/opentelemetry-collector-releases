@@ -45,6 +45,7 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: --snapshot --clean --skip=sign --timeout 2h
+          workdir: distributions/nr-otel-collector
 
       - name: Extract image version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
@@ -87,6 +88,7 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: --skip=announce,validate --clean --timeout 2h --config .goreleaser-nightly.yaml
+          workdir: distributions/nr-otel-collector
 
       - name: Run nightly tests
         run: |

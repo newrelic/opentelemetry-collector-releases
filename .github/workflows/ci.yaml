@@ -45,6 +45,7 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: --snapshot --clean --skip=sign --timeout 2h
+          workdir: distributions/nr-otel-collector
 
       - name: Extract image version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV

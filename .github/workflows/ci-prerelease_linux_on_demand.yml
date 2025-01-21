@@ -85,6 +85,7 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: release --rm-dist --skip-docker --skip-publish --timeout 2h
+          workdir: distributions/nr-otel-collector
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
