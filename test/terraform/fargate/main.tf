@@ -1,3 +1,4 @@
+# TODO: destroy and delete terraform
 provider "aws" {
   region = "us-east-2"
 }
