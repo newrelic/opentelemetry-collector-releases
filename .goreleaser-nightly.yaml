@@ -135,4 +135,4 @@ blobs:
   - provider: s3
     region: us-east-1
     bucket: nr-releases
-    directory: 'opentelemetry-collector-releases/{{ .Tag }}'
+    directory: 'opentelemetry-collector-releases/nightly'

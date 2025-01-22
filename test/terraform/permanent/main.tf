@@ -128,7 +128,5 @@ module "ci_e2e_ec2" {
   # reuse vpc to avoid having to pay for second NAT gateway for this simple use case
   vpc_id              = module.ci_e2e_cluster.eks_vpc_id
   deploy_id           = random_string.deploy_id.result
-  # TODO: using sticky version until we have nightly-labeled binaries setup
-  collector_version   = "0.8.7"
   permission_boundary = local.required_permissions_boundary_arn_for_new_roles
 }
