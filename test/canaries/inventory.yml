@@ -1,6 +1,0 @@
-[hosts]
-server ansible_host=w.x.y.z ansible_user= ansible_python_interpreter=/usr/bin/python3
-
-[hosts:vars]
-ansible_ssh_private_key_file=
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
