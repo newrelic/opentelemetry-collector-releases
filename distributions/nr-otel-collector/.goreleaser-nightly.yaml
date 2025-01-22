@@ -12,7 +12,7 @@ builds:
     ignore:
       - goos: windows
         goarch: arm64
-    dir: distributions/nr-otel-collector/_build
+    dir: _build
     binary: nr-otel-collector
     ldflags:
       - -s
@@ -30,7 +30,8 @@ archives:
 
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
 
 nfpms:
   - package_name: nr-otel-collector
@@ -48,18 +49,18 @@ nfpms:
       {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{- end }}
 
     contents:
-      - src: distributions/nr-otel-collector/nr-otel-collector.service
+      - src: nr-otel-collector.service
         dst: /lib/systemd/system/nr-otel-collector.service
-      - src: distributions/nr-otel-collector/nr-otel-collector.conf
+      - src: nr-otel-collector.conf
         dst: /etc/nr-otel-collector/nr-otel-collector.conf
         type: config|noreplace
       - src: configs/nr-otel-collector-agent-linux.yaml
         dst: /etc/nr-otel-collector/config.yaml
         type: config
     scripts:
-      preinstall: distributions/nr-otel-collector/preinstall.sh
-      postinstall: distributions/nr-otel-collector/postinstall.sh
-      preremove: distributions/nr-otel-collector/preremove.sh
+      preinstall: preinstall.sh
+      postinstall: postinstall.sh
+      preremove: preremove.sh
     id: nr-otel-collector
     builds:
       - nr-otel-collector
@@ -73,7 +74,7 @@ nfpms:
 dockers:
   - goos: linux
     goarch: amd64
-    dockerfile: distributions/nr-otel-collector/Dockerfile
+    dockerfile: Dockerfile
     image_templates:
       - '{{ .Env.REGISTRY }}:{{ .Version }}-nightly-amd64'
       - '{{ .Env.REGISTRY }}:nightly-amd64'
@@ -90,7 +91,7 @@ dockers:
     use: buildx
   - goos: linux
     goarch: arm64
-    dockerfile: distributions/nr-otel-collector/Dockerfile
+    dockerfile: Dockerfile
     image_templates:
       - '{{ .Env.REGISTRY }}:{{ .Version }}-nightly-arm64'
       - '{{ .Env.REGISTRY }}:nightly-arm64'
@@ -120,9 +121,16 @@ docker_manifests:
 release:
   disable: true
 
+signs:
+  - args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]
+    artifacts: all
 # Disable default checksum generator as we use a custom one per each artifact.
 checksum:
-  disable: true
+  name_template: "{{ .ArtifactName }}.sum"
+  # Create a checksum per each artifact.
+  split: true
+  # This is the default, but we are explicit here for clarity.
+  algorithm: sha256
 
 # Skip auto-generating changelog.
 changelog:

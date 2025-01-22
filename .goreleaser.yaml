@@ -29,7 +29,8 @@ archives:
 
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
 
 nfpms:
   - package_name: nr-otel-collector
@@ -52,7 +53,7 @@ nfpms:
       - src: distributions/nr-otel-collector/nr-otel-collector.conf
         dst: /etc/nr-otel-collector/nr-otel-collector.conf
         type: config|noreplace
-      - src: configs/nr-otel-collector-agent-linux.yaml
+      - src: distributions/nr-otel-collector/configs/nr-otel-collector-agent-linux.yaml
         dst: /etc/nr-otel-collector/config.yaml
         type: config
     scripts:
@@ -76,7 +77,7 @@ dockers:
     image_templates:
       - newrelic/nr-otel-collector:{{ .Version }}-rc-amd64
     extra_files:
-      - configs/nr-otel-collector-agent-linux.yaml
+      - distributions/nr-otel-collector/configs/nr-otel-collector-agent-linux.yaml
     build_flag_templates:
       - --pull
       - --platform=linux/amd64
@@ -92,7 +93,7 @@ dockers:
     image_templates:
       - newrelic/nr-otel-collector:{{ .Version }}-rc-arm64
     extra_files:
-      - configs/nr-otel-collector-agent-linux.yaml
+      - distributions/nr-otel-collector/configs/nr-otel-collector-agent-linux.yaml
     build_flag_templates:
       - --pull
       - --platform=linux/arm64
