@@ -29,6 +29,10 @@ spec:
             - name: health
               containerPort: 13133
           env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               valueFrom:
                 secretKeyRef:
@@ -42,7 +46,7 @@ spec:
                   name: daemonset-secrets
                   key: nrIngestKey
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "host.name={{ .Values.collector.hostname }}"
+              value: "host.name={{ .Values.collector.hostname }}-$(NODE_NAME)"
 ---
 apiVersion: v1
 kind: Secret

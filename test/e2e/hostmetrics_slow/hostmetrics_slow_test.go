@@ -7,7 +7,6 @@ import (
 	"log"
 	"test/e2e/util/assert"
 	"test/e2e/util/chart"
-	envutil "test/e2e/util/env"
 	helmutil "test/e2e/util/helm"
 	k8sutil "test/e2e/util/k8s"
 	"test/e2e/util/nr"
@@ -22,10 +21,8 @@ const (
 )
 
 var (
-	kubectlOptions            *k8s.KubectlOptions
-	testChart                 chart.NrBackendChart
-	testId                    string
-	collectorReportedHostname string
+	kubectlOptions *k8s.KubectlOptions
+	testChart      chart.NrBackendChart
 )
 
 type testEnv struct {
@@ -42,22 +39,13 @@ func setupTest(tb testing.TB) testEnv {
 
 }
 
-func TestMain(m *testing.M) {
-	testId = testutil.NewTestId()
-	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
-	environmentName := "local"
-	if envutil.IsContinuousIntegration() {
-		environmentName = "ci"
-	}
-	collectorReportedHostname = fmt.Sprintf("nr-otel-collector-%s-%s", environmentName, testId)
-	testChart = chart.NewNrBackendChart(collectorReportedHostname)
-	m.Run()
-}
-
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsSlowTest(t)
+	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
+	testId := testutil.NewTestId()
+	testChart = chart.NewNrBackendChart(testId)
 
-	t.Logf("host.name used for test: %s", collectorReportedHostname)
+	t.Logf("hostname used for test: %s", testChart.NrQueryHostNamePattern)
 	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup", testId)
 	t.Cleanup(cleanup)
 	te := setupTest(t)
@@ -69,15 +57,15 @@ func TestStartupBehavior(t *testing.T) {
 	// space out requests to not run into 25 concurrent request limit
 	requestsPerSecond := 4.0
 	requestSpacing := time.Duration((1/requestsPerSecond)*1000) * time.Millisecond
+	client := nr.NewClient()
 
 	for i, testCase := range spec.GetOnHostTestCases() {
 		t.Run(fmt.Sprintf(testCase.Name), func(t *testing.T) {
 			t.Parallel()
 			assertionFactory := assert.NewNrMetricAssertionFactory(
-				fmt.Sprintf("WHERE host.name = '%s'", collectorReportedHostname),
+				fmt.Sprintf("WHERE host.name like '%s'", testChart.NrQueryHostNamePattern),
 				"5 minutes ago",
 			)
-			client := nr.NewClient()
 			assertion := assertionFactory.NewNrMetricAssertion(testCase.Metric, testCase.Assertions)
 			// space out requests to avoid rate limiting
 			time.Sleep(time.Duration(i) * requestSpacing)

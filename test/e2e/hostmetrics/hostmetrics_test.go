@@ -46,15 +46,11 @@ func setupTest(tb testing.TB) testEnv {
 	}}
 }
 
-func TestMain(m *testing.M) {
-	testId = testutil.NewTestId()
-	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
-	testChart = chart.MockedBackend
-	m.Run()
-}
-
 func TestStartupBehavior(t *testing.T) {
 	testutil.TagAsFastTest(t)
+	kubectlOptions = k8sutil.NewKubectlOptions(TestNamespace)
+	testChart = chart.MockedBackend
+	testId = testutil.NewTestId()
 	cleanup := helmutil.ApplyChart(t, kubectlOptions, testChart.AsChart(), "hostmetrics-startup", testId)
 	defer cleanup()
 
