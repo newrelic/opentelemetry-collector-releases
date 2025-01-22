@@ -24,8 +24,8 @@ func NewNrBackendChart(testId string) NrBackendChart {
 		}
 		environmentName = fmt.Sprintf("local_%s", user.Username)
 	}
-	hostNamePrefix := testutil.NewHostNamePrefix(environmentName, testId, "k8s-node")
-	hostNamePattern := testutil.NewNrQueryHostNamePattern(environmentName, testId, "k8s-node")
+	hostNamePrefix := testutil.NewHostNamePrefix(environmentName, testId, "k8s_node")
+	hostNamePattern := testutil.NewNrQueryHostNamePattern(environmentName, testId, "k8s_node")
 
 	return NrBackendChart{
 		collectorHostNamePrefix: hostNamePrefix,
