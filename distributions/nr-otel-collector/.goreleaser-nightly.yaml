@@ -69,6 +69,14 @@ nfpms:
     maintainer: New Relic <caos-team@newrelic.com>
     description: OpenTelemetry Collector - nr-otel-collector
     license: Apache 2.0
+    rpm:
+      signature:
+        key_file: '{{ .Env.GPG_KEY_PATH }}'
+
+    deb:
+      signature:
+        key_file: "{{ .Env.GPG_KEY_PATH }}"
+
 
 dockers:
   - goos: linux
@@ -125,7 +133,6 @@ checksum:
   name_template: "{{ .ArtifactName }}.sum"
   # Create a checksum per each artifact.
   split: true
-
   # This is the default, but we are explicit here for clarity.
   algorithm: sha256
 
