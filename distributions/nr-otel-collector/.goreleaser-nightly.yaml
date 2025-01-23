@@ -70,6 +70,12 @@ nfpms:
     maintainer: New Relic <caos-team@newrelic.com>
     description: OpenTelemetry Collector - nr-otel-collector
     license: Apache 2.0
+    rpm:
+      signature:
+        key_file: "{{ .Env.GPG_KEY_PATH }}"
+    deb:
+      signature:
+        key_file: "{{ .Env.GPG_KEY_PATH }}"
 
 dockers:
   - goos: linux
@@ -124,7 +130,7 @@ release:
 signs:
   - args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]
     artifacts: all
-# Disable default checksum generator as we use a custom one per each artifact.
+
 checksum:
   name_template: "{{ .ArtifactName }}.sum"
   # Create a checksum per each artifact.
@@ -137,7 +143,7 @@ changelog:
   disable: true
 
 snapshot:
-  version_template: "{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}-nightly"
+  version_template: "{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}"
 
 blobs:
   - provider: s3
