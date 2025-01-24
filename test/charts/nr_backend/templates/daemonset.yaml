@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: &app nr-otel-collector
+  name: &app nrdot-collector
   labels:
     app: *app
 spec:
@@ -22,9 +22,9 @@ spec:
           command: [ "/bin/sh","-c" ]
           args: [ 'while [ $(curl -ksw "%{http_code}" "http://validation-backend:8080" -o /dev/null) -ne 200 ]; do sleep 5; echo "health check failed. Waiting for validation service..."; done' ]
       containers:
-        - name: *app
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        - name: {{ .Values.collector.distro }}
+          image: "newrelic/{{ .Values.collector.distro }}:{{ .Values.collector.image.tag }}"
+          imagePullPolicy: "{{ .Values.collector.image.pullPolicy }}"
           ports:
             - name: health
               containerPort: 13133

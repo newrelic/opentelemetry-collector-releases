@@ -1,6 +1,8 @@
 package chart
 
-import utilenv "test/e2e/util/env"
+import (
+	envutil "test/e2e/util/env"
+)
 
 type MockedBackendChart struct {
 }
@@ -20,7 +22,8 @@ func (m *MockedBackendChart) Meta() Meta {
 
 func (m *MockedBackendChart) RequiredChartValues() map[string]string {
 	return map[string]string{
-		"image.tag": utilenv.GetImageTag(),
+		"collector.distro":    envutil.GetDistro(),
+		"collector.image.tag": envutil.GetImageTag(),
 	}
 }
 

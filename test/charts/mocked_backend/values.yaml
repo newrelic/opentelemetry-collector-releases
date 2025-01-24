@@ -1,7 +1,6 @@
-image:
-  repository: newrelic/nr-otel-collector
-  tag: latest
-  # Avoid accidentally pulling remote images in CI
-  pullPolicy: Never
-
-resources: {}
+collector:
+  distro: nr-otel-collector
+  image:
+    tag: latest
+    # Avoid accidentally pulling remote images in CI
+    pullPolicy: Never

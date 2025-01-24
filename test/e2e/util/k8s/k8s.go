@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"fmt"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -9,14 +10,19 @@ import (
 	"time"
 )
 
-func NewKubectlOptions(namespace string) *k8s.KubectlOptions {
+func NewKubectlOptions(namespacePrefix string) *k8s.KubectlOptions {
+	namespace := newTestNamespace(namespacePrefix, envutil.GetDistro())
 	contextName := envutil.GetK8sContextName()
 	return k8s.NewKubectlOptions(contextName, "", namespace)
 }
 
+func newTestNamespace(namespacePrefix string, distro string) string {
+	return fmt.Sprintf("%s-%s", namespacePrefix, distro)
+}
+
 func WaitForCollectorReady(tb testing.TB, kubectlOptions *k8s.KubectlOptions) corev1.Pod {
 	filters := metav1.ListOptions{
-		LabelSelector: "app=nr-otel-collector",
+		LabelSelector: "app=nrdot-collector",
 	}
 	k8s.WaitUntilNumPodsCreated(tb, kubectlOptions, filters, 1, 30, 10*time.Second)
 

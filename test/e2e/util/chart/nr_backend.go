@@ -46,7 +46,8 @@ func (m *NrBackendChart) Meta() Meta {
 
 func (m *NrBackendChart) RequiredChartValues() map[string]string {
 	return map[string]string{
-		"image.tag":            envutil.GetImageTag(),
+		"collector.distro":     envutil.GetDistro(),
+		"collector.image.tag":  envutil.GetImageTag(),
 		"secrets.nrBackendUrl": envutil.GetNrBackendUrl(),
 		"secrets.nrIngestKey":  envutil.GetNrIngestKey(),
 		"collector.hostname":   m.collectorHostNamePrefix,
