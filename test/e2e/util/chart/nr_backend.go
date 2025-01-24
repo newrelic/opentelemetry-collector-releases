@@ -46,6 +46,7 @@ func (m *NrBackendChart) Meta() Meta {
 
 func (m *NrBackendChart) RequiredChartValues() map[string]string {
 	return map[string]string{
+		"image.repository":     fmt.Sprintf("newrelic/%s", envutil.GetDistro()),
 		"image.tag":            envutil.GetImageTag(),
 		"secrets.nrBackendUrl": envutil.GetNrBackendUrl(),
 		"secrets.nrIngestKey":  envutil.GetNrIngestKey(),

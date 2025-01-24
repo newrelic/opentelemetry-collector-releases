@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: &app nr-otel-collector
+  name: &app nrdot-collector
   labels:
     app: *app
 spec:
