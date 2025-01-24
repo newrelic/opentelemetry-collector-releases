@@ -17,9 +17,13 @@ type systemUnderTest struct {
 
 var ec2Ubuntu22 = systemUnderTest{
 	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu22_04"),
+	// TODO: NR-362121
+	excludedMetrics: []string{"system.paging.usage"},
 }
 var ec2Ubuntu24 = systemUnderTest{
 	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu24_04"),
+	// TODO: NR-362121
+	excludedMetrics: []string{"system.paging.usage"},
 }
 var k8sNode = systemUnderTest{
 	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "k8s_node"),
