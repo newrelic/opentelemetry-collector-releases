@@ -1,10 +1,7 @@
 package chart
 
 import (
-	"fmt"
-	"os"
-	"path"
-	"strings"
+	testutil "test/e2e/util/test"
 )
 
 type Chart interface {
@@ -17,13 +14,5 @@ type Meta struct {
 }
 
 func (m Meta) ChartPath() string {
-	pwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	testDirPath := path.Clean(fmt.Sprintf("%s/../..", pwd))
-	if !strings.HasSuffix(testDirPath, "test") {
-		panic(fmt.Sprintf("Unexpected directory structure: %s should be the test dir containing the charts directory (pwd: %s)", testDirPath, pwd))
-	}
-	return path.Join(testDirPath, "charts", m.name)
+	return testutil.NewPathRelativeToRootDir("test/charts/" + m.name)
 }

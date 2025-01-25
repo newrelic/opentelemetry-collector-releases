@@ -3,6 +3,10 @@ locals {
     for _, v in fileset(path.module, "../../../distributions/**") :
     regex("../../../distributions/([^/]*).*", dirname(v))
   ])))
+  test_specs = {
+    for distro in local.distros :
+    distro => yamldecode(file("${path.module}/../../../distributions/${distro}/test-spec.yaml"))
+  }
   releases_bucket_name                            = "nr-releases"
   required_permissions_boundary_arn_for_new_roles = "arn:aws:iam::${var.aws_account_id}:policy/resource-provisioner-boundary"
 }
@@ -122,8 +126,10 @@ resource "helm_release" "ci_e2e_nightly" {
 }
 
 module "ci_e2e_ec2" {
+  for_each             = toset([for distro in local.distros: distro if local.test_specs[distro].nightly.ec2.enabled])
   source               = "../modules/ec2"
   releases_bucket_name = local.releases_bucket_name
+  collector_distro     = each.key
   nr_ingest_key        = var.nr_ingest_key
   # reuse vpc to avoid having to pay for second NAT gateway for this simple use case
   vpc_id              = module.ci_e2e_cluster.eks_vpc_id
