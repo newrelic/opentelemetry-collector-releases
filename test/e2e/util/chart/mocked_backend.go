@@ -27,8 +27,3 @@ func (m *MockedBackendChart) RequiredChartValues() map[string]string {
 		"image.tag":        envutil.GetImageTag(),
 	}
 }
-
-func (m *MockedBackendChart) GetCollectorSelector() string {
-	//TODO implement me
-	panic("implement me")
-}

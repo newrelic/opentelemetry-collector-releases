@@ -1,6 +1,8 @@
 package spec
 
-import "test/e2e/util/assert"
+import (
+	"test/e2e/util/assert"
+)
 
 type TestCase struct {
 	Name       string

@@ -32,7 +32,6 @@ variable "nr_ingest_key" {
 variable "collector_distro" {
   description = "Name of the distribution of NRDOT to install"
   type        = string
-  default     = "nr-otel-collector"
 }
 
 variable "collector_version" {

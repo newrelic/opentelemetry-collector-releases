@@ -1,5 +1,5 @@
 locals {
-  collector_reported_hostname_prefix = "${var.test_environment}-${var.deploy_id}"
+  collector_reported_hostname_prefix = "${var.test_environment}-${var.deploy_id}-${var.collector_distro}"
   instance_config = [
     {
       hostname_suffix    = "ec2_ubuntu22_04-0"

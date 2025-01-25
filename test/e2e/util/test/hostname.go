@@ -1,17 +1,28 @@
 package test
 
-import "fmt"
+import (
+	"strings"
+	envutil "test/e2e/util/env"
+)
+
+const (
+	Wildcard                 = "%"
+	hostNameSegmentSeparator = "-"
+)
 
 func NewHostNamePrefix(envName string, deployId string, hostType string) string {
-	// TODO: incorporate distro into hostname when generalizing nightly to support multiple distro
+	distro := getNormalizedDistro()
 	// only a prefix as helm chart appends hostId
-	return fmt.Sprintf("%s-%s-%s", envName, deployId, hostType)
+	return strings.Join([]string{envName, deployId, distro, hostType}, hostNameSegmentSeparator)
 }
 
-const Wildcard = "%"
-
 func NewNrQueryHostNamePattern(envName string, deployId string, hostType string) string {
-	// TODO: incorporate distro into hostname when generalizing nightly to support multiple distro
+	distro := getNormalizedDistro()
 	hostId := Wildcard
-	return fmt.Sprintf("%s-%s-%s-%s", envName, deployId, hostType, hostId)
+	return strings.Join([]string{envName, deployId, distro, hostType, hostId}, hostNameSegmentSeparator)
+}
+
+func getNormalizedDistro() string {
+	// solely to improve readability - no technical necessity
+	return strings.Replace(envutil.GetDistro(), hostNameSegmentSeparator, "_", -1)
 }
