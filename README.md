@@ -30,3 +30,20 @@ To all contributors, we thank you!  Without your contribution, this project woul
 
 ## License
 [Collector releases] is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+
+## Diagram Test
+```mermaid
+graph LR
+    classDef customer fill:#0a0
+    classDef nr fill:#00a
+    
+    subgraph customer["Customer"]
+    nrdot["NRDOT"]:::customer
+    end
+    
+    subgraph new_relic["New Relic"]
+    nr_otlp["OTLP HTTP Endpoint"]:::nr
+    end
+
+    nrdot -->|"MLT"| nr_otlp
+```
