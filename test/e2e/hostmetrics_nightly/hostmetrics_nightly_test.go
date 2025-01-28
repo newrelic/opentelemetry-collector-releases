@@ -10,40 +10,46 @@ import (
 	"time"
 )
 
-type systemUnderTest struct {
-	hostNamePattern string
-	excludedMetrics []string
-}
-
-var ec2Ubuntu22 = systemUnderTest{
-	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu22_04"),
+var ec2Ubuntu22 = spec.NightlySystemUnderTest{
+	HostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu22_04"),
 	// TODO: NR-362121
-	excludedMetrics: []string{"system.paging.usage"},
+	ExcludedMetrics: []string{"system.paging.usage"},
+	SkipIf: func(testSpec *spec.TestSpec) bool {
+		return !testSpec.Nightly.EC2.Enabled
+	},
 }
-var ec2Ubuntu24 = systemUnderTest{
-	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu24_04"),
+var ec2Ubuntu24 = spec.NightlySystemUnderTest{
+	HostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "ec2_ubuntu24_04"),
 	// TODO: NR-362121
-	excludedMetrics: []string{"system.paging.usage"},
+	ExcludedMetrics: []string{"system.paging.usage"},
+	SkipIf: func(testSpec *spec.TestSpec) bool {
+		return !testSpec.Nightly.EC2.Enabled
+	},
 }
-var k8sNode = systemUnderTest{
-	hostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "k8s_node"),
-	excludedMetrics: []string{"system.paging.usage"},
+var k8sNode = spec.NightlySystemUnderTest{
+	HostNamePattern: testutil.NewNrQueryHostNamePattern("nightly", testutil.Wildcard, "k8s_node"),
+	ExcludedMetrics: []string{"system.paging.usage"},
 }
 
 func TestNightlyHostMetrics(t *testing.T) {
 	testutil.TagAsNightlyTest(t)
+	testSpec := spec.LoadTestSpec()
 
 	// space out requests to not run into 25 concurrent request limit
 	requestsPerSecond := 4.0
 	requestSpacing := time.Duration((1/requestsPerSecond)*1000) * time.Millisecond
 	client := nr.NewClient()
 
-	for _, sut := range []systemUnderTest{ec2Ubuntu22, ec2Ubuntu24, k8sNode} {
-		for i, testCase := range spec.GetOnHostTestCasesWithout(sut.excludedMetrics) {
-			t.Run(fmt.Sprintf("%s/%d/%s", sut.hostNamePattern, i, testCase.Name), func(t *testing.T) {
+	for _, sut := range []spec.NightlySystemUnderTest{ec2Ubuntu22, ec2Ubuntu24, k8sNode} {
+		if sut.SkipIf != nil && sut.SkipIf(testSpec) {
+			t.Logf("Skipping nightly system-under-test: %s", sut.HostNamePattern)
+			continue
+		}
+		for i, testCase := range spec.GetOnHostTestCasesWithout(sut.ExcludedMetrics) {
+			t.Run(fmt.Sprintf("%s/%d/%s", sut.HostNamePattern, i, testCase.Name), func(t *testing.T) {
 				t.Parallel()
 				assertionFactory := assert.NewNrMetricAssertionFactory(
-					fmt.Sprintf("WHERE host.name like '%s'", sut.hostNamePattern),
+					fmt.Sprintf("WHERE host.name like '%s'", sut.HostNamePattern),
 					"2 hour ago",
 				)
 				assertion := assertionFactory.NewNrMetricAssertion(testCase.Metric, testCase.Assertions)
