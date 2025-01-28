@@ -1,7 +1,5 @@
-# New Relic OpenTelemetry Collector Distro
+# nr-otel-collector
 
-TODO
+Note: See [general README](../README.md) for information that applies to all distributions.
 
-## Components
-
-The full list of components is available in the [manifest](manifest.yaml)
+The legacy general-purpose distribution of the NRDOT collector. Will be deprecated in favor of more specialized distributions.

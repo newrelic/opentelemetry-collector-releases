@@ -21,6 +21,7 @@ jobs:
       matrix:
         dist:
           - nr-otel-collector
+          - nrdot-collector-host
     steps:
       - name: Checkout
         uses: actions/checkout@v4

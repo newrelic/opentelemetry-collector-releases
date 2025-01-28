@@ -1,6 +1,6 @@
 locals {
   distros = toset(distinct(flatten([
-    for _, v in fileset(path.module, "../../../distributions/**") :
+    for _, v in fileset(path.module, "../../../distributions/*/**") :
     regex("../../../distributions/([^/]*).*", dirname(v))
   ])))
   test_specs = {
