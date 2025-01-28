@@ -17,6 +17,11 @@ jobs:
   build:
     name: Validate distributions build, third party libraries and security
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dist:
+          - nr-otel-collector
+          - nrdot-collector-k8s
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,25 +34,55 @@ jobs:
           go-version: '1.23'
           check-latest: true
 
-      - name: Verify build
-        run: make ci
+      - name: Tidy go.mod files
+        run: go mod tidy
 
-      - name: Validate distributions third party libraries
-        run: make licenses-check
+      - name: Verify build
+        run: make ci DISTRIBUTIONS=${{ matrix.dist }}
+
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.OTELCOMM_DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.OTELCOMM_DOCKER_HUB_PASSWORD }}
 
       - uses: docker/setup-qemu-action@v2
 
       - uses: docker/setup-buildx-action@v2
 
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
+          passphrase: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+
+      - name: Write GPG to path in memory for signing rpm/deb
+        id: write_gpg_to_path
+        run: |
+          GPG_KEY_PATH="$(mktemp /dev/shm/gpg.XXXXXX)"
+          echo "$GPG_PRIVATE_KEY" | base64 -d >> "$GPG_KEY_PATH"
+          echo "gpg_key_path=$GPG_KEY_PATH" >> $GITHUB_OUTPUT
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
+
       - name: Build binaries & packages with GoReleaser
+        id: goreleaser
         uses: goreleaser/goreleaser-action@v6
+        env:
+          NFPM_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GPG_KEY_PATH: ${{ steps.write_gpg_to_path.outputs.gpg_key_path }}
+          REGISTRY: "newrelic/${{ matrix.dist }}"
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: --snapshot --clean --skip=sign --timeout 2h
+          args: --snapshot --clean --skip=publish,validate --timeout 2h
+          workdir: distributions/${{ matrix.dist }}
 
       - name: Extract image version
-        run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
+        run: echo "version=$(echo '${{ steps.goreleaser.outputs.metadata }}' | jq -r '.version')" >> $GITHUB_ENV
 
       - name: Setup local kind cluster
         uses: helm/kind-action@v1
@@ -56,27 +91,30 @@ jobs:
           cluster_name: ${{ env.TEST_CLUSTER_NAME }}
           wait: 60s
 
+      - uses: azure/setup-helm@v4.2.0
+
       - name: Run local e2e tests
         run: |
-          IMAGE_TAG=${{ env.version }}-rc-amd64 \
+          IMAGE_TAG=${{ env.version }}-amd64 \
           KIND_CLUSTER_NAME=${{ env.TEST_CLUSTER_NAME }} \
-          make -f ./test/e2e/Makefile ci_test-fast
+          make -f ./test/e2e/Makefile ci_test-fast DISTRO=${{ matrix.dist }}
 
       - name: Trivy security check
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
-          image-ref: "newrelic/nr-otel-collector:${{ env.version }}-rc-amd64"
+          image-ref: "newrelic/${{ matrix.dist }}:${{ env.version }}-amd64"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: "HIGH,CRITICAL"
         env:
-          # dbs are downloaded async in download_trivy_db.yml
+          # dbs are downloaded async in trivy-cache.yml
           TRIVY_SKIP_DB_UPDATE: true
           TRIVY_SKIP_JAVA_DB_UPDATE: true
+
   terraform:
-    uses: ./.github/workflows/component_terraform.yml
+    uses: ./.github/workflows/terraform.yml
     if: github.event.pull_request.user.login != 'dependabot[bot]'
     with:
       branch: ${{ github.ref }}

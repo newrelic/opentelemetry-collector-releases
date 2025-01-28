@@ -1,0 +1,53 @@
+dist:
+  module: github.com/newrelic/opentelemetry-collector-releases/nrdot-collector-k8s
+  name: nrdot-collector-k8s
+  description: New Relic OpenTelemetry Collector
+  version: 0.8.9
+  output_path: ./_build
+
+receivers:
+  # shared
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.118.0
+  # daemonset-only
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/kubeletstatsreceiver v0.118.0
+  # deployment-only
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver v0.118.0
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.118.0 # only in commented out gateway pipeline but useful for piping
+
+processors:
+  # shared
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.118.0
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor v0.118.0
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.118.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.118.0
+  # deployment-only
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.118.0
+
+exporters:
+  # shared
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.118.0 # added
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.118.0 # added
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.118.0
+
+extensions:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.118.0 # added
+# When adding a replace, add a comment before it to document why it's needed and when it can be removed
+replaces:
+  ### Transitive deps determined via `go mod graph | grep $dep@$dep_replace_version`
+  # Why: Fixes CVE-2024-41110
+  # Transitive dep of: prometheusreceiver
+  - github.com/docker/docker v27.0.3+incompatible => github.com/docker/docker v27.3.1+incompatible
+  # Why: Fixes CVE-2024-45337
+  # Transitive dep of: x/net, hostmetricsreceiver, prometheusreceiver
+  - golang.org/x/crypto v0.28.0 => golang.org/x/crypto v0.31.0
+  # Why: Fixes CVE-2024-45338
+  # Transitive dep of: almost all components
+  - golang.org/x/net v0.30.0 => golang.org/x/net v0.33.0

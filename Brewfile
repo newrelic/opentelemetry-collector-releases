@@ -1,0 +1,6 @@
+brew 'go@1.23'
+brew 'goreleaser/tap/goreleaser'
+brew 'gnupg'
+brew 'pinentry-mac'
+brew 'act'
+brew 'helm'

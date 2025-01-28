@@ -1,23 +1,28 @@
 #!/bin/bash
 
-REPO_DIR="$( cd "$(dirname $( dirname "${BASH_SOURCE[0]}" ))" &> /dev/null && pwd )"
-# flag for ci-only behavior (CI is auto-populated with 'true' in github actions)
-ensure_docker_write_permissions=$CI
+REPO_DIR="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )")" &> /dev/null && pwd )"
+BUILDER=''
 
 # default values
 skipcompilation=false
+validate=true
 
-while getopts d:s: flag
+while getopts d:s:b: flag
 do
     case "${flag}" in
-        d) distribution=${OPTARG};;
+        d) distributions=${OPTARG};;
         s) skipcompilation=${OPTARG};;
+        l) validate=${OPTARG};;
+        b) BUILDER=${OPTARG};;
+        *) exit 1;;
     esac
 done
 
-if [[ -z $distribution ]]; then
-    echo "Distribution to build not provided. Use '-d' to specify the name of the distribution to build. Ex.:"
-    echo "$0 -d nr-otel-collector"
+[[ -n "$BUILDER" ]] || BUILDER='ocb'
+
+if [[ -z $distributions ]]; then
+    echo "List of distributions to build not provided. Use '-d' to specify the names of the distributions to build. Ex.:"
+    echo "$0 -d otelcol"
     exit 1
 fi
 
@@ -25,40 +30,27 @@ if [[ "$skipcompilation" = true ]]; then
     echo "Skipping the compilation, we'll only generate the sources."
 fi
 
-echo "Distribution to build: $distribution";
+echo "Distributions to build: $distributions";
 
-pushd "${REPO_DIR}/distributions/${distribution}" > /dev/null
-ocb_config="manifest.yaml"
-output_dir=$(yq '.dist.output_path' "${ocb_config}")
-echo "Output dir: $(pwd)/${output_dir}"
-if [[ -d "${output_dir}" ]]; then
-    # cleanup build dir as reruns of workflows seem to reuse the same filesystem
-    rm -rf "${output_dir}"
-fi
-mkdir "${output_dir}"
-if [[ "$ensure_docker_write_permissions" == "true" ]]; then
-    # ocb dockerfile user/group id is 10001 (https://github.com/open-telemetry/opentelemetry-collector-releases/blob/main/cmd/builder/Dockerfile#L6)
-    sudo chown 10001:10001 "${output_dir}"
-fi
+for distribution in $(echo "$distributions" | tr "," "\n")
+do
+    pushd "${REPO_DIR}/distributions/${distribution}" > /dev/null || exit
+    mkdir -p _build
 
-builder_version=$(yq '.dist.otelcol_version' "${ocb_config}")
-builder_image="otel/opentelemetry-collector-builder:${builder_version}"
-docker pull "${builder_image}"
+    echo "Building: $distribution"
+    echo "Using Builder: $(command -v "$BUILDER")"
+    echo "Using Go: $(command -v go)"
 
-container_work_dir=$(docker image inspect -f '{{.Config.WorkingDir}}' ${builder_image})
-container_path_ocb_config="${container_work_dir}/${ocb_config}"
+    if "$BUILDER" --skip-compilation="${skipcompilation}" --config manifest.yaml > _build/build.log 2>&1; then
+        echo "✅ SUCCESS: distribution '${distribution}' built."
+    else
+        echo "❌ ERROR: failed to build the distribution '${distribution}'."
+        echo "🪵 Build logs for '${distribution}'"
+        echo "----------------------"
+        cat _build/build.log
+        echo "----------------------"
+        exit 1
+    fi
 
-echo "Building: $distribution"
-docker run \
-  -v "$(pwd)/${ocb_config}:${container_path_ocb_config}" \
-  -v "$(pwd)/${output_dir}:${container_work_dir}/${output_dir}:rw" \
-  "${builder_image}" \
-  --config "${container_path_ocb_config}" \
-  --skip-compilation=${skipcompilation}
-
-if [[ "$ensure_docker_write_permissions" == "true" ]]; then
-    # change owner of output dir back to the 'build' user to allow access for following steps
-    sudo chown -R $(id -u):$(id -g) "${output_dir}"
-fi
-
-popd > /dev/null
+    popd > /dev/null || exit
+done

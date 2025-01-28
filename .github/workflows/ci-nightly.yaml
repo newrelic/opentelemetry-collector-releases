@@ -13,7 +13,7 @@ on:
 
 env:
   TEST_CLUSTER_NAME: ci-e2etest-nightly
-  REGISTRY: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nr-otel-collector
+  REGISTRY: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
 jobs:
   slow-tests:
@@ -46,7 +46,7 @@ jobs:
           gpg_private_key: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
           passphrase: ${{ secrets.OHAI_GPG_PASSPHRASE }}
 
-      - name: Write GPG to path in memory
+      - name: Write GPG to path in memory for signing rpm/deb
         id: write_gpg_to_path
         run: |
           GPG_KEY_PATH="$(mktemp /dev/shm/gpg.XXXXXX)"

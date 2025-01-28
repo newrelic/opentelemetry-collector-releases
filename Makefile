@@ -1,45 +1,106 @@
-##########################################
-# 		     Dynamic targets 			 #
-##########################################
-# Exclude current, distributions and hidden directories
-FIND_PATH = . -mindepth 2 -not -path '*/\.*' -not -path '*/distributions/*'
-# Define the list of subdirectories that contain a Makefile
-SUBDIRS := $(patsubst ./%/Makefile,%,$(shell find $(FIND_PATH) -name Makefile))
-TARGETS := $(SUBDIRS)
+GO ?= go
+GORELEASER ?= goreleaser
 
-.PHONY: all $(TARGETS) clean $(addsuffix -clean,$(TARGETS)) help
+# SRC_ROOT is the top of the source tree.
+SRC_ROOT := $(shell git rev-parse --show-toplevel)
+OTELCOL_BUILDER_VERSION ?= 0.118.0
+OTELCOL_BUILDER_DIR ?= ${HOME}/bin
+OTELCOL_BUILDER ?= ${OTELCOL_BUILDER_DIR}/ocb
 
-$(TARGETS):
-	$(MAKE) -C $@
+GOCMD?= go
+TOOLS_MOD_DIR   := $(SRC_ROOT)/internal/tools
+TOOLS_BIN_DIR   := $(SRC_ROOT)/.tools
+TOOLS_MOD_REGEX := "\s+_\s+\".*\""
+TOOLS_PKG_NAMES := $(shell grep -E $(TOOLS_MOD_REGEX) < $(TOOLS_MOD_DIR)/tools.go | tr -d " _\"" | grep -vE '/v[0-9]+$$')
+TOOLS_BIN_NAMES := $(addprefix $(TOOLS_BIN_DIR)/, $(notdir $(shell echo $(TOOLS_PKG_NAMES))))
+GO_LICENCE_DETECTOR        := $(TOOLS_BIN_DIR)/go-licence-detector
+GO_LICENCE_DETECTOR_CONFIG   := $(SRC_ROOT)/internal/assets/license/rules.json
 
-clean: $(addsuffix -clean,$(SUBDIRS))
+DISTRIBUTIONS ?= "nr-otel-collector,nrdot-collector-k8s"
 
-$(addsuffix -clean,$(TARGETS)):
-	$(MAKE) -C $(patsubst %-clean,%,$@) clean
+ci: check build licenses-check
+check: ensure-goreleaser-up-to-date
 
+build: go ocb
+	@./scripts/build.sh -d "${DISTRIBUTIONS}" -b ${OTELCOL_BUILDER}
 
-##########################################
-# 		     Static targets 			 #
-##########################################
-FIND_MOD_ARGS=-type f -name "manifest.yaml"
-TO_DIR=dirname {} \; | sort | grep -E '^./'
+generate: generate-sources generate-goreleaser
 
-ALL_DISTRIBUTIONS := $(shell find ./distributions/* $(FIND_MOD_ARGS) -exec $(TO_DIR) )
+generate-goreleaser: go
+	@./scripts/generate-goreleaser.sh -d "${DISTRIBUTIONS}" -g ${GO}
 
-# Define a delegation target for each distribution
-.PHONY: $(ALL_DISTRIBUTIONS)
-$(ALL_DISTRIBUTIONS):
-	$(MAKE) -C $@ $(TARGET)
+generate-sources: go ocb
+	@./scripts/build.sh -d "${DISTRIBUTIONS}" -s true -b ${OTELCOL_BUILDER}
 
-# trigger target for each module's delegation target
-.PHONY: for-all-target
-for-all-target: $(ALL_DISTRIBUTIONS)
+goreleaser-verify: goreleaser
+	@${GORELEASER} release --snapshot --clean
 
-include build.mk
-include check.mk
+ensure-goreleaser-up-to-date: generate-goreleaser
+	@git diff -s --exit-code distributions/*/.goreleaser.yaml || (echo "Check failed: The goreleaser templates have changed but the .goreleaser.yamls haven't. Run 'make generate-goreleaser' and update your PR." && exit 1)
 
-help:
-	@echo "## Available targets:"
-	@echo $(TARGETS)
-	@echo "## Available clean targets:"
-	@echo $(addsuffix -clean,$(TARGETS))
+validate-components:
+	@./scripts/validate-components.sh
+
+.PHONY: ocb
+ocb:
+ifeq (, $(shell command -v ocb 2>/dev/null))
+	@{ \
+	[ ! -x '$(OTELCOL_BUILDER)' ] || exit 0; \
+	set -e ;\
+	os=$$(uname | tr A-Z a-z) ;\
+	machine=$$(uname -m) ;\
+	[ "$${machine}" != x86 ] || machine=386 ;\
+	[ "$${machine}" != x86_64 ] || machine=amd64 ;\
+	echo "Installing ocb ($${os}/$${machine}) at $(OTELCOL_BUILDER_DIR)";\
+	mkdir -p $(OTELCOL_BUILDER_DIR) ;\
+	CGO_ENABLED=0 go install -trimpath -ldflags="-s -w" go.opentelemetry.io/collector/cmd/builder@v$(OTELCOL_BUILDER_VERSION) ;\
+	mv $$(go env GOPATH)/bin/builder $(OTELCOL_BUILDER) ;\
+	}
+else
+OTELCOL_BUILDER=$(shell command -v ocb)
+endif
+
+.PHONY: go
+go:
+	@{ \
+		if ! command -v '$(GO)' >/dev/null 2>/dev/null; then \
+			echo >&2 '$(GO) command not found. Please install golang. https://go.dev/doc/install'; \
+			exit 1; \
+		fi \
+	}
+
+.PHONY: goreleaser
+goreleaser:
+	@{ \
+		if ! command -v '$(GORELEASER)' >/dev/null 2>/dev/null; then \
+			echo >&2 '$(GORELEASER) command not found. Please install goreleaser. https://goreleaser.com/install/'; \
+			exit 1; \
+		fi \
+	}
+
+.PHONY: install-tools
+install-tools: $(TOOLS_BIN_NAMES)
+
+$(TOOLS_BIN_DIR):
+	mkdir -p $@
+
+$(TOOLS_BIN_NAMES): $(TOOLS_BIN_DIR) $(TOOLS_MOD_DIR)/go.mod
+	cd $(TOOLS_MOD_DIR) && $(GOCMD) build -o $@ -trimpath $(filter %/$(notdir $@),$(TOOLS_PKG_NAMES))
+
+FILENAME?=$(shell git branch --show-current)
+NOTICE_OUTPUT?=THIRD_PARTY_NOTICES.md
+
+.PHONY: licenses
+licenses: go generate-sources $(GO_LICENCE_DETECTOR)
+	@./scripts/licenses.sh -d "${DISTRIBUTIONS}" -b ${GO_LICENCE_DETECTOR} -n ${NOTICE_OUTPUT} -g ${GO}
+
+.PHONY: licenses-check
+licenses-check: licenses
+	@git diff --name-only | grep -q $(NOTICE_OUTPUT) \
+		&& { \
+			echo "Third party notices out of date, please run \"make licenses\" and commit the changes in this PR.";\
+			echo "Diff of $(NOTICE_OUTPUT):";\
+			git --no-pager diff HEAD -- */$(NOTICE_OUTPUT);\
+			exit 1;\
+		} \
+		|| exit 0
