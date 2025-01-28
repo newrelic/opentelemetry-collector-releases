@@ -48,7 +48,7 @@ data "aws_subnets" "private_subnets" {
 }
 
 resource "aws_security_group" "ec2_allow_all_egress" {
-  name        = "nightly-ec2-all-egress"
+  name        = "${var.test_environment}-${var.collector_distro}-ec2-all-egress"
   description = "Allow all outbound traffic"
   vpc_id      = data.aws_vpc.ec2_vpc.id
 
@@ -61,7 +61,7 @@ resource "aws_security_group" "ec2_allow_all_egress" {
 }
 
 resource "aws_iam_role" "ec2_role" {
-  name = "ec2_s3_read_access_role"
+  name = "${var.test_environment}-${var.collector_distro}-ec2-s3-read-access-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -79,7 +79,7 @@ resource "aws_iam_role" "ec2_role" {
 
 
 resource "aws_iam_policy" "s3_nr_releases_read_policy" {
-  name = "s3_read_policy"
+  name = "${var.test_environment}-${var.collector_distro}-s3-read-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -104,7 +104,7 @@ resource "aws_iam_role_policy_attachment" "s3_read_policy" {
 }
 
 resource "aws_iam_instance_profile" "s3_read_access" {
-  name = "ec2-s3-nr-releases-read-access"
+  name = "${var.test_environment}-${var.collector_distro}-ec2-s3-nr-releases-read-access"
   role = aws_iam_role.ec2_role.name
 }
 
