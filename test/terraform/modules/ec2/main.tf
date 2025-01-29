@@ -117,7 +117,8 @@ resource "aws_instance" "ubuntu" {
   iam_instance_profile   = aws_iam_instance_profile.s3_read_access.name
 
 
-  user_data = <<-EOF
+  user_data_replace_on_change = true
+  user_data                   = <<-EOF
               #!/bin/bash
               echo 'Configuring swap file to ensure system.paging.usage metric gets published'
               dd if=/dev/zero of=/swapfile bs=1M count=128
@@ -134,7 +135,7 @@ resource "aws_instance" "ubuntu" {
               unzip -q awscliv2.zip
               ./aws/install
               deb_package_basepath='s3://${var.releases_bucket_name}/opentelemetry-collector-releases/${var.collector_version}/'
-              latest_deb_package_filename=$(aws s3 ls $${deb_package_basepath} | sort -r | grep 'amd64.deb' | awk '{print $NF}')
+              latest_deb_package_filename=$(aws s3 ls $${deb_package_basepath} | sort -r | grep '${var.collector_distro}' | grep 'amd64.deb$' | head -n1 | awk '{print $NF}')
               echo "Installing collector from: $${deb_package_basepath}$${latest_deb_package_filename}"
               aws s3 cp "$${deb_package_basepath}$${latest_deb_package_filename}" /tmp/collector.deb
               dpkg -i /tmp/collector.deb
