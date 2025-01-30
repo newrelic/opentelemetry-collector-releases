@@ -28,9 +28,6 @@ import (
 const (
 	ArmArch = "arm"
 
-	AgentConfigSuffix   = "agent-linux"
-	GatewayConfigSuffix = "gateway"
-
 	HostDistro = "nr-otel-collector"
 	K8sDistro  = "nrdot-collector-k8s"
 
@@ -198,7 +195,7 @@ func Package(dist string) config.NFPM {
 	}
 	if _, ok := DefaultConfigDists[dist]; ok {
 		nfpmContents = append(nfpmContents, config.NFPMContent{
-			Source:      "configs/nr-otel-collector-agent-linux.yaml",
+			Source:      "config.yaml",
 			Destination: path.Join("/etc", dist, "config.yaml"),
 			Type:        "config",
 		})
@@ -293,15 +290,8 @@ func DockerImage(dist string, nightly bool, arch string, armVersion string) conf
 		return fmt.Sprintf("--label=org.opencontainers.image.%s={{%s}}", name, template)
 	}
 	files := make([]string, 0)
-
-	configFile := "configs/config.yaml"
-
-	if dist == HostDistro {
-		configFile = fmt.Sprintf("configs/%s-%s.yaml", dist, AgentConfigSuffix)
-	}
-
 	if _, ok := DefaultConfigDists[dist]; ok {
-		files = append(files, configFile)
+		files = append(files, "config.yaml")
 	}
 	return config.Docker{
 		ImageTemplates: imageTemplates,
