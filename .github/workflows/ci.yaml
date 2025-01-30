@@ -110,12 +110,12 @@ jobs:
           severity: "HIGH,CRITICAL"
         env:
           # dbs are downloaded async in trivy-cache.yml
-          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_DB_UPDATE: ${{ !env.ACT }}
           TRIVY_SKIP_JAVA_DB_UPDATE: true
 
   terraform:
     uses: ./.github/workflows/terraform.yml
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    if: ${{ !github.event.act && github.event.pull_request.user.login != 'dependabot[bot]' }}
     with:
       branch: ${{ github.ref }}
       tf_work_subdir: permanent
