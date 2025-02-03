@@ -84,7 +84,7 @@ jobs:
       - name: Extract image version and arch
         run: |
           VERSION=$(echo '${{ steps.goreleaser.outputs.metadata }}' | jq -r '.version')
-          ARCH=$(echo '${{ runner.arch }}')
+          ARCH=$(echo '${{ runner.arch }}' | sed 's/X/amd/g')
           echo "version=$VERSION" >> $GITHUB_ENV
           echo "arch=${ARCH@L}" >> $GITHUB_ENV
 
