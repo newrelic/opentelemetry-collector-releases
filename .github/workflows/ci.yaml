@@ -91,8 +91,6 @@ jobs:
           cluster_name: ${{ env.TEST_CLUSTER_NAME }}
           wait: 60s
 
-      - uses: azure/setup-helm@v4.2.0
-
       - name: Run local e2e tests
         run: |
           IMAGE_TAG=${{ env.version }}-amd64 \

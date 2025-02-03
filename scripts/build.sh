@@ -22,7 +22,7 @@ done
 
 if [[ -z $distributions ]]; then
     echo "List of distributions to build not provided. Use '-d' to specify the names of the distributions to build. Ex.:"
-    echo "$0 -d otelcol"
+    echo "$0 -d nrdot-collector-k8s"
     exit 1
 fi
 
