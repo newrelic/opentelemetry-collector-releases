@@ -81,8 +81,12 @@ jobs:
           args: --snapshot --clean --skip=publish,validate --timeout 2h
           workdir: distributions/${{ matrix.dist }}
 
-      - name: Extract image version
-        run: echo "version=$(echo '${{ steps.goreleaser.outputs.metadata }}' | jq -r '.version')" >> $GITHUB_ENV
+      - name: Extract image version and arch
+        run: |
+          VERSION=$(echo '${{ steps.goreleaser.outputs.metadata }}' | jq -r '.version')
+          ARCH=$(echo '${{ runner.arch }}')
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "arch=${ARCH@L}" >> $GITHUB_ENV
 
       - name: Setup local kind cluster
         uses: helm/kind-action@v1
@@ -95,14 +99,14 @@ jobs:
 
       - name: Run local e2e tests
         run: |
-          IMAGE_TAG=${{ env.version }}-amd64 \
+          IMAGE_TAG=${{ env.version }}-${{ env.arch }} \
           KIND_CLUSTER_NAME=${{ env.TEST_CLUSTER_NAME }} \
           make -f ./test/e2e/Makefile ci_test-fast DISTRO=${{ matrix.dist }}
 
       - name: Trivy security check
         uses: aquasecurity/trivy-action@0.29.0
         with:
-          image-ref: "newrelic/${{ matrix.dist }}:${{ env.version }}-amd64"
+          image-ref: "newrelic/${{ matrix.dist }}:${{ env.version }}-${{ env.arch }}"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
