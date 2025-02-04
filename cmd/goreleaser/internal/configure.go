@@ -78,6 +78,10 @@ func Generate(dist string, nightly bool) config.Project {
 			VersionTemplate: "{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}",
 		},
 		Blobs: Blobs(dist, nightly),
+		Release: config.Release{
+			// Disable releases on all distros for now
+			Disable: "true",
+		},
 	}
 }
 

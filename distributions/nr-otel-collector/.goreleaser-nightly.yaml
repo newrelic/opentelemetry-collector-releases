@@ -1,5 +1,7 @@
 version: 2
 project_name: nrdot-collector-releases-nightly
+release:
+  disable: "true"
 builds:
   - id: nr-otel-collector
     goos:
