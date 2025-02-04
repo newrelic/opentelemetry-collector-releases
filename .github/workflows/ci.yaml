@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: 🔄 CI | PR / Merge
 
 on:
   push:
@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    name: Validate distributions build, third party libraries and security
+    name: Build & Validate
     runs-on: ubuntu-latest
     strategy:
       matrix:

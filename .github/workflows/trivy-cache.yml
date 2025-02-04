@@ -1,4 +1,4 @@
-name: Update Trivy Cache
+name: 🔍 Update Trivy Cache
 
 on:
   schedule:
