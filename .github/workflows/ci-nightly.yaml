@@ -1,4 +1,4 @@
-name: 🔄 CI | Nightly
+name: 🔄 CI | Nightly Tests
 
 on:
   workflow_dispatch:

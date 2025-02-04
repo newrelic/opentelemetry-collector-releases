@@ -1,4 +1,4 @@
-name: 🔄 CI | Config Drift
+name: 🔄 CI | Nightly Config Drift
 
 on:
   schedule:
