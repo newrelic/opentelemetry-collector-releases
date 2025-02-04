@@ -2,7 +2,7 @@ name: . 🕵🏼 Security scanner
 on:
   schedule:
     # Scheduled to run in the morning (PT) on every day-of-week from Monday through Friday.
-    - cron:  '0 15 * * 1-5'
+    - cron: '0 15 * * 1-5'
   workflow_dispatch:
     inputs:
       tag:
@@ -12,9 +12,54 @@ on:
 
 jobs:
   docker-trivy:
-    uses: ./.github/workflows/component_trivy.yml
-    secrets:
-      slack_webhook: ${{ secrets.OTELCOMM_BOTS_SLACK_HOOK }}
-    with:
-      tag: "${{ inputs.tag || 'latest' }}"
-      severity: "CRITICAL,HIGH"
+    name: Trivy scanner for docker
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        image:
+          - newrelic/nr-otel-collector
+
+    steps:
+      - name: Run Trivy image vulnerability scanner
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          image-ref: ${{ matrix.image }}:${{ inputs.tag }}
+          format: sarif
+          output: trivy-${{ matrix.image }}-results.sarif
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+          exit-code: 1
+          ignore-unfixed: true
+          limit-severities-for-sarif: true
+        env:
+          # dbs are downloaded async in download_trivy_db.yml
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
+
+      - name: Print Trivy scan results # action can't do both table/sarif output, so we just print the sarif file
+        if: ${{ (success() || failure()) && inputs.tag == 'latest' }}
+        run: |
+          if [[ -s trivy-${{ matrix.image }}-results.sarif ]]; then
+            cat trivy-${{ matrix.image }}-results.sarif
+          else
+            echo "No sarif file found"
+          fi
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        # Upload sarif only for latest
+        if: ${{ (success() || failure()) && inputs.tag == 'latest' }}
+        with:
+          category: "trivy-${{ matrix.image }}"
+          sarif_file: "trivy-${{ matrix.image }}-results.sarif"
+
+
+      - name: Send notification to Slack Workflow
+        if: ${{ failure() && inputs.tag == 'latest' }}
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.OTELCOMM_BOTS_SLACK_HOOK }}
+          webhook-type: incoming-webhook
+          # This data can be any valid JSON from a previous step in the GitHub Action
+          payload: |
+            text: ":rotating_light: Hi from your Github Action, vulnerabilities found in NRDOT ${{ matrix.image }}:${{ inputs.tag }}, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"

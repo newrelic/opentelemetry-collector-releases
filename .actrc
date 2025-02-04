@@ -1,0 +1,4 @@
+# .actrc
+--container-architecture=linux/arm64
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+-e event.json

@@ -13,7 +13,7 @@ on:
 
 env:
   TEST_CLUSTER_NAME: ci-e2etest-nightly
-  REGISTRY: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nr-otel-collector
+  REGISTRY: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
 jobs:
   slow-tests:
@@ -39,15 +39,41 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
+          passphrase: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+
+      - name: Write GPG to path in memory for signing rpm/deb
+        id: write_gpg_to_path
+        run: |
+          GPG_KEY_PATH="$(mktemp /dev/shm/gpg.XXXXXX)"
+          echo "$GPG_PRIVATE_KEY" | base64 -d >> "$GPG_KEY_PATH"
+          echo "gpg_key_path=$GPG_KEY_PATH" >> $GITHUB_OUTPUT
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
+
       - name: Build binaries & packages with GoReleaser
+        id: goreleaser_snapshot
         uses: goreleaser/goreleaser-action@v6
+        env:
+          NFPM_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GPG_KEY_PATH: ${{ steps.write_gpg_to_path.outputs.gpg_key_path }}
+          REGISTRY: "newrelic/nr-otel-collector"
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: --snapshot --clean --skip=sign --timeout 2h
+          args: --snapshot --clean --skip=publish,validate --timeout 2h --config .goreleaser-nightly.yaml
+          workdir: distributions/nr-otel-collector
+
+      - name: List contents of dist folder
+        run: ls -la distributions/nr-otel-collector/dist
 
       - name: Extract image version
-        run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_ENV
+        run: echo "version=$(echo '${{ steps.goreleaser_snapshot.outputs.metadata }}' | jq -r '.version')" >> $GITHUB_ENV
 
       - name: Setup local kind cluster
         uses: helm/kind-action@v1
@@ -58,7 +84,7 @@ jobs:
 
       - name: Run slow local tests
         run: |
-          IMAGE_TAG=${{ env.version }}-rc-amd64 \
+          IMAGE_TAG=${{ env.version }}-nightly-amd64 \
           KIND_CLUSTER_NAME=${{ env.TEST_CLUSTER_NAME }} \
           NR_BACKEND_URL=${{ secrets.NR_STAGING_BACKEND_URL }} \
           NR_INGEST_KEY=${{ secrets.OTELCOMM_NR_INGEST_KEY }} \
@@ -83,10 +109,15 @@ jobs:
 
       - name: Build and publish nightly binaries & packages with GoReleaser
         uses: goreleaser/goreleaser-action@v6
+        env:
+          NFPM_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GPG_KEY_PATH: ${{ steps.write_gpg_to_path.outputs.gpg_key_path }}
         with:
           distribution: goreleaser
           version: '~> v2'
           args: --skip=announce,validate --clean --timeout 2h --config .goreleaser-nightly.yaml
+          workdir: distributions/nr-otel-collector
 
       - name: Run nightly tests
         run: |

@@ -1,0 +1,3 @@
+nightly:
+  ec2:
+    enabled: false

@@ -9,7 +9,7 @@ ROOT_DIR := $(realpath $(THIS_MAKEFILE_DIR)/../..)
 ################
 #### ASSERT ####
 ################
-REQUIRED_BINS := go kind docker helm kubectl awk
+REQUIRED_BINS := go kind docker awk
 $(foreach bin,$(REQUIRED_BINS),\
 	$(if $(shell command -v $(bin) 2> /dev/null),$(info Found required dependency `$(bin)`),$(error Please install `$(bin)`)))
 

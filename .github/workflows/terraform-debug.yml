@@ -1,4 +1,4 @@
-name: 🪲 Terraform
+name: 🪲 Terraform Debug
 
 on:
   workflow_dispatch:
@@ -38,7 +38,7 @@ on:
         default: "WARN"
 
 jobs:
-  terraform:
+  terraform-debug:
     uses: ./.github/workflows/component_terraform.yml
     with:
       branch: ${{ inputs.branch }}
