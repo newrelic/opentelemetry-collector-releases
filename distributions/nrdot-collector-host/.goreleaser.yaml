@@ -136,9 +136,3 @@ signs:
       - ${artifact}
     signature: ${artifact}.sig
     artifacts: all
-    certificate: ${artifact}.pem
-docker_signs:
-  - args:
-      - sign
-      - ${artifact}
-    artifacts: all

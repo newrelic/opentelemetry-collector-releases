@@ -105,7 +105,7 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: ${{ env.goreleaser_args }}
-          workdir: distributions/${{ inputs.distribution}}
+          workdir: distributions/${{ inputs.distribution }}
 
       - name: Extract image version and arch
         run: |
@@ -119,10 +119,6 @@ jobs:
           else
             echo "image_tag=$VERSION-$ARCH" >> $GITHUB_ENV
           fi
-
-      - name: Show local images
-        run: |
-          docker image ls
 
       - name: Setup local kind cluster
         uses: helm/kind-action@v1
@@ -171,12 +167,3 @@ jobs:
           # dbs are downloaded async in trivy-cache.yml
           TRIVY_SKIP_DB_UPDATE: ${{ !env.ACT }}
           TRIVY_SKIP_JAVA_DB_UPDATE: true
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4.6.0
-        if: ${{ inputs.nightly }}
-        with:
-          name: artifacts-${{ inputs.distribution }}-${{ env.version }}
-          path: distributions/${{ inputs.distribution }}/dist/**/*
-          if-no-files-found: error
-  
