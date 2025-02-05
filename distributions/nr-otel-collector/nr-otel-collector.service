@@ -1,5 +1,5 @@
 [Unit]
-Description=New Relic OpenTelemetry Collector
+Description=NRDOT Collector Legacy
 After=network.target
 
 [Service]
