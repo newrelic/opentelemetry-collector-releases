@@ -1,12 +1,15 @@
 <a href="https://opensource.newrelic.com/oss-category/#community-project"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Community_Project.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Project.png"><img alt="New Relic Open Source community project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Project.png"></picture></a>
 
-# New Relic OpenTelemetry collector releases
+# New Relic Distribution of OpenTelemetry (NRDOT) Releases 
 
-This repository assembles New Relic's OpenTelemetry Collector distributions. All generated assets are available in the corresponding Github release page.
+This repository assembles various [custom distributions](https://opentelemetry.io/docs/collector/distributions/#custom-distributions) of the [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) focused on specific use cases and pre-configured to work with NewRelic out-of-the-box.
+
+Generated assets are available in the corresponding Github release page and as docker images published within the [newrelic organization on Docker Hub](https://hub.docker.com/u/newrelic).
 
 Current list of distributions:
 
-- [New Relic OpenTelemetry Collector](./distributions/nr-otel-collector/)
+- [nr-otel-collector](./distributions/nr-otel-collector/): (Deprecated) legacy general-purpose distribution
+- [nrdot-collector-host](./distributions/nrdot-collector-host/): distribution focused on monitoring host metrics and logs
 
 ## Support
 

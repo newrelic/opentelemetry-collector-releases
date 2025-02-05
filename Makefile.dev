@@ -1,0 +1,8 @@
+.PHONY: ci
+ci:
+	act -W .github/workflows/ci.yaml
+
+ci_custom_matrix:
+	@# repeat --matrix arg for multiple distros
+	act -W .github/workflows/ci.yaml \
+		--matrix dist:nrdot-collector-host
