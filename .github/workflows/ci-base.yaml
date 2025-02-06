@@ -1,4 +1,4 @@
-name: 🧩 CI Base
+name: 🧩 CI | Base
 
 on:
   workflow_call:

@@ -1,5 +1,7 @@
 version: 2
 project_name: nrdot-collector-releases
+release:
+  disable: "true"
 builds:
   - id: nrdot-collector-k8s
     goos:
@@ -38,6 +40,8 @@ dockers:
     image_templates:
       - newrelic/nrdot-collector-k8s:{{ .Version }}-amd64
       - newrelic/nrdot-collector-k8s:latest-amd64
+    extra_files:
+      - config.yaml
     build_flag_templates:
       - --pull
       - --platform=linux/amd64
@@ -54,6 +58,8 @@ dockers:
     image_templates:
       - newrelic/nrdot-collector-k8s:{{ .Version }}-arm64
       - newrelic/nrdot-collector-k8s:latest-arm64
+    extra_files:
+      - config.yaml
     build_flag_templates:
       - --pull
       - --platform=linux/arm64
@@ -85,10 +91,4 @@ signs:
       - --detach-sign
       - ${artifact}
     signature: ${artifact}.sig
-    artifacts: all
-    certificate: ${artifact}.pem
-docker_signs:
-  - args:
-      - sign
-      - ${artifact}
     artifacts: all
