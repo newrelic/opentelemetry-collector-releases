@@ -1,7 +1,7 @@
 dist:
   module: github.com/newrelic/opentelemetry-collector-releases/nrdot-collector-k8s
   name: nrdot-collector-k8s
-  description: New Relic OpenTelemetry Collector
+  description: NRDOT Collector k8s
   version: 0.8.9
   output_path: ./_build
 
