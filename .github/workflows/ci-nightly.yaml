@@ -21,6 +21,7 @@ jobs:
       matrix:
         distribution:
           - nr-otel-collector
+          - nrdot-collector-host
     uses: ./.github/workflows/ci-base.yaml
     with:
       nightly: true
@@ -46,6 +47,7 @@ jobs:
       matrix:
         distribution:
           - nr-otel-collector
+          - nrdot-collector-host
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -155,6 +155,7 @@ jobs:
           make -f ./test/e2e/Makefile ci_test-slow
 
       - name: Trivy security check
+        if: ${{ !inputs.nightly }}
         uses: aquasecurity/trivy-action@0.29.0
         with:
           image-ref: "${{ secrets.registry }}/${{ inputs.distribution}}:${{ env.image_tag }}"
