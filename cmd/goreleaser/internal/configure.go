@@ -71,13 +71,16 @@ func Generate(dist string, nightly bool) config.Project {
 		Dockers:         DockerImages(dist, nightly),
 		DockerManifests: DockerManifests(dist, nightly),
 		Signs:           Sign(),
-		DockerSigns:     DockerSigns(),
 		Version:         2,
 		Changelog:       config.Changelog{Disable: "true"},
 		Snapshot: config.Snapshot{
 			VersionTemplate: "{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}",
 		},
 		Blobs: Blobs(dist, nightly),
+		Release: config.Release{
+			// Disable releases on all distros for now
+			Disable: "true",
+		},
 	}
 }
 
@@ -393,9 +396,8 @@ func archName(arch, armVersion string) string {
 func Sign() []config.Sign {
 	return []config.Sign{
 		{
-			Artifacts:   "all",
-			Signature:   "${artifact}.sig",
-			Certificate: "${artifact}.pem",
+			Artifacts: "all",
+			Signature: "${artifact}.sig",
 			Args: []string{
 				"--batch",
 				"-u",
@@ -403,18 +405,6 @@ func Sign() []config.Sign {
 				"--output",
 				"${signature}",
 				"--detach-sign",
-				"${artifact}",
-			},
-		},
-	}
-}
-
-func DockerSigns() []config.Sign {
-	return []config.Sign{
-		{
-			Artifacts: "all",
-			Args: []string{
-				"sign",
 				"${artifact}",
 			},
 		},

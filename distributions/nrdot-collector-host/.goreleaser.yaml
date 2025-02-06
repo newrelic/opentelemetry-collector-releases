@@ -1,5 +1,7 @@
 version: 2
 project_name: nrdot-collector-releases
+release:
+  disable: "true"
 builds:
   - id: nrdot-collector-host
     goos:
@@ -133,10 +135,4 @@ signs:
       - --detach-sign
       - ${artifact}
     signature: ${artifact}.sig
-    artifacts: all
-    certificate: ${artifact}.pem
-docker_signs:
-  - args:
-      - sign
-      - ${artifact}
     artifacts: all

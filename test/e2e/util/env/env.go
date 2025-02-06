@@ -11,6 +11,7 @@ const (
 	K8sContextName = "E2E_TEST__K8S_CONTEXT_NAME"
 	Distro         = "E2E_TEST__DISTRO_TO_TEST"
 	ImageTag       = "E2E_TEST__IMAGE_TAG"
+	ImageRepo      = "E2E_TEST__IMAGE_REPO"
 	NrBackendUrl   = "E2E_TEST__NR_BACKEND_URL"
 	NrIngestKey    = "E2E_TEST__NR_INGEST_KEY"
 	NrApiKey       = "E2E_TEST__NR_API_KEY"
@@ -41,6 +42,10 @@ func GetDistro() string {
 
 func GetImageTag() string {
 	return getEnvVar(ImageTag)
+}
+
+func GetImageRepo() string {
+	return getEnvVar(ImageRepo)
 }
 
 func GetNrBackendUrl() string {

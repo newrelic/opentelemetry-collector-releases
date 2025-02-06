@@ -12,18 +12,46 @@ on:
     - cron: '0 15 * * 1-5'
 
 env:
-  TEST_CLUSTER_NAME: ci-e2etest-nightly
-  REGISTRY: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+  REGISTRY: '${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com'
 
 jobs:
-  slow-tests:
-    name: Run slow tests
+  build:
+    name: Build & Validate
+    strategy:
+      matrix:
+        distribution:
+          - nr-otel-collector
+          - nrdot-collector-host
+    uses: ./.github/workflows/ci-base.yaml
+    with:
+      nightly: true
+      distribution: ${{ matrix.distribution }}
+      test_cluster_name: 'ci-e2etest-nightly'
+    secrets:
+      docker_hub_username: ${{ secrets.OTELCOMM_DOCKER_HUB_USERNAME }}
+      docker_hub_password: ${{ secrets.OTELCOMM_DOCKER_HUB_PASSWORD }}
+      gpg_private_key: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
+      gpg_passphrase: ${{ secrets.OHAI_GPG_PASSPHRASE }}
+      registry: '${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com'
+      nr_backend_url: ${{ secrets.NR_STAGING_BACKEND_URL }}
+      nr_ingest_key: ${{ secrets.OTELCOMM_NR_INGEST_KEY }}
+      nr_account_id: ${{ secrets.OTELCOMM_NR_TEST_ACCOUNT_ID }}
+      nr_api_base_url: ${{ secrets.NR_STAGING_API_BASE_URL }}
+      nr_api_key: ${{ secrets.OTELCOMM_NR_API_KEY }}
+
+  publish:
+    name: Build & Publish Nightly
     runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        distribution:
+          - nr-otel-collector
+          - nrdot-collector-host
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch || 'main' }}
           fetch-depth: 0 # required for tag metadata
 
       - name: Setup Go
@@ -32,8 +60,19 @@ jobs:
           go-version: '1.23'
           check-latest: true
 
+      - name: Tidy go.mod files
+        run: go mod tidy
+
       - name: Verify build
-        run: make ci
+        run: make ci DISTRIBUTIONS=${{ matrix.distribution }}
+
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        if: ${{ env.ACT }}
+        with:
+          registry: docker.io
+          username: ${{ secrets.OTELCOMM_DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.OTELCOMM_DOCKER_HUB_PASSWORD }}
 
       - uses: docker/setup-qemu-action@v2
 
@@ -55,44 +94,6 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.OHAI_GPG_PRIVATE_KEY_BASE64 }}
 
-      - name: Build binaries & packages with GoReleaser
-        id: goreleaser_snapshot
-        uses: goreleaser/goreleaser-action@v6
-        env:
-          NFPM_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
-          GPG_KEY_PATH: ${{ steps.write_gpg_to_path.outputs.gpg_key_path }}
-          REGISTRY: "newrelic/nr-otel-collector"
-        with:
-          distribution: goreleaser
-          version: '~> v2'
-          args: --snapshot --clean --skip=publish,validate --timeout 2h --config .goreleaser-nightly.yaml
-          workdir: distributions/nr-otel-collector
-
-      - name: List contents of dist folder
-        run: ls -la distributions/nr-otel-collector/dist
-
-      - name: Extract image version
-        run: echo "version=$(echo '${{ steps.goreleaser_snapshot.outputs.metadata }}' | jq -r '.version')" >> $GITHUB_ENV
-
-      - name: Setup local kind cluster
-        uses: helm/kind-action@v1
-        with:
-          version: v0.21.0
-          cluster_name: ${{ env.TEST_CLUSTER_NAME }}
-          wait: 60s
-
-      - name: Run slow local tests
-        run: |
-          IMAGE_TAG=${{ env.version }}-nightly-amd64 \
-          KIND_CLUSTER_NAME=${{ env.TEST_CLUSTER_NAME }} \
-          NR_BACKEND_URL=${{ secrets.NR_STAGING_BACKEND_URL }} \
-          NR_INGEST_KEY=${{ secrets.OTELCOMM_NR_INGEST_KEY }} \
-          NR_API_KEY=${{ secrets.OTELCOMM_NR_API_KEY }} \
-          NR_ACCOUNT_ID=${{ secrets.OTELCOMM_NR_TEST_ACCOUNT_ID }} \
-          NR_API_BASE_URL=${{ secrets.NR_STAGING_API_BASE_URL }} \
-          make -f ./test/e2e/Makefile ci_test-slow
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -105,23 +106,26 @@ jobs:
       - name: Login to ECR
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.OTELCOMM_AWS_TEST_ACC_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nr-otel-collector
+          registry: ${{ env.REGISTRY}}/${{ matrix.distribution }}
 
-      - name: Build and publish nightly binaries & packages with GoReleaser
+      - name: Build and publish ${{ matrix.distribution }} nightly binaries & packages with GoReleaser
+        if: ${{ !env.ACT }}
         uses: goreleaser/goreleaser-action@v6
         env:
           NFPM_PASSPHRASE: ${{ secrets.OHAI_GPG_PASSPHRASE }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GPG_KEY_PATH: ${{ steps.write_gpg_to_path.outputs.gpg_key_path }}
+          REGISTRY: ${{ env.REGISTRY }}
         with:
           distribution: goreleaser
           version: '~> v2'
           args: --skip=announce,validate --clean --timeout 2h --config .goreleaser-nightly.yaml
-          workdir: distributions/nr-otel-collector
+          workdir: distributions/${{ matrix.distribution }}
 
-      - name: Run nightly tests
+      - name: Run nightly tests for ${{ matrix.distribution }}
         run: |
           NR_API_KEY=${{ secrets.OTELCOMM_NR_API_KEY }} \
           NR_ACCOUNT_ID=${{ secrets.OTELCOMM_NR_TEST_ACCOUNT_ID }} \
           NR_API_BASE_URL=${{ secrets.NR_STAGING_API_BASE_URL }} \
+          DISTRO=${{ matrix.distribution }} \
           make -f ./test/e2e/Makefile ci_test-nightly

@@ -39,7 +39,7 @@ on:
 
 jobs:
   terraform-debug:
-    uses: ./.github/workflows/component_terraform.yml
+    uses: ./.github/workflows/terraform.yaml
     with:
       branch: ${{ inputs.branch }}
       tf_work_subdir: ${{inputs.tf_work_subdir}}
