@@ -116,7 +116,10 @@ resource "aws_instance" "ubuntu" {
   vpc_security_group_ids = [aws_security_group.ec2_allow_all_egress.id]
   iam_instance_profile   = aws_iam_instance_profile.s3_read_access.name
 
-
+  tags = {
+      Name = "${var.test_environment}-${var.collector_distro}-${local.instance_config[count.index].hostname_suffix}"
+  }
+  
   user_data_replace_on_change = true
   user_data                   = <<-EOF
               #!/bin/bash
