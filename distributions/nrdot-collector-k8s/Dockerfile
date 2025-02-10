@@ -8,6 +8,11 @@ USER ${USER_UID}
 
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --chmod=755 nrdot-collector-k8s /nrdot-collector-k8s
+COPY config-node.yaml /etc/nrdot-collector-k8s/config-node.yaml
+COPY config-cluster.yaml /etc/nrdot-collector-k8s/config-cluster.yaml
+
 ENTRYPOINT ["/nrdot-collector-k8s"]
+CMD ["--config", "/etc/nrdot-collector-k8s/config-node.yaml"]
+
 # `4137` and `4318`: OTLP
 EXPOSE 4317 4318
