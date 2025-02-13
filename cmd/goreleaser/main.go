@@ -20,7 +20,7 @@ import (
 	"github.com/goreleaser/goreleaser/v2/pkg/config"
 	"gopkg.in/yaml.v3"
 
-	"github.com/newrelic/opentelemetry-collector-releases/cmd/goreleaser/internal"
+	"github.com/newrelic/nrdot-collector-releases/cmd/goreleaser/internal"
 )
 
 var distFlag = flag.String("d", "", "Collector distributions to build")

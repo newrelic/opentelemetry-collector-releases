@@ -62,4 +62,4 @@ jobs:
           webhook-type: incoming-webhook
           # This data can be any valid JSON from a previous step in the GitHub Action
           payload: |
-            text: ":rotating_light: Hi from your Github Action, vulnerabilities found in NRDOT ${{ matrix.image }}:${{ inputs.tag }}, see: https://github.com/newrelic/opentelemetry-collector-releases/security :rotating_light:"
+            text: ":rotating_light: Hi from your Github Action, vulnerabilities found in NRDOT ${{ matrix.image }}:${{ inputs.tag }}, see: https://github.com/newrelic/nrdot-collector-releases/security :rotating_light:"

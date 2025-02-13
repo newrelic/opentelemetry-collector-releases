@@ -1,5 +1,5 @@
 dist:
-  module: github.com/newrelic/opentelemetry-collector-releases/nrdot-collector-host
+  module: github.com/newrelic/nrdot-collector-releases/nrdot-collector-host
   name: nrdot-collector-host
   description: NRDOT Collector Host
   version: 0.8.10

@@ -1,4 +1,4 @@
-module github.com/newrelic/opentelemetry-collector-releases
+module github.com/newrelic/nrdot-collector-releases
 
 go 1.23.4
 
