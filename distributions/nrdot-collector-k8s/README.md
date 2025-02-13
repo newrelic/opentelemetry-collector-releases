@@ -3,10 +3,10 @@
 Note: See [general README](../README.md) for information that applies to all distributions.
 
 A distribution of the NRDOT collector focused on gathering metrics in a kubernetes environment with two different configs:
-- [config-node.yaml](./config-node.yaml) (default): Collects node-level metrics via `hostmetricsreceiver`, `filelogreceiver`, `kubeletstatsreceiver` and `prometheusreceiver` (`cAdvisor`, `kubelet`)
-- [config-cluster.yaml](./config-cluster.yaml): Collects cluster-level metrics via `k8seventsreceiver`,  `prometheusreceiver` (`kube-state-metrics`, `apiserver`, `controller-manager`, `scheduler`). Can be enabled by overriding the default docker `CMD`, i.e. `--config /etc/nrdot-collector-k8s/config-cluster.yaml`
+- [config-daemonset.yaml](./config-daemonset.yaml) (default): Typically deployed as a `DaemonSet`. Collects node-level metrics via `hostmetricsreceiver`, `filelogreceiver`, `kubeletstatsreceiver` and `prometheusreceiver` (`cAdvisor`, `kubelet`).
+- [config-deployment.yaml](./config-deployment.yaml): Typically deployed as a `Deployment`. Collects cluster-level metrics via `k8seventsreceiver`,  `prometheusreceiver` (`kube-state-metrics`, `apiserver`, `controller-manager`, `scheduler`). Can be enabled by overriding the default docker `CMD`, i.e. `--config /etc/nrdot-collector-k8s/config-deployment.yaml`.
 
-Distribution is available as docker image and runs in `node` mode by default.
+Distribution is available as docker image and runs in `daemonset` mode by default.
 
 ## Additional Configuration
 

@@ -32,8 +32,8 @@ dockers:
       - '{{ .Env.REGISTRY }}/nrdot-collector-k8s:{{ .Version }}-nightly-amd64'
       - '{{ .Env.REGISTRY }}/nrdot-collector-k8s:nightly-amd64'
     extra_files:
-      - config-node.yaml
-      - config-cluster.yaml
+      - config-daemonset.yaml
+      - config-deployment.yaml
     build_flag_templates:
       - --pull
       - --platform=linux/amd64
@@ -51,8 +51,8 @@ dockers:
       - '{{ .Env.REGISTRY }}/nrdot-collector-k8s:{{ .Version }}-nightly-arm64'
       - '{{ .Env.REGISTRY }}/nrdot-collector-k8s:nightly-arm64'
     extra_files:
-      - config-node.yaml
-      - config-cluster.yaml
+      - config-daemonset.yaml
+      - config-deployment.yaml
     build_flag_templates:
       - --pull
       - --platform=linux/arm64

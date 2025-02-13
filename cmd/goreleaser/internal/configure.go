@@ -54,7 +54,7 @@ var (
 	DockerIncludedConfigs = map[string][]string{
 		LegacyDistro: {"config.yaml"},
 		HostDistro:   {"config.yaml"},
-		K8sDistro:    {"config-node.yaml", "config-cluster.yaml"},
+		K8sDistro:    {"config-daemonset.yaml", "config-deployment.yaml"},
 	}
 	K8sDockerSkipArchs = map[string]bool{"arm": true, "386": true}
 	K8sGoos            = []string{"linux"}

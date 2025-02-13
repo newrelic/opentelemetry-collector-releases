@@ -14,12 +14,10 @@ rendered_helm_chart=$(helm template "test-render-$(date +%s)" newrelic/nr-k8s-ot
 script_name=$(basename "$0")
 script_dir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 k8s_distro_dir="${script_dir}"
-node_config="${k8s_distro_dir}/config-node.yaml"
-cluster_config="${k8s_distro_dir}/config-cluster.yaml"
 
 function extract_config_with_overwritable_defaults() {
   local helm_deploy_type="${1}"
-  local output_file="${2}"
+  local output_file="${k8s_distro_dir}/config-${helm_deploy_type}.yaml"
   echo "$rendered_helm_chart" |
     {
       yq "(select(.kind == \"ConfigMap\" and (.metadata.name | contains(\"${helm_deploy_type}-config\"))) | .data[\"${helm_deploy_type}-config.yaml\"])"
@@ -43,8 +41,8 @@ function extract_config_with_overwritable_defaults() {
     echo "Config '${helm_deploy_type}' written to ${output_file}"
 }
 
-extract_config_with_overwritable_defaults 'daemonset' "${node_config}"
-extract_config_with_overwritable_defaults 'deployment' "${cluster_config}"
+extract_config_with_overwritable_defaults 'daemonset'
+extract_config_with_overwritable_defaults 'deployment'
 
 
 
