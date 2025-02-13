@@ -7,7 +7,7 @@ In the event that a required notice is missing or incorrect, please notify us by
 [open-source@newrelic.com](mailto:open-source@newrelic.com).
 
 For any licenses that require the disclosure of source code, the source code
-can be found at https://github.com/newrelic/opentelemetry-collector-releases.
+can be found at https://github.com/newrelic/nrdot-collector-releases.
 
 
 

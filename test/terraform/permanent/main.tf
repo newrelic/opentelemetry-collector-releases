@@ -34,14 +34,14 @@ module "ecr" {
 
   for_each = local.distros
 
-  source = "terraform-aws-modules/ecr/aws"
-
+  source          = "terraform-aws-modules/ecr/aws"
+  version         = "2.3.1"
   repository_name = each.value
 
   repository_image_tag_mutability = "MUTABLE"
 
   repository_read_write_access_arns = [data.aws_iam_session_context.current.issuer_arn]
-  repository_read_access_arns       = [module.ci_e2e_cluster.cluster_iam_role_arn]
+  repository_read_access_arns = [module.ci_e2e_cluster.cluster_iam_role_arn]
 
   repository_lifecycle_policy = jsonencode({
     rules = [
@@ -49,10 +49,10 @@ module "ecr" {
         rulePriority = 1,
         description  = "Keep last 10 nightly images",
         selection = {
-          tagStatus     = "tagged",
+          tagStatus   = "tagged",
           tagPrefixList = ["nightly"],
-          countType     = "imageCountMoreThan",
-          countNumber   = 10
+          countType   = "imageCountMoreThan",
+          countNumber = 10
         },
         action = {
           type = "expire"
@@ -63,10 +63,10 @@ module "ecr" {
 }
 
 module "s3_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
-
-  bucket = local.releases_bucket_name
-  acl    = "private"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "4.5.0"
+  bucket  = local.releases_bucket_name
+  acl     = "private"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"
@@ -86,7 +86,7 @@ resource "random_string" "deploy_id" {
 }
 
 resource "helm_release" "ci_e2e_nightly" {
-  for_each   = local.distros
+  for_each = local.distros
   depends_on = [module.ci_e2e_cluster, module.ecr]
 
   name  = "ci-e2etest-nightly"
@@ -131,9 +131,9 @@ module "ci_e2e_ec2" {
   source               = "../modules/ec2"
   releases_bucket_name = local.releases_bucket_name
   collector_distro     = each.key
-  nr_ingest_key        = var.nr_ingest_key
+  nr_ingest_key = var.nr_ingest_key
   # reuse vpc to avoid having to pay for second NAT gateway for this simple use case
-  vpc_id              = module.ci_e2e_cluster.eks_vpc_id
-  deploy_id           = random_string.deploy_id.result
-  permission_boundary = local.required_permissions_boundary_arn_for_new_roles
+  vpc_id               = module.ci_e2e_cluster.eks_vpc_id
+  deploy_id            = random_string.deploy_id.result
+  permission_boundary  = local.required_permissions_boundary_arn_for_new_roles
 }

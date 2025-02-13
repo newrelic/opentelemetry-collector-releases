@@ -1,4 +1,4 @@
-module github.com/newrelic/opentelemetry-collector-releases/internal/tools
+module github.com/newrelic/nrdot-collector-releases/internal/tools
 
 go 1.23
 

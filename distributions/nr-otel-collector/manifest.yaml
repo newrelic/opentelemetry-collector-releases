@@ -1,5 +1,5 @@
 dist:
-  module: github.com/newrelic/opentelemetry-collector-releases/nr-otel-collector
+  module: github.com/newrelic/nrdot-collector-releases/nr-otel-collector
   name: nr-otel-collector
   description: NRDOT Collector Legacy
   version: 0.8.10
