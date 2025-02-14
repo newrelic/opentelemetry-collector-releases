@@ -41,6 +41,11 @@ on:
         type: string
         required: false
         default: "nrdot-collector-host"
+      nightly_docker_manifest_sha:
+        description: "SHA256 to identify nightly docker manifest to use"
+        type: string
+        required: false
+        default: "docker_manifest_sha_placeholder"
     secrets:
       aws_access_key_id:
         description: "AWS credentials for tf with permission to assume resource-provider"
@@ -71,6 +76,7 @@ jobs:
       TF_VAR_nr_backend_url: ${{ secrets.nr_backend_url }}
       TF_VAR_nr_ingest_key: ${{ secrets.nr_ingest_key }}
       TF_VAR_distros: ${{ inputs.distros}}
+      TF_VAR_nightly_docker_manifest_sha: ${{ inputs.nightly_docker_manifest_sha }}
 
     steps:
       - name: Checkout repository

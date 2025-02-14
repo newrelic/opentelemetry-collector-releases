@@ -107,7 +107,6 @@ jobs:
           args: ${{ env.goreleaser_args }}
           workdir: distributions/${{ inputs.distribution }}
 
-      # TODO: extract docker manifest sha
       - name: Extract relevant metadata
         run: |
           VERSION=$(echo '${{ steps.goreleaser.outputs.metadata }}' | jq -r '.version')
