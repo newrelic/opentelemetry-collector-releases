@@ -1,5 +1,7 @@
 version: 2
 project_name: nrdot-collector-releases-nightly
+release:
+  disable: "true"
 builds:
   - id: nrdot-collector-k8s
     goos:
@@ -81,10 +83,4 @@ signs:
       - --detach-sign
       - ${artifact}
     signature: ${artifact}.sig
-    artifacts: all
-    certificate: ${artifact}.pem
-docker_signs:
-  - args:
-      - sign
-      - ${artifact}
     artifacts: all

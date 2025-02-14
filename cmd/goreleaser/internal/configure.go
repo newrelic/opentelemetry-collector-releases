@@ -28,9 +28,8 @@ import (
 const (
 	ArmArch = "arm"
 
-	LegacyDistro = "nr-otel-collector"
-	HostDistro   = "nrdot-collector-host"
-	K8sDistro    = "nrdot-collector-k8s"
+	HostDistro = "nrdot-collector-host"
+	K8sDistro  = "nrdot-collector-k8s"
 
 	DockerHub   = "newrelic"
 	EnvRegistry = "{{ .Env.REGISTRY }}"
@@ -44,7 +43,7 @@ var (
 	NightlyImagePrefixes = []string{EnvRegistry}
 
 	Architectures      = []string{"amd64", "arm64"}
-	DefaultConfigDists = map[string]bool{LegacyDistro: true, HostDistro: true}
+	DefaultConfigDists = map[string]bool{HostDistro: true}
 	K8sDockerSkipArchs = map[string]bool{"arm": true, "386": true}
 	K8sGoos            = []string{"linux"}
 	K8sArchs           = []string{"amd64", "arm64"}
