@@ -35,7 +35,7 @@ data "aws_eks_cluster" "eks_cluster" {
 }
 
 data "aws_eks_cluster_auth" "eks_cluster_auth" {
-    name = "aws-ci-e2etest"
+  name = "aws-ci-e2etest"
 }
 
 provider "helm" {

@@ -10,13 +10,13 @@ variable "aws_region" {
 }
 
 variable "distro" {
-    description = "Distro to test during nightly"
-    type        = string
+  description = "Distro to test during nightly"
+  type        = string
 }
 
 variable "nightly_docker_manifest_sha" {
-    description = "SHA of the nightly docker manifest"
-    type        = string
+  description = "SHA of the nightly docker manifest"
+  type        = string
 }
 
 variable "nr_backend_url" {
